@@ -3,13 +3,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-
-    <title>Minihome</title>
-
-    <link rel="stylesheet" href="/css/index.css">
-
-    <script defer src="/js/minihome.js"></script>
-
+    <title>JSP - Hello World</title>
+    <link rel="stylesheet" href="css/index.css">
 </head>
 <body>
 <div class="desk-wrapper">
@@ -28,7 +23,7 @@
                     <div class="menu-list">
                         <div class="menu-item active">홈</div>
                         <div class="menu-item">다이어리</div>
-                        <div class="menu-item" onclick="location.href='pic'">사진첩</div>
+                        <div class="menu-item">사진첩</div>
                         <div class="menu-item">방명록</div>
                     </div>
                 </div>
@@ -51,70 +46,73 @@
                 <div class="visitor">Today 15 | Total 1,234</div>
             </div>
 
-            <div class="nb-tabs">
-                <div class="nb-tab active">홈</div>
-                <div class="nb-tab">다이어리</div>
-                <div class="nb-tab" onclick="location.href='pic'">사진첩</div>
-                <div class="nb-tab">방명록</div>
-            </div>
+            <jsp:include page="${content}"></jsp:include>
 
-            <div class="nb-body">
-                <jsp:include page="${content}"></jsp:include>
-            </div>
+
         </div>
     </div>
+</div>
 
-    <div class="right-col">
-        <div class="mp3">
-            <div class="mp3-screen">
-                <div class="mp3-marquee">
+<div class="right-col">
+    <div class="mp3">
+        <div class="mp3-screen">
+            <div class="mp3-marquee">
                 <span class="mp3-title-inner" onclick="location.href='/bgm'"
                 >♪ Hype Boy - NewJeans &nbsp;&nbsp;&nbsp;&nbsp; ♪ Attention -
                   NewJeans</span
                 >
-                </div>
-                <div class="mp3-controls-row">
-                    <div class="mp3-time">01:23</div>
-                    <div class="mp3-bar-mini">
-                        <div class="mp3-fill-mini"></div>
-                    </div>
-                    <div class="mp3-time">03:07</div>
-                </div>
             </div>
-            <div class="mp3-buttons">
-                <div class="mp3-btn">◀◀</div>
-                <div class="mp3-btn play">⏸</div>
-                <div class="mp3-btn">▶▶</div>
+            <div class="mp3-controls-row">
+                <div class="mp3-time">01:23</div>
+                <div class="mp3-bar-mini">
+                    <div class="mp3-fill-mini"></div>
+                </div>
+                <div class="mp3-time">03:07</div>
+            </div>
+        </div>
+        <div class="mp3-buttons">
+            <div class="mp3-btn">◀◀</div>
+            <div class="mp3-btn play">⏸</div>
+            <div class="mp3-btn">▶▶</div>
+        </div>
+    </div>
+
+    <div class="smartphone">
+        <!-- 전면 카메라 -->
+        <div class="phone-camera"></div>
+
+        <!-- 화면: YouTube iframe -->
+        <div class="phone-screen">
+            <!-- YT IFrame API가 이 div를 iframe으로 교체 -->
+            <div id="yt-player"></div>
+
+            <!-- 유튜브 바로가기 링크 -->
+            <a id="yt-link" href="#" target="_blank" class="phone-yt-link">
+                ▶ YouTube에서 보기
+            </a>
+        </div>
+
+        <div class="postit"> ...</div>
+        <!-- 홈버튼 -->
+        <div class="phone-home"></div>
+    </div>
+        <div class="visitor-btn-wrap" onclick="location.href='/visitor'">
+            <div class="visitor-btn-card">
+                <span class="visitor-icon">🐾</span>
+                <span class="visitor-text">방문자 보기</span>
             </div>
         </div>
 
-        <div class="smartphone">
-            <!-- 전면 카메라 -->
-            <div class="phone-camera"></div>
+</div>
 
-            <!-- 화면: YouTube iframe -->
-            <div class="phone-screen">
-                <!-- YT IFrame API가 이 div를 iframe으로 교체 -->
-                <div id="yt-player"></div>
-
-                <!-- 유튜브 바로가기 링크 -->
-                <a id="yt-link" href="#" target="_blank" class="phone-yt-link">
-                    ▶ YouTube에서 보기
-                </a>
-            </div>
-
-            <!-- 홈버튼 -->
-            <div class="phone-home"></div>
-        </div>
-
-    </div>
-
-    <div class="postit">
-        오늘도<br/>몽글몽글한<br/>하루 보내장🌤<br/>
-        <span style="font-size: 12px; color: #8a8030">— 2026.03.31</span>
-    </div>
+<div class="postit">
+    오늘도<br/>몽글몽글한<br/>하루 보내장🌤<br/>
+    <span style="font-size: 12px; color: #8a8030">— 2026.03.31</span>
+</div>
+</div>
 </div>
 <div class="desk-front"></div>
+</div>
 </body>
 
 

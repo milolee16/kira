@@ -20,6 +20,7 @@ public class BoardC extends HttpServlet {
 
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         GuestBoardDAO.GBDAO.addHi(request,response);
+        response.sendRedirect("board");
     }
     public void destroy() {
     }

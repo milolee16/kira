@@ -67,7 +67,7 @@ public class GuestBoardDAO {
         String board_content = request.getParameter("content");
         int is_private = 0;
 
-        String sql = "insert into GuestBoard values(?,?,?,?,?,?,?,DEFAULT)";
+        String sql = "insert into guestboard_test values(?,?,?,?,?,?,?,DEFAULT)";
 
             ps = con.prepareStatement(sql);
             ps.setString(1,pk);

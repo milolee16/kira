@@ -22,12 +22,14 @@ public class DBManager {
     public static Connection connect() throws SQLException {
         return dataSource.getConnection();
     }
-    public static void close(Connection con, PreparedStatement pstmt, ResultSet rs) {
+    public static void close(Connection con, PreparedStatement ps, ResultSet rs) {
         try {
             if (rs != null) {
                 rs.close();
             }
-            pstmt.close();
+            if(ps != null){
+                ps.close();
+            }
             if (con != null) {
                 con.close();
             }

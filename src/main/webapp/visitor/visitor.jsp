@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-<form action="visitor" method="post" class="write-row" style="justify-content: center; align-items: center; gap: 10px;">
+<form action="visitor" method="post" class="vWrite-row" style="justify-content: center; align-items: center; gap: 10px;>
 
     <span style="font-family: 'Nanum Pen Script', cursive; font-size: 22px; color: #8a7a78;">🐾 발도장 꾹: </span>
 

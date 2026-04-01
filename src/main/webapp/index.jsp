@@ -51,13 +51,18 @@
                 <div class="visitor">Today 15 | Total 1,234</div>
             </div>
 
-            <jsp:include page="${content}"></jsp:include>
+            <div class="nb-tabs">
+            <div class="nb-tab active">홈</div>
+            <div class="nb-tab">다이어리</div>
+            <div class="nb-tab" onclick="location.href='pic'">사진첩</div>
+            <div class="nb-tab">방명록</div>
+        </div>
 
-
-
-                </div>
+            <div class="nb-body">
+                <jsp:include page="${content}"></jsp:include>
             </div>
         </div>
+    </div>
 
         <div class="right-col">
             <div class="mp3">

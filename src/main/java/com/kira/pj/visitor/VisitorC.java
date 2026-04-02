@@ -11,24 +11,31 @@ import java.util.List;
 @WebServlet(name = "VisitorC", value = "/visitor")
 public class VisitorC extends HttpServlet {
 
-    // 화면을 보여주는 역할 (조회: Read)
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // 1. 페이지 번호 파라미터 받기 (기본값 1)
+        // 1. 파라미터 처리 (페이지 번호)
         String pStr = request.getParameter("p");
         int p = (pStr == null) ? 1 : Integer.parseInt(pStr);
 
+        // 2. DB 데이터 조회
         VisitorDAO dao = new VisitorDAO();
-        List<VisitorDTO> list = dao.getVisitorsByPage("DongMin", p);
+        String ownerId = "DongMin"; // 고정 ID 변수 처리
 
-        // 2. JSP로 데이터 및 현재 페이지 전달
-        request.setAttribute("visitorList", list);
-        request.setAttribute("currentPage", p);
+        // [A] 해당 페이지의 방문자 목록 (7개)
+        List<VisitorDTO> list = dao.getVisitorsByPage(ownerId, p);
+
+        // [B] 우측 위젯용 최신 방문자 목록 (5개)
+        List<VisitorDTO> recent = dao.showVisitors(ownerId);
+
+        // 3. JSP 데이터 전달
+        request.setAttribute("visitorList", list);     // 메인 리스트
+        request.setAttribute("recentVisitors", recent); // 우측 위젯용
+        request.setAttribute("currentPage", p);         // 현재 페이지 번호
         request.setAttribute("content", "visitor/visitor.jsp");
 
+        // 4. 화면 포워딩
         request.getRequestDispatcher("index.jsp").forward(request, response);
     }
-
     // 새로운 방문 기록을 저장하는 역할 (생성: Create)
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

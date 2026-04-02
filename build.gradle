@@ -1,0 +1,40 @@
+plugins {
+    id 'java'
+    id 'war'
+}
+
+group 'com.kira'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    junitVersion = '5.10.2'
+}
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+dependencies {
+    implementation 'com.aventrix.jnanoid:jnanoid:1.0.1'
+    compileOnly('javax.servlet:javax.servlet-api:4.0.1')
+    compileOnly 'org.projectlombok:lombok:1.18.32'
+    annotationProcessor 'org.projectlombok:lombok:1.18.32'
+    implementation 'javax.servlet:jstl:1.2'
+    testCompileOnly 'org.projectlombok:lombok:1.18.32'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.32'
+    implementation 'com.servlets:cos:09May2002'
+    implementation 'org.apache.commons:commons-dbcp2:2.10.0'
+    testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+}
+
+test {
+    useJUnitPlatform()
+}

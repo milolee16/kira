@@ -1,0 +1,18 @@
+/* 달력 전체 배경 및 테두리 */
+.flatpickr-calendar {
+    background: #fff;
+    border: 1px solid #dfe6e9;
+    box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+    border-radius: 8px;
+}
+
+/* 요일 및 날짜 색상 (방명록 포인트 컬러로 수정하세요) */
+.flatpickr-day.selected, .flatpickr-day.selected:hover {
+    background: #a29bfe !important; /* 포인트 컬러: 연보라 예시 */
+    border-color: #a29bfe !important;
+}
+
+/* 오늘 날짜 표시 */
+.flatpickr-day.today {
+    border-color: #ff7675;
+}

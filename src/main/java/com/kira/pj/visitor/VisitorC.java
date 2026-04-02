@@ -15,18 +15,23 @@ public class VisitorC extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // DB 조회 (기존 로직 그대로)
-        VisitorDAO dao = new VisitorDAO();
-        List<VisitorDTO> list = dao.getAllVisitors("DongMin");
-        request.setAttribute("visitorList", list);
+        String pStr = request.getParameter("p");
+        int p = (pStr == null) ? 1 : Integer.parseInt(pStr);
 
-        // ✅ ajax 파라미터 분기
+        VisitorDAO dao = new VisitorDAO();
+        String ownerId = "DongMin";
+
+        List<VisitorDTO> list = dao.getVisitorsByPage(ownerId, p);
+        List<VisitorDTO> recent = dao.getRecentVisitors(ownerId);
+
+        request.setAttribute("visitorList", list);
+        request.setAttribute("recentVisitors", recent);
+        request.setAttribute("currentPage", p);
+
         String ajax = request.getParameter("ajax");
         if ("true".equals(ajax)) {
-            // 탭 클릭 → visitor.jsp만 반환 (index.jsp 거치지 않음)
             request.getRequestDispatcher("visitor/visitor.jsp").forward(request, response);
         } else {
-            // 직접 URL 접근 또는 새로고침 → 기존 방식 그대로
             request.setAttribute("content", "visitor/visitor.jsp");
             request.getRequestDispatcher("index.jsp").forward(request, response);
         }
@@ -39,66 +44,13 @@ public class VisitorC extends HttpServlet {
 
         String visitorName = request.getParameter("visitorName");
 
-        /*
-        VisitorDTO dto = new VisitorDTO();
-        dto.setvWriterId(visitorName);
-        dto.setvOwnerId("DongMin");
-        VisitorDAO dao = new VisitorDAO();
-        dao.insertVisitor(dto);
-        */
-
-        System.out.println("오라클 DB 저장 시도: " + visitorName);
-
-        // ✅ POST 후 리다이렉트도 ajax=true로 → iframe 안에서만 갱신, 음악 유지
-        response.sendRedirect("/visitor?ajax=true");
-    }
-}
-    // 화면을 보여주는 역할 (조회: Read)
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // 1. 파라미터 처리 (페이지 번호)
-        String pStr = request.getParameter("p");
-        int p = (pStr == null) ? 1 : Integer.parseInt(pStr);
-
-        // 2. DB 데이터 조회
-        VisitorDAO dao = new VisitorDAO();
-        String ownerId = "DongMin"; // 고정 ID 변수 처리
-
-        // [A] 해당 페이지의 방문자 목록 (7개)
-        List<VisitorDTO> list = dao.getVisitorsByPage(ownerId, p);
-
-        // [B] 우측 위젯용 최신 방문자 목록 (5개)
-        List<VisitorDTO> recent = dao.showVisitors(ownerId);
-
-        // 3. JSP 데이터 전달
-        request.setAttribute("visitorList", list);     // 메인 리스트
-        request.setAttribute("recentVisitors", recent); // 우측 위젯용
-        request.setAttribute("currentPage", p);         // 현재 페이지 번호
-        request.setAttribute("content", "visitor/visitor.jsp");
-
-        // 4. 화면 포워딩
-        request.getRequestDispatcher("index.jsp").forward(request, response);
-    }
-    // 새로운 방문 기록을 저장하는 역할 (생성: Create)
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
-
-        // 1. JSP 폼에서 넘어온 데이터 받기
-        String visitorName = request.getParameter("visitorName");
-
-        // 2. 유효성 검사 및 저장 로직
         if (visitorName != null && !visitorName.trim().isEmpty()) {
-
             VisitorDTO dto = new VisitorDTO();
             dto.setV_writer_id(visitorName);
             dto.setV_owner_id("DongMin");
 
-            // --- 랜덤 이모지 생성 로직 추가 ---
-            // 1부터 5 사이의 정수 랜덤 생성
             int randomEmoji = (int) (Math.random() * 5) + 1;
             dto.setV_emoji(randomEmoji);
-            // -------------------------------
 
             VisitorDAO dao = new VisitorDAO();
             int result = dao.insertVisitor(dto);
@@ -110,7 +62,6 @@ public class VisitorC extends HttpServlet {
             }
         }
 
-        // 3. 저장이 끝나면 목록으로 리다이렉트
-        response.sendRedirect("visitor");
-    }}
-
+        response.sendRedirect("visitor?ajax=true");
+    }
+}

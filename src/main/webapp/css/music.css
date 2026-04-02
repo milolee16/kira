@@ -1,0 +1,94 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    font-family: 'Gaegu', cursive;
+}
+
+.bgm-wrap {
+    padding: 20px 20px 20px 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;  /* 가로 좌측 정렬 */
+    justify-content: flex-start;  /* 세로 상단 정렬 */
+    height: 100%;
+}
+
+.bgm-header {
+    font-family: 'Nanum Pen Script', cursive;
+    font-size: 20px;
+    color: #8a7a78;
+    border-bottom: 1px dashed #f2c0bd;
+    padding-bottom: 8px;
+    margin-bottom: 5px;
+}
+
+.bgm-track {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 15px;
+    background: #fff;
+    border: 1px solid #f0eee5;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.bgm-track:hover {
+    background: rgba(240, 160, 160, 0.1);
+}
+
+.bgm-track.playing {
+    background: rgba(240, 160, 160, 0.2);
+    border-color: #f2c0bd;
+}
+
+.bgm-track-num {
+    font-size: 13px;
+    color: #c0b0a0;
+    width: 20px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.bgm-track.playing .bgm-track-num {
+    color: #f2a0a0;
+    font-weight: bold;
+}
+
+.bgm-track-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.bgm-track-title {
+    font-size: 17px;
+    color: #5a4a3a;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.bgm-track.playing .bgm-track-title {
+    color: #f2a0a0;
+    font-weight: bold;
+}
+
+.bgm-track-duration {
+    font-size: 13px;
+    color: #c0b0a0;
+    flex-shrink: 0;
+}
+
+.bgm-now-playing {
+    font-size: 13px;
+    color: #f2a0a0;
+    animation: blink 1.2s ease-in-out infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}

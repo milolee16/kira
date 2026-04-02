@@ -5,6 +5,9 @@ let progressTimer = null;
 let fetchDone = false;
 let apiReady = false;
 
+// API KEY = AIzaSyCaFcoW7d1sP0C6U9GPDPTHKaLdNWoY65U
+
+
 // ── fetch가 먼저 끝나도, API가 먼저 준비돼도 둘 다 될 때만 시작 ──
 function loadPlaylist(userId) {
     fetch('/api/bgm?userId=' + userId)

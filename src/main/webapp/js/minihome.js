@@ -1,24 +1,31 @@
-// 현재 src 기준으로 초기 active 탭 설정
 const frame = document.getElementById('notebook-frame');
-const tabs = document.querySelectorAll('.nb-tab');
+const tabs = document.querySelectorAll('.nb-tab, .menu-item');
 const notebook = document.querySelector('.notebook');
 
-function setActiveTab(src) {
+// ✅ 외부에서 호출 가능한 전역 함수로 분리
+function switchTab(src) {
+    frame.src = src;
+
+    // nb-tab, menu-item 둘 다 active 동기화
     tabs.forEach(t => {
         t.classList.toggle('active', t.dataset.src === src);
     });
-    // is-visitor 클래스 처리
+
+    // is-visitor 토글
     notebook.classList.toggle('is-visitor', src.includes('visitor'));
 }
 
 // 초기 로드 시 현재 src에 맞는 탭 활성화
-setActiveTab(frame.src.replace(location.origin, ''));
+switchTab(frame.getAttribute('src'));
 
-// 탭 클릭 시 iframe src만 교체
+// 탭 클릭
 tabs.forEach(tab => {
     tab.addEventListener('click', () => {
-        const src = tab.dataset.src;
-        frame.src = src;
-        setActiveTab(src);
+        if (tab.dataset.src) switchTab(tab.dataset.src);
     });
+});
+
+// bgm 진입 요소들 (마퀴, 스마트폰 화면, 홈버튼)
+document.querySelectorAll('[data-src="/bgm?ajax=true"]').forEach(el => {
+    el.addEventListener('click', () => switchTab('/bgm?ajax=true'));
 });

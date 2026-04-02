@@ -1,5 +1,4 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -14,9 +13,12 @@
     <script src="js/diary.js"></script>
     <link rel="stylesheet" href="css/diary.css">
 </head>
+
 <body>
 <div class="desk-wrapper">
     <div class="desk-surface">
+
+        <%-- ══ 왼쪽: 프로필 + 메뉴 + 색연필통 ══ --%>
         <div class="left-col">
             <div class="profile">
                 <div class="profile-card">
@@ -56,6 +58,7 @@
                 <div class="jar-label">꾸미기</div>
             </div>
         </div>
+        <%-- ══ /왼쪽 ══ --%>
 
         <%-- is-visitor도 JS가 토글하므로 초기값만 EL로 설정 --%>
         <div class="notebook ${content eq 'visitor/visitor.jsp' ? 'is-visitor' : ''}"
@@ -87,8 +90,12 @@
                     style="flex:1; width:100%; border:none; display:block; min-height:0;"
             ></iframe>
         </div>
+        <%-- ══ /가운데 ══ --%>
 
+        <%-- ══ 오른쪽: MP3 + 스마트폰 + 포스트잇 ══ --%>
         <div class="right-col">
+
+            <%-- MP3 플레이어 (BGM 연결) --%>
             <div class="mp3">
                 <div class="mp3-screen">
                     <div class="mp3-marquee">
@@ -98,22 +105,22 @@
                         </span>
                     </div>
                     <div class="mp3-controls-row">
-                        <div class="mp3-time">01:23</div>
+                        <div class="mp3-time" id="bgm-current">0:00</div>
                         <div class="mp3-bar-mini">
-                            <div class="mp3-fill-mini"></div>
+                            <div class="mp3-fill-mini" id="bgm-progress-bar"></div>
                         </div>
-                        <div class="mp3-time">03:07</div>
+                        <div class="mp3-time" id="bgm-duration">0:00</div>
                     </div>
                 </div>
                 <div class="mp3-buttons">
-                    <div class="mp3-btn">◀◀</div>
-                    <div class="mp3-btn play">⏸</div>
-                    <div class="mp3-btn">▶▶</div>
+                    <div class="mp3-btn" onclick="playPrev()">◀◀</div>
+                    <div class="mp3-btn play" id="bgm-toggle" onclick="togglePlay()">⏸</div>
+                    <div class="mp3-btn" onclick="playNext()">▶▶</div>
                 </div>
             </div>
 
+            <%-- 스마트폰 (YouTube IFrame) --%>
             <div class="smartphone">
-                <!-- 전면 카메라 -->
                 <div class="phone-camera"></div>
                 <!-- 화면: YouTube iframe -->
                 <div class="phone-screen">

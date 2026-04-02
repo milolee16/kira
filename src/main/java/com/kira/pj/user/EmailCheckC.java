@@ -7,8 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet("/id-check")
-public class IdCheckC extends HttpServlet {
+@WebServlet("/email-check")
+public class EmailCheckC extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -16,7 +16,7 @@ public class IdCheckC extends HttpServlet {
 
         request.setCharacterEncoding("UTF-8");
 
-        UserDAO.DAO.checkId(request);
+        UserDAO.DAO.checkEmailAuth(request);
         request.getRequestDispatcher("user/join.jsp").forward(request, response);
     }
 }

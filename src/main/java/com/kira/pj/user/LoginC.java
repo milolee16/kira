@@ -7,13 +7,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet(name = "JoinC", value = "/join")
-public class JoinC extends HttpServlet {
+@WebServlet(name = "LoginC", value = "/login")
+public class LoginC extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("user/join.jsp").forward(request, response);
+        request.getRequestDispatcher("user/login.jsp").forward(request, response);
     }
 
     @Override
@@ -22,10 +22,10 @@ public class JoinC extends HttpServlet {
 
         request.setCharacterEncoding("UTF-8");
 
-        if (UserDAO.DAO.join(request)) {
-            response.sendRedirect(request.getContextPath() + "/login");
+        if (UserDAO.DAO.login(request)) {
+            response.sendRedirect(request.getContextPath() + "/"); // /home 이런식으로 입력하면 바로가짐
         } else {
-            request.getRequestDispatcher("user/join.jsp").forward(request, response);
+            request.getRequestDispatcher("user/login.jsp").forward(request, response);
         }
     }
 }

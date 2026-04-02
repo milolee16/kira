@@ -53,10 +53,16 @@ public class VisitorDAO {
 
             while (rs.next()) {
                 VisitorDTO v = new VisitorDTO();
+<<<<<<< HEAD
+                v.setV_writer_id(rs.getString("v_writer_id"));
+                // SQL 별칭인 v_date_fmt로 가져와야 포맷팅된 날짜가 들어갑/니다.
+                v.setV_date(rs.getString("v_date_fmt"));
+=======
                 v.setV_id(rs.getInt("v_id"));
                 v.setV_writer_id(rs.getString("v_writer_id"));
                 v.setV_date(rs.getString("v_date_fmt"));
                 v.setV_emoji(rs.getInt("v_emoji")); // 이 줄이 있어야 JSP에서 이모티콘 번호를 인식합니다.
+>>>>>>> f8d958458667e0f848b3c80b9cac4c303a8163f4
                 list.add(v);
             }
         } catch (Exception e) {
@@ -68,7 +74,11 @@ public class VisitorDAO {
     }
 
     // 3. 메인 위젯용 최근 방문자 5명만 조회 (R)
+<<<<<<< HEAD
+    public List<VisitorDTO> getRecentVisitors(String ownerId) {
+=======
     public List<VisitorDTO> showVisitors(String ownerId) {
+>>>>>>> f8d958458667e0f848b3c80b9cac4c303a8163f4
         Connection con = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -98,6 +108,9 @@ public class VisitorDAO {
         }
         return list;
     }
+<<<<<<< HEAD
+}
+=======
 
     // 4. 방문 기록 삭제 (D)
     public int deleteVisitor(int vId) {
@@ -160,3 +173,4 @@ public class VisitorDAO {
         return list;
     }
 }
+>>>>>>> f8d958458667e0f848b3c80b9cac4c303a8163f4

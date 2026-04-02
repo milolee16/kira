@@ -10,6 +10,8 @@
     bottom: 20px;
     width: 90%;
     left: 3%;
+<<<<<<< HEAD
+=======
 }
 /* 둥둥 떠다니는 애니메이션 */
 @keyframes floatingEmoji {
@@ -50,4 +52,5 @@
 .notebook.is-visitor .nb-body {
     padding-bottom: 10px; /* 버튼이 너무 바닥에 붙지 않게 */
     overflow-y: hidden;   /* 스크롤바 대신 페이징 사용 */
+>>>>>>> f8d958458667e0f848b3c80b9cac4c303a8163f4
 }

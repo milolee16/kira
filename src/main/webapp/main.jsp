@@ -19,6 +19,13 @@ pageEncoding="UTF-8"%>
       <div class="nb-tab">방명록</div>
     </div>
 
+</head>
+
+<body style="margin: 0; padding: 0">
+
+<div class="nb-body" style="min-height: 100vh;">
+    <div class="write-row">
+        <input class="write-input" placeholder="지금 기분은 어때요? ✏️"/>
     <div class="nb-body">
       <div class="write-row">
         <input class="write-input" placeholder="지금 기분은 어때요? ✏️" />

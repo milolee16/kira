@@ -26,7 +26,7 @@ function editMode(pk, content,date) {
     // 입력창과 버튼으로 교체
     container.innerHTML = `
         <input type="text" id="input_gc" value="${content}" class="edit-input">
-        <a href="javascript:void(0);" onclick="location.href='updateGB?guest_board=${content}&gboard_pk=${pk}" style="font-size:12px;">[확인]</a>
+        <a href="javascript:void(0);" onclick="location.href='updateGB?guest_board=${content}&gboard_pk=${pk}'" style="font-size:12px;">[확인]</a>
         <a href="javascript:void(0);" onclick="location.href='board?date=${date}'" style="font-size:12px;">[취소]</a>
     `;
 

@@ -1,17 +1,6 @@
-.vWrite-row {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 20px;
-    padding: 15px;
-    background: #fff;
-    border-radius: 8px;
-    border: 1px solid #eee0d0;
-    position: absolute;
-    bottom: 20px;
-    width: 90%;
-    left: 3%;
-}
-/* 둥둥 떠다니는 애니메이션 */
+/* =========================================
+   방문자(Visitor) 공통 애니메이션
+   ========================================= */
 @keyframes floatingEmoji {
     0% { transform: translateY(0) rotate(0deg); }
     50% { transform: translateY(-5px) rotate(5deg); }
@@ -24,12 +13,40 @@
     animation: floatingEmoji 2s infinite ease-in-out;
 }
 
-/* 짝수번째 아이콘은 약간 다른 타이밍으로 움직이게 설정 */
+/* 짝수번째 아이콘은 타이틀을 다르게 하여 더 자연스럽게 */
 .post-item:nth-child(even) .moving-emoji {
     animation-duration: 2.5s;
     animation-delay: 0.5s;
 }
-/* 페이징 버튼 스타일 */
+
+/* =========================================
+   방문자 작성 영역 (Form)
+   ========================================= */
+.write-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid #eee0d0;
+    /* 페이징 버튼과 겹치지 않도록 위치 조정 */
+    position: relative;
+    width: 100%;
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.02);
+}
+
+/* =========================================
+   페이징 & 버튼 스타일
+   ========================================= */
+.paging-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+    padding: 0 10px;
+}
+
 .page-btn {
     background: #ffffff;
     border: 1px solid #f2c0bd;
@@ -40,18 +57,17 @@
     color: #8a7a78;
     cursor: pointer;
     box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
+    transition: all 0.2s;
 }
 
 .page-btn:hover {
     background: #fceae8;
+    transform: translateY(-1px);
 }
 
-/* 방문자 페이지일 때 공책 내부 여백 및 높이 제어 */
-.notebook.is-visitor .nb-body {
-    padding-bottom: 10px; /* 버튼이 너무 바닥에 붙지 않게 */
-    overflow-y: hidden;   /* 스크롤바 대신 페이징 사용 */
-}
-/* 방문자 위젯 전체 컨테이너 */
+/* =========================================
+   우측 컬럼: 최근 방문자 위젯 (Widget)
+   ========================================= */
 .visitor-widget {
     width: 180px;
     background: #ffffff;
@@ -61,9 +77,9 @@
     box-shadow: 3px 4px 10px rgba(180, 150, 140, 0.1);
     position: relative;
     margin-top: 10px;
+    margin-bottom: 10px;
 }
 
-/* 위젯 상단 타이틀 */
 .widget-title {
     font-family: "Nanum Pen Script", cursive;
     font-size: 18px;
@@ -73,7 +89,6 @@
     margin-bottom: 8px;
 }
 
-/* 최근 방문자 리스트 */
 .widget-list {
     display: flex;
     flex-direction: column;
@@ -102,7 +117,6 @@
     color: #c0b0a0;
 }
 
-/* 하단 버튼 스타일 */
 .visitor-btn-wrap {
     background: #fceae8;
     border-radius: 8px;
@@ -121,4 +135,18 @@
     font-size: 15px;
     color: #8a7a78;
     font-weight: bold;
+}
+
+/* =========================================
+   페이지별 특수 예외 처리
+   ========================================= */
+/* 방문자 페이지일 때 공책 왼쪽 선 제거 및 스크롤 제어 */
+.notebook.is-visitor::before {
+    display: none !important;
+}
+
+.notebook.is-visitor .nb-body {
+    padding-left: 25px;   /* 선이 사라진 만큼 왼쪽 여백 확보 */
+    padding-bottom: 10px;
+    overflow-y: hidden;   /* 페이징을 위해 세로 스크롤 숨김 */
 }

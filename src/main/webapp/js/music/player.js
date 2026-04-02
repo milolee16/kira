@@ -6,13 +6,15 @@ let fetchDone = false;
 let apiReady = false;
 
 // ── fetch가 먼저 끝나도, API가 먼저 준비돼도 둘 다 될 때만 시작 ──
-fetch('/api/bgm')
-    .then(res => res.json())
-    .then(tracks => {
-        playlist = tracks;
-        fetchDone = true;
-        if (apiReady) initPlayer();
-    });
+function loadPlaylist(userId) {
+    fetch('/api/bgm?userId=' + userId)
+        .then(res => res.json())
+        .then(tracks => {
+            playlist = tracks;
+            fetchDone = true;
+            if (apiReady) initPlayer();
+        });
+}
 
 function onYouTubeIframeAPIReady() {
     apiReady = true;

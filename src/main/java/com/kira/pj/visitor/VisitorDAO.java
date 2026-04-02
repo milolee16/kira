@@ -42,8 +42,8 @@ public class VisitorDAO {
 
         String sql =
                 "SELECT v_id, v_writer_id, v_owner_id, v_emoji, " +
-                "TO_CHAR(v_date, 'MM.DD AM HH12:MI') as v_date_fmt " +
-                "FROM visitor_log WHERE v_owner_id = ? ORDER BY v_date DESC";
+                        "TO_CHAR(v_date, 'MM.DD AM HH12:MI') as v_date_fmt " +
+                        "FROM visitor_log WHERE v_owner_id = ? ORDER BY v_date DESC";
 
         try {
             con = DBManager.connect();
@@ -84,10 +84,9 @@ public class VisitorDAO {
 
         String sql =
                 "SELECT * FROM (" +
-                "  SELECT v_id, v_writer_id, v_emoji, TO_CHAR(v_date, 'MM.DD') as v_date_fmt " +
-                "  FROM visitor_log WHERE v_owner_id = ? ORDER BY v_date DESC" +
-                ") WHERE rownum <= 5";
-
+                        "  SELECT v_id, v_writer_id, v_emoji, TO_CHAR(v_date, 'MM.DD') as v_date_fmt " +
+                        "  FROM visitor_log WHERE v_owner_id = ? ORDER BY v_date DESC" +
+                        ") WHERE rownum <= 5";
         try {
 
             con = DBManager.connect();
@@ -154,11 +153,12 @@ public class VisitorDAO {
 
         String sql =
                 "SELECT * FROM (" +
-                "  SELECT rownum as rn, t.* FROM (" +
-                "    SELECT v_id, v_writer_id, v_emoji, TO_CHAR(v_date, 'MM.DD AM HH12:MI') as v_date_fmt " +
-                "    FROM visitor_log WHERE v_owner_id = ? ORDER BY v_date DESC" +
-                "  ) t" +
-                ") WHERE rn BETWEEN ? AND ?";
+                        "  SELECT rownum as rn, t.* FROM (" +
+                        "    SELECT v_id, v_writer_id, v_emoji, TO_CHAR(v_date, 'MM.DD AM HH12:MI') as v_date_fmt " +
+                        "    FROM visitor_log WHERE v_owner_id = ? ORDER BY v_date DESC" +
+                        "  ) t" +
+                        ") WHERE rn BETWEEN ? AND ?";
+
 
         try {
 

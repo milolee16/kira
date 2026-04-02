@@ -13,7 +13,7 @@
 </head>
 <body>
 
-<form action="visitor" method="post" class="write-row"
+<form action="visitor" method="post" class="vWrite-row"
       style="display:flex; justify-content:center; align-items:center; gap:10px; margin-bottom:20px; position:static; width:100%;">
     <span style="font-family:'Nanum Pen Script'; font-size:22px; color:#8a7a78;">🐾 발도장 꾹:</span>
     <input type="text" name="visitorName" class="write-input" placeholder="닉네임" style="width:150px;" required>
@@ -33,13 +33,13 @@
 
                     <div style="display:flex; align-items:center; gap:10px;">
                         <span class="moving-emoji">
-                            <c:choose>
-                                <c:when test="${v.v_emoji == 1}">🐾</c:when>
-                                <c:when test="${v.v_emoji == 2}">👣</c:when>
-                                <c:when test="${v.v_emoji == 3}">🐱</c:when>
-                                <c:when test="${v.v_emoji == 4}">🐶</c:when>
-                                <c:otherwise>✨</c:otherwise>
-                            </c:choose>
+                         <c:choose>
+                             <c:when test="${v.v_emoji == 1}">&#128062;</c:when> <%-- 🐾 --%>
+                             <c:when test="${v.v_emoji == 2}">&#128099;</c:when> <%-- 👣 --%>
+                             <c:when test="${v.v_emoji == 3}">&#128049;</c:when> <%-- 🐱 --%>
+                             <c:when test="${v.v_emoji == 4}">&#128054;</c:when> <%-- 🐶 --%>
+                             <c:otherwise>&#10024;</c:otherwise>             <%-- ✨ --%>
+                         </c:choose>
                         </span>
                         <span style="font-size:16px;">
                             <strong>${v.v_writer_id}</strong>님이 다녀갔습니다.

@@ -35,6 +35,8 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
     implementation 'com.sun.mail:javax.mail:1.6.2' //이메일 인증
     implementation 'javax.activation:activation:1.1.1'//이메일 인증
+
+    implementation 'com.google.code.gson:gson:2.10.1'
 }
 
 test {

@@ -11,44 +11,71 @@ import java.util.List;
 @WebServlet(name = "VisitorC", value = "/visitor")
 public class VisitorC extends HttpServlet {
 
-    // 화면을 보여주는 역할 (조회: Read)
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // 1. DB 연동 (지금은 주석 처리된 상태 유지)
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        // 1. 페이지 번호 파라미터
+        String pStr = request.getParameter("p");
+        int p = (pStr == null) ? 1 : Integer.parseInt(pStr);
+
+        // 2. DB 조회
         VisitorDAO dao = new VisitorDAO();
-        // 홈피 주인 ID(DongMin)를 기준으로 전체 조회
-        List<VisitorDTO> list = dao.getAllVisitors("DongMin");
-        // request.setAttribute("visitorList", list);
+        String ownerId = "DongMin";
 
-        // 2. 화면 설정 (파일명 앞에 /를 붙여 경로를 확실히 합니다)
+        // 메인 방문자 목록
+        List<VisitorDTO> list = dao.getVisitorsByPage(ownerId, p);
+
+        // 최근 방문자 목록
+        List<VisitorDTO> recent = dao.getRecentVisitors(ownerId);
+
+        // JSP 전달
         request.setAttribute("visitorList", list);
-        request.setAttribute("content", "visitor/visitor.jsp");
+        request.setAttribute("recentVisitors", recent);
+        request.setAttribute("currentPage", p);
 
-        // 3. 포워딩 (main.jsp가 WEB-INF 밖에 있다면 아래처럼, 안에 있다면 경로 수정)
-        request.getRequestDispatcher("index.jsp").forward(request, response);
+        // AJAX 여부 확인
+        String ajax = request.getParameter("ajax");
+
+        if ("true".equals(ajax)) {
+            request.getRequestDispatcher("visitor/visitor.jsp").forward(request, response);
+        } else {
+            request.setAttribute("content", "visitor/visitor.jsp");
+            request.getRequestDispatcher("index.jsp").forward(request, response);
+        }
     }
-    // 새로운 방문 기록을 저장하는 역할 (생성: Create)
+
+    // 방문 기록 저장
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
         request.setCharacterEncoding("UTF-8");
 
-        // 1. JSP 폼에서 넘어온 데이터 받기
+        // 방문자 이름
         String visitorName = request.getParameter("visitorName");
 
-        // 2. [DB 로직] 오라클 DB에 INSERT 실행
-        // 실제로는 아래와 같은 모양이 될 거예요.
-        /*
-        VisitorDTO dto = new VisitorDTO();
-        dto.setvWriterId(visitorName); // 지금은 로그인 연동 전이니 입력받은 이름 사용
-        dto.setvOwnerId("DongMin");    // 현재 홈피 주인
+        if (visitorName != null && !visitorName.trim().isEmpty()) {
 
-        VisitorDAO dao = new VisitorDAO();
-        dao.insertVisitor(dto);
-        */
+            VisitorDTO dto = new VisitorDTO();
+            dto.setV_writer_id(visitorName);
+            dto.setV_owner_id("DongMin");
 
-        System.out.println("오라클 DB 저장 시도: " + visitorName);
+            // 랜덤 이모지
+            int randomEmoji = (int) (Math.random() * 5) + 1;
+            dto.setV_emoji(randomEmoji);
 
-        // 3. 저장이 끝나면 목록 페이지로 리다이렉트
-        response.sendRedirect("/visitor");
+            VisitorDAO dao = new VisitorDAO();
+            int result = dao.insertVisitor(dto);
+
+            if (result == 1) {
+                System.out.println("오라클 DB 저장 성공 (이모지 " + randomEmoji + "번): " + visitorName);
+            } else {
+                System.out.println("오라클 DB 저장 실패");
+            }
+        }
+
+        // AJAX 페이지 리로드
+        response.sendRedirect("visitor?ajax=true");
     }
 }

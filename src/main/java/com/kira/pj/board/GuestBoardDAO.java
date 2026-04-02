@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
@@ -33,23 +34,23 @@ public class GuestBoardDAO {
             con = DBManager.connect();
             request.setCharacterEncoding("utf-8");
 
-            String sql = "select guest_nick, board_content, is_private, created_at from guestboard_test ";
-            if (gbDate != null && !gbDate.isEmpty()) {
-                sql += "where to_char(created_at, 'YYYY-MM-DD') = ? order by created_at desc";
-            }else{
-            sql += " order by created_at desc";
+            if (gbDate == null || gbDate.isEmpty()) {
+                gbDate  = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
             }
 
+            String sql = "select * from guestboard_test where to_char(created_at, 'YYYY-MM-DD') = ? order by created_at desc ";
             ps = con.prepareStatement(sql);
-            if (gbDate != null && !gbDate.isEmpty()) {
-                ps.setString(1, gbDate);
-            }
+            ps.setString(1,gbDate);
 
             rs = ps.executeQuery();
             GuestBoardVO guestboard = null;
             ArrayList<GuestBoardVO> guestBoards = new ArrayList<>();
             while (rs.next()) {
                 guestboard = new GuestBoardVO();
+                guestboard.setGboard_pk(rs.getString("gboard_pk"));
+                guestboard.setGuest_pk(rs.getString("guest_pk"));
+                guestboard.setHost_id(rs.getString("host_id"));
                 guestboard.setBoard_content(rs.getString("board_content"));
                 guestboard.setGuest_nick(rs.getString("guest_nick"));
                 guestboard.setIs_private(rs.getInt("is_private"));
@@ -112,4 +113,62 @@ public class GuestBoardDAO {
 
     }
 
+    public void UpdateGuestBoard(HttpServletRequest request, HttpServletResponse response) {
+        Connection con = null;
+        PreparedStatement ps = null;
+
+        try {
+            con = DBManager.connect();
+            request.setCharacterEncoding("utf-8");
+
+
+
+            String board_content = request.getParameter("guest_board");
+            String gboard_pk = request.getParameter("gboard_pk");
+
+            String sql = "update guestboard_test set board_content = ? where gboard_pk = ? ";
+
+            ps = con.prepareStatement(sql);
+            ps.setString(1, board_content);
+            ps.setString(2, gboard_pk);
+            if (ps.executeUpdate() == 1) {
+                System.out.println("update Gboard success");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBManager.close(con, ps, null);
+        }
+    }
+
+    public void delGB(HttpServletRequest request, HttpServletResponse response) {
+
+        Connection con = null;
+        PreparedStatement ps = null;
+
+        try {
+            con = DBManager.connect();
+            request.setCharacterEncoding("utf-8");
+
+
+
+
+            String gboard_pk = request.getParameter("gboard_pk");
+
+            String sql = "delete guestboard_test where gboard_pk = ? ";
+
+            ps = con.prepareStatement(sql);
+
+            ps.setString(1, gboard_pk);
+            if (ps.executeUpdate() == 1) {
+                System.out.println("delete Gboard success");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBManager.close(con, ps, null);
+        }
+    }
 }

@@ -22,7 +22,7 @@
                 <div class="menu-card">
                     <div class="menu-list">
                         <div class="menu-item active">홈</div>
-                        <div onclick="location.href='/diary'" class="menu-item">다이어리</div>
+                        <div onclick="location.href='diary'" class="menu-item">다이어리</div>
                         <div class="menu-item">사진첩</div>
                         <div class="menu-item">방명록</div>
                     </div>

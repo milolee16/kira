@@ -1,0 +1,150 @@
+/* ============================
+다이어리 전체 컨테이너
+============================ */
+.diary-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    padding-right: 10px;
+}
+
+/* ============================
+달력 스타일 (상단)
+============================ */
+.calendar-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 2px 2px 10px rgba(0,0,0,0.03);
+    border: 1px solid #eee0d0;
+}
+
+.calendar-table th {
+    background: #fdfaf5;
+    padding: 12px 0;
+    font-size: 14px;
+    color: #9a8a7a;
+    border-bottom: 2px solid #f7cfcd;
+}
+
+.calendar-table td {
+    height: 50px;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 16px;
+    color: #5a4a3a;
+    border: 1px solid #f9f4ee;
+    transition: all 0.2s;
+}
+
+/* 날짜 링크 스타일 */
+.calendar-table td a {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    width: 100%;
+    height: 100%;
+    line-height: 50px; /* 세로 중앙 정렬 */
+}
+
+.calendar-table td:hover {
+    background-color: #fff5f5;
+    transform: scale(1.05);
+}
+
+.calendar-table td.sun a { color: #ff8b8b; } /* 일요일 */
+.calendar-table td.sat a { color: #8bb9ff; } /* 토요일 */
+
+/* ============================
+일기 게시판 스타일 (하단)
+============================ */
+.diary-board {
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 10px;
+    padding: 15px;
+    border: 1px dashed #dcd0c0;
+}
+
+.board-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.board-header h3 {
+    font-family: "Nanum Pen Script", cursive;
+    font-size: 26px;
+    color: #8a7a78;
+}
+
+/* 글쓰기 폼 스타일 */
+.write-row {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #f2c0bd;
+    margin-bottom: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.write-input {
+    width: 100%;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    padding: 10px;
+    font-family: "Gaegu", cursive;
+    font-size: 16px;
+    background: #fdfcf8;
+}
+
+textarea.write-input {
+    height: 80px;
+    resize: none;
+}
+
+/* 버튼 디자인 */
+.write-btn {
+    align-self: flex-end;
+    padding: 8px 20px;
+    background: #f7cfcd;
+    border: none;
+    border-radius: 20px;
+    color: #8a7a78;
+    font-family: "Gaegu", cursive;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.write-btn:hover {
+    background: #f2a0a0;
+    color: white;
+}
+
+/* 일기 포스트 삭제 버튼 */
+.post-btns {
+    text-align: right;
+    margin-top: 10px;
+}
+
+.post-btns a {
+    font-size: 14px;
+    color: #ccc;
+    text-decoration: none;
+}
+
+.post-btns a:hover {
+    color: #ff8b8b;
+}
+
+.diary-hr {
+    border: 0;
+    height: 1px;
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(242, 192, 189, 0.75), rgba(0, 0, 0, 0));
+    margin: 20px 0;
+}

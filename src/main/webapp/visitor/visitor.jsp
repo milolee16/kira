@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+=======
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+>>>>>>> 7cadccfc67644f98b27fba6008d0d24e2ebe2fb8
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
@@ -33,6 +37,7 @@
 </form>
 
 <div class="posts">
+<<<<<<< HEAD
 <c:choose>
     <c:when test="${empty visitorList}">
         <div class="post-item" style="text-align: center; color: #aaa09a; padding: 30px;">
@@ -113,3 +118,27 @@
             </c:otherwise>
         </c:choose>
 </c:choose>
+=======
+    <c:choose>
+        <c:when test="${empty visitorList}">
+            <div class="post-item" style="text-align: center; color: #aaa09a; padding: 30px;">
+                아직 다녀간 사람이 없어요. 첫 발도장을 찍어주세요! 😊
+            </div>
+        </c:when>
+        <c:otherwise>
+            <c:forEach var="v" items="${visitorList}">
+                <div class="post-item"
+                     style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 16px; color: #5a4a3a;">
+                        <strong style="color: #f2a0a0;">${v.v_writer_id}</strong>님이 다녀갔습니다.
+                    </span>
+                    <span style="font-size: 13px; color: #c0b0a0;">${v.v_date}</span>
+                </div>
+            </c:forEach>
+        </c:otherwise>
+    </c:choose>
+</div>
+
+</body>
+</html>
+>>>>>>> 7cadccfc67644f98b27fba6008d0d24e2ebe2fb8

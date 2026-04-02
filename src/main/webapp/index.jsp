@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="css/guestboard.css">
     <%-- defer로 통일, 중복 스크립트 제거 --%>
     <script defer src="/js/minihome.js"></script>
+    <script src="js/diary.js"></script>
+    <link rel="stylesheet" href="css/diary.css">
 </head>
 <body>
 <div class="desk-wrapper">

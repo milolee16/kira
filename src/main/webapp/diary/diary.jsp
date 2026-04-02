@@ -13,76 +13,93 @@
 </head>
 <body>
 <div class="diary-container">
-    <%-- [1] 달력 영역: 다이어리 버튼 누르면 가장 먼저 보이는 곳 --%>
-    <div class="calendar-wrap">
-        <table class="calendar-table">
-            <thead>
-            <tr>
-                <th class="sun">SUN</th><th>MON</th><th>TUE</th><th>WED</th><th>THU</th><th>FRI</th><th class="sat">SAT</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <c:forEach var="i" begin="1" end="${startDay - 1}">
-                    <td></td>
-                </c:forEach>
-
-                <c:forEach var="d" begin="1" end="${lastDay}">
-                <td class="${(d + startDay - 1) % 7 == 1 ? 'sun' : ((d + startDay - 1) % 7 == 0 ? 'sat' : '')}">
-                        <%-- 날짜를 클릭하면 해당 날짜 d를 파라미터로 다시 서블릿을 부릅니다 --%>
-                    <a href="diary?d=${d}">${d}</a>
-                </td>
-                <c:if test="${(d + startDay - 1) % 7 == 0}">
-            </tr><tr>
-                </c:if>
-                </c:forEach>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <%--
-        [2] 게시판 영역:
-        핵심!! selectedDay가 비어있지 않을 때(즉, 날짜를 클릭했을 때)만 아래 내용이 나타납니다.
-    --%>
-    <c:if test="${not empty selectedDay}">
-        <hr class="diary-hr">
-
-        <div class="diary-board">
-            <div class="board-header">
-                <h3>📅 ${selectedDay}일의 일기</h3>
-                    <%-- 일기쓰기 버튼 --%>
-                <button onclick="showWriteForm()" class="write-btn">일기쓰기</button>
-            </div>
-
-                <%-- 게시글 작성 폼 (일기쓰기 버튼을 눌러야 showWriteForm()에 의해 나타남) --%>
-            <form action="diary.write" method="post" id="writeForm" style="display:none;" class="write-row">
-                <input type="hidden" name="d_date" value="${selectedDay}">
-                <input name="d_title" placeholder="제목" class="write-input" required>
-                <textarea name="d_txt" placeholder="오늘의 추억..." class="write-input" required></textarea>
-                <div style="text-align: right;">
-                    <button class="write-btn">등록</button>
+    <c:choose>
+        <%-- [A] 글쓰기 모드: 전체 화면 --%>
+        <c:when test="${showMode == 'write'}">
+            <div class="write-full-container">
+                <div class="board-header">
+                    <h3>✍️ ${curYear}.${curMonth}.${selectedDay} 일기 쓰기</h3>
+                    <button onclick="location.href='diary?y=${curYear}&m=${curMonth}&d=${selectedDay}'" class="write-btn">취소</button>
                 </div>
-            </form>
 
-                <%-- 게시판 목록 --%>
-            <div class="posts">
-                <c:forEach var="p" items="${posts}">
-                    <div class="post-item">
-                        <div class="post-header">
-                                <%-- DB 연동 전이라면 p.d_title 대신 그냥 p로 출력될 수 있음 --%>
-                            <span class="post-user">${p}</span>
-                            <span class="post-date">2026.04.02</span>
-                        </div>
-                        <div class="post-text">임시 데이터입니다. DB 연동 후 내용이 표시됩니다.</div>
-                        <div class="post-btns">
-                            <a href="#">삭제</a>
-                        </div>
+                <form action="diary.write" method="post" class="write-form-full">
+                    <input type="hidden" name="d_year" value="${curYear}">
+                    <input type="hidden" name="d_month" value="${curMonth}">
+                    <input type="hidden" name="d_date" value="${selectedDay}">
+
+                    <input name="d_title" placeholder="제목을 입력하세요" class="write-input-title" required>
+                    <textarea id="editor" name="d_txt" class="write-input-content" placeholder="내용을 입력하세요..." required></textarea>
+
+                    <div class="write-footer">
+                        <button class="write-btn">등록하기</button>
                     </div>
-                </c:forEach>
+                </form>
             </div>
-        </div>
-    </c:if>
+        </c:when>
+
+        <%-- [B] 목록 및 [C] 기본 달력 --%>
+        <c:otherwise>
+            <div class="calendar-header" style="position: relative;">
+                <a href="diary?y=${prevYear}&m=${prevMonth}" class="cal-btn">◀</a>
+
+                <span class="cal-title" onclick="toggleDateSelector()" title="클릭하여 이동">
+                    ${curYear}. ${curMonth < 10 ? '0' : ''}${curMonth}
+                </span>
+
+                <div id="dateSelector" class="date-selector" style="display: none; position: absolute; top: 45px; background: white; padding: 10px; border: 1px solid #f7cfcd; border-radius: 8px; z-index: 10;">
+                    <form action="diary" method="get" style="display: flex; gap: 5px; align-items: center;">
+                        <input type="number" name="y" value="${curYear}" style="width: 60px;"> 년
+                        <input type="number" name="m" value="${curMonth}" min="1" max="12" style="width: 40px;"> 월
+                        <button class="write-btn" style="padding: 2px 8px; font-size: 12px;">Go</button>
+                    </form>
+                </div>
+
+                <a href="diary?y=${nextYear}&m=${nextMonth}" class="cal-btn">▶</a>
+            </div>
+
+            <div class="calendar-wrap">
+                <table class="calendar-table">
+                    <thead>
+                    <tr><th class="sun">SUN</th><th>MON</th><th>TUE</th><th>WED</th><th>THU</th><th>FRI</th><th class="sat">SAT</th></tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <c:if test="${startDay > 1}">
+                            <c:forEach var="i" begin="1" end="${startDay - 1}"><td></td></c:forEach>
+                        </c:if>
+                        <c:forEach var="d" begin="1" end="${lastDay}">
+                        <td class="${(d + startDay - 1) % 7 == 1 ? 'sun' : ((d + startDay - 1) % 7 == 0 ? 'sat' : '')} ${selectedDay == d ? 'selected-td' : ''}">
+                            <a href="diary?y=${curYear}&m=${curMonth}&d=${d}">${d}</a>
+                        </td>
+                        <c:if test="${(d + startDay - 1) % 7 == 0 && d < lastDay}"></tr><tr></c:if>
+                        </c:forEach>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <c:if test="${showMode == 'list'}">
+                <hr class="diary-hr">
+                <div class="diary-board">
+                    <div class="board-header">
+                        <h3>📅 ${selectedDay}일의 일기</h3>
+                        <button onclick="location.href='diary?y=${curYear}&m=${curMonth}&d=${selectedDay}&mode=write'" class="write-btn">일기쓰기</button>
+                    </div>
+                    <div class="posts">
+                        <c:forEach var="p" items="${posts}">
+                            <div class="post-item">
+                                <div class="post-header">
+                                    <span class="post-user">${p}</span>
+                                    <span class="post-date">${curYear}.${curMonth}.${selectedDay}</span>
+                                </div>
+                                <div class="post-text">여기에 일기 본문이 들어갑니다.</div>
+                            </div>
+                        </c:forEach>
+                    </div>
+                </div>
+            </c:if>
+        </c:otherwise>
+    </c:choose>
 </div>
 </body>
 </html>

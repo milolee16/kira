@@ -1,25 +1,96 @@
-/* ============================
-다이어리 전체 컨테이너
-============================ */
+/* ==========================================
+   다이어리 전체 레이아웃
+   ========================================== */
 .diary-container {
   display: flex;
   flex-direction: column;
-  gap: 30px;
-  padding-right: 10px;
-  padding-left: 60px;
+  padding-left: 75px;  /* 왼쪽 공책 선 가림 방지 (넉넉하게) */
+  padding-right: 25px;
+  padding-bottom: 80px; /* 하단 짤림 방지 여백 */
+  height: 100%;
+  overflow-y: auto;    /* 내용 길어지면 내부 스크롤 */
+  gap: 15px;
+  box-sizing: border-box;
 }
 
-/* ============================
-달력 스타일 (상단)
-============================ */
+/* 스크롤바 커스텀 (싸이월드 갬성) */
+.diary-container::-webkit-scrollbar {
+  width: 6px;
+}
+.diary-container::-webkit-scrollbar-thumb {
+  background: #f7cfcd;
+  border-radius: 10px;
+}
+.diary-container::-webkit-scrollbar-track {
+  background: rgba(0,0,0,0.03);
+}
+
+/* ==========================================
+   상단 년/월 이동 헤더
+   ========================================== */
+.calendar-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 35px;
+  margin-bottom: 10px;
+  position: relative;
+}
+
+.cal-title {
+  font-family: "Nanum Pen Script", cursive;
+  font-size: 38px;
+  color: #8a7a78;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+  border-bottom: 2px dashed transparent;
+}
+
+.cal-title:hover {
+  color: #f2a0a0;
+  border-bottom: 2px dashed #f7cfcd;
+}
+
+.cal-btn {
+  text-decoration: none;
+  color: #f7cfcd;
+  font-size: 26px;
+  font-weight: bold;
+  transition: 0.2s;
+}
+
+.cal-btn:hover {
+  color: #f2a0a0;
+  transform: scale(1.3);
+}
+
+/* 년도 직접 선택창 (Selector) */
+.date-selector {
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  font-family: "Gaegu", cursive;
+  background: white;
+  padding: 12px;
+  border: 1px solid #f7cfcd;
+  border-radius: 12px;
+  z-index: 99;
+}
+
+/* ==========================================
+   달력 테이블 스타일
+   ========================================== */
+.calendar-wrap {
+  width: 100%;
+}
+
 .calendar-table {
   width: 100%;
   border-collapse: collapse;
   background: #fff;
   border-radius: 10px;
   overflow: hidden;
-  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.03);
   border: 1px solid #eee0d0;
+  box-shadow: 2px 2px 8px rgba(0,0,0,0.02);
 }
 
 .calendar-table th {
@@ -33,89 +104,161 @@
 .calendar-table td {
   height: 50px;
   text-align: center;
-  vertical-align: middle;
-  font-size: 16px;
-  color: #5a4a3a;
   border: 1px solid #f9f4ee;
-  transition: all 0.2s;
+  font-size: 16px;
+  transition: 0.2s;
 }
 
-/* 날짜 링크 스타일 */
 .calendar-table td a {
   text-decoration: none;
-  color: inherit;
+  color: #5a4a3a;
   display: block;
   width: 100%;
   height: 100%;
-  line-height: 50px; /* 세로 중앙 정렬 */
+  line-height: 50px;
 }
 
 .calendar-table td:hover {
   background-color: #fff5f5;
-  transform: scale(1.05);
 }
 
-.calendar-table td.sun a {
-  color: #ff8b8b;
-} /* 일요일 */
-.calendar-table td.sat a {
-  color: #8bb9ff;
-} /* 토요일 */
+/* 요일별 색상 */
+.sun a { color: #ff8b8b !important; }
+.sat a { color: #8bb9ff !important; }
 
-/* ============================
-일기 게시판 스타일 (하단)
-============================ */
+/* 선택된 날짜 강조 */
+.selected-td {
+  background-color: #fff0f0 !important;
+  font-weight: bold;
+  outline: 2px solid #f2a0a0;
+  outline-offset: -2px;
+}
+
+/* ==========================================
+   게시판 목록 (Post List)
+   ========================================== */
 .diary-board {
-  background: rgba(255, 255, 255, 0.5);
-  border-radius: 10px;
-  padding: 15px;
-  border: 1px dashed #dcd0c0;
+  margin-top: 5px;
 }
 
 .board-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 .board-header h3 {
   font-family: "Nanum Pen Script", cursive;
-  font-size: 26px;
+  font-size: 28px;
   color: #8a7a78;
 }
 
-/* 글쓰기 폼 스타일 */
-.write-row {
+.post-item {
   background: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  border: 1px solid #f2c0bd;
-  margin-bottom: 25px;
+  border: 1px solid #f9f4ee;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+  box-shadow: 1px 1px 5px rgba(0,0,0,0.02);
+}
+
+.post-header {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px dashed #eee;
+  padding-bottom: 8px;
+  margin-bottom: 10px;
+}
+
+.post-user {
+  font-family: "Gaegu", cursive;
+  font-weight: bold;
+  color: #7a6a6a;
+}
+
+.post-date {
+  font-size: 12px;
+  color: #ccc;
+}
+
+.post-text {
+  font-family: "Gaegu", cursive;
+  font-size: 17px;
+  line-height: 1.6;
+  color: #555;
+  min-height: 40px;
+}
+
+/* 삭제 버튼 등 */
+.post-btns {
+  text-align: right;
+  margin-top: 10px;
+}
+
+.post-btns a {
+  font-size: 13px;
+  color: #ddd;
+  text-decoration: none;
+}
+
+.post-btns a:hover {
+  color: #ff8b8b;
+}
+
+/* ==========================================
+   일기 쓰기 (Full 모드 & 일반 버튼)
+   ========================================== */
+.write-full-container {
+  height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 10px;
 }
 
-.write-input {
-  width: 100%;
-  border: 1px solid #eee;
-  border-radius: 5px;
+.write-form-full {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 10px;
+  border: 1px solid #f7cfcd;
   padding: 10px;
+}
+
+.write-input-title {
+  width: 100%;
+  padding: 15px;
   font-family: "Gaegu", cursive;
-  font-size: 16px;
-  background: #fdfcf8;
+  font-size: 22px;
+  border: none;
+  border-bottom: 2px solid #f7cfcd;
+  outline: none;
+  background: transparent;
 }
 
-textarea.write-input {
-  height: 80px;
+.write-input-content {
+  width: 100%;
+  flex: 1;
+  padding: 20px;
+  font-family: "Gaegu", cursive;
+  font-size: 18px;
+  border: none;
   resize: none;
+  outline: none;
+  /* 원고지 느낌 배경 (선택사항) */
+  background-image: linear-gradient(#f9f9f9 1px, transparent 1px);
+  background-size: 100% 30px;
+  line-height: 30px;
 }
 
-/* 버튼 디자인 */
+.write-footer {
+  padding: 15px;
+  text-align: right;
+  border-top: 1px dashed #eee;
+}
+
 .write-btn {
-  align-self: flex-end;
-  padding: 8px 20px;
+  padding: 8px 22px;
   background: #f7cfcd;
   border: none;
   border-radius: 20px;
@@ -128,144 +271,14 @@ textarea.write-input {
 
 .write-btn:hover {
   background: #f2a0a0;
-  color: white;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(242, 160, 160, 0.4);
 }
 
-/* 일기 포스트 삭제 버튼 */
-.post-btns {
-  text-align: right;
-  margin-top: 10px;
-}
-
-.post-btns a {
-  font-size: 14px;
-  color: #ccc;
-  text-decoration: none;
-}
-
-.post-btns a:hover {
-  color: #ff8b8b;
-}
-
+/* 구분선 */
 .diary-hr {
   border: 0;
   height: 1px;
-  background-image: linear-gradient(
-    to right,
-    rgba(0, 0, 0, 0),
-    rgba(242, 192, 189, 0.75),
-    rgba(0, 0, 0, 0)
-  );
-  margin: 20px 0;
-}
-
-.write-full-container {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.write-input-title {
-  width: 100%;
-  padding: 15px;
-  font-size: 20px;
-  border: none;
-  border-bottom: 2px solid #f7cfcd;
-  font-family: "Gaegu", cursive;
-  outline: none;
-  background: transparent;
-}
-
-.write-input-content {
-  width: 100%;
-  flex: 1; /* 남은 공간 다 쓰기 */
-  min-height: 300px;
-  padding: 15px;
-  font-size: 18px;
-  border: none;
-  font-family: "Gaegu", cursive;
-  resize: none;
-  outline: none;
-  background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAIklEQVQIW2NkQAKrVq36z8gAFWNjY2MoBFFGjAz8D54AAN19EAtD/E1pAAAAAElFTkSuQmCC"); /* 미세한 종이 질감 */
-}
-
-.write-footer {
-  text-align: right;
-  padding-top: 10px;
-  border-top: 1px dashed #eee;
-}
-.calendar-header {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 30px;
-  margin-bottom: 20px;
-}
-
-.cal-title {
-  font-family: "Nanum Pen Script", cursive;
-  font-size: 36px;
-  color: #8a7a78;
-  font-weight: bold;
-  min-width: 120px;
-  text-align: center;
-}
-
-.cal-btn {
-  text-decoration: none;
-  color: #f7cfcd;
-  font-size: 24px;
-  font-weight: bold;
-  transition: 0.2s;
-  cursor: pointer;
-}
-
-.cal-btn:hover {
-  color: #f2a0a0;
-  transform: scale(1.3);
-}
-
-/* 기존 diary-container 패딩 수정 (왼쪽 선 가림 방지) */
-.diary-container {
-  display: flex;
-  flex-direction: column;
-  padding-left: 60px;
-  padding-right: 20px;
-  gap: 10px;
-}
-
-/* diary.css 하단에 추가 또는 수정 */
-
-.diary-container {
-  display: flex;
-  flex-direction: column;
-  padding-left: 60px;
-  padding-right: 20px;
-  gap: 10px;
-  /* 짤림 방지: 컨텐츠가 길어지면 자동으로 스크롤 생성 */
-  height: 100%;
-  overflow-y: auto;
-  padding-bottom: 50px; /* 맨 아래쪽 여백 확보 */
-}
-
-/* 년도 클릭 시 강조 느낌 */
-.cal-title {
-  cursor: pointer;
-  border-bottom: 2px dashed #f7cfcd;
-}
-.cal-title:hover {
-  color: #f2a0a0;
-}
-
-/* 년도 선택 레이어 (간단한 방식) */
-.date-selector {
-  display: none; /* 기본은 숨김 */
-  background: #fff;
-  border: 1px solid #f7cfcd;
-  border-radius: 10px;
-  padding: 10px;
-  position: absolute;
-  top: 50px;
-  z-index: 100;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  background-image: linear-gradient(to right, rgba(0,0,0,0), #f2c0bd, rgba(0,0,0,0));
+  margin: 25px 0;
 }

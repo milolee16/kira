@@ -2,15 +2,12 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-<!DOCTYPE html>
-<html>
-<head>
+
     <title>Board</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://npmcdn.com/flatpickr/dist/l10n/ko.js"></script>
-</head>
-<body>
+
 <div class="nb-tabs">
     <div class="nb-tab ">홈</div>
     <div class="nb-tab">다이어리</div>
@@ -18,14 +15,14 @@
     <div class="nb-tab active">방명록</div>
 </div>
 
-<div class="nb-body">
+<div class="gb-body">
 
 
-    <div class="posts">
-        <div class="post-item">
-            <div class="post-header" style="position: relative;"> <span class="post-user">방명록</span>
+    <div class="gb-posts">
+        <div class="gb-post-item">
+            <div class="gb-post-header" style="position: relative;"> <span class="gb-post-user">방명록</span>
                 <jsp:useBean id="now" class="java.util.Date"/>
-                <span id="calendar-trigger" class="post-date" style="cursor:pointer; font-weight: bold;">
+                <span id="calendar-trigger" class="gb-post-date" style="cursor:pointer; font-weight: bold;">
                   <c:choose>
                      <c:when test="${not empty selectedDate}">${selectedDate}</c:when>
                       <c:otherwise><fmt:formatDate value="${now}" pattern="yyyy-MM-dd"/></c:otherwise>
@@ -34,19 +31,19 @@
 
                 <input type="text" id="datePicker" style="position:absolute; right:30px; opacity:0; width:1px;">
             </div>
-            <div class="post-text">
+            <div class="gb-post-text">
                 <c:forEach items="${guestBoards}" var="gb">
 
                     <div id="gbContent">
                         <span class="gb-text-part">
-                            ${gb.guest_nick} : ${gb.board_content}
+                            ${gb.guest_nick} : <p id="guestHi">${gb.board_content}</p>
                         </span>
 <%--                                <c:choose>--%>
 <%--                                    <c:when test="${gb.guest_pk == user.pk} ">--%>
-                                <a href="" onclick="editMode( '${gb.board_content}','${gb.gboard_pk}')" class="gbUp">📝</a>
+                                        <a href="javascript:void(0);" onclick="editMode( '${gb.gboard_pk}','${gb.board_content}','${gb.created_at}')" class="gbUp">📝</a>
 <%--                                    </c:when>--%>
 <%--                                    <c:when test="${gb.guest_pk == user.pk || gb.host_id == user.pk} ">--%>
-                                        <a href="" onclick="location.href='delGB?gboard_pk=${gb.gboard_pk}'" class="gbDel">🗑️</a>
+                                        <a href="javascript:void(0);" onclick="location.href='delGB?gboard_pk=${gb.gboard_pk}'" class="gbDel">🗑️</a>
 <%--                                    </c:when>--%>
 <%--                                </c:choose>--%>
                     </div>
@@ -59,15 +56,13 @@
         </div>
     </div>
 
-    <form action="board" method="post">
-        <div class="write-row">
-            <input class="write-input" autocomplete="off" placeholder="인사를 남겨주세요! ✏️" name="content" type="text"/>
-            <button class="write-btn">남기기</button>
+    <form action="board" method="post" class="gbHi">
+        <div class="gb-write-row">
+            <input class="gb-write-input" autocomplete="off" placeholder="인사를 남겨주세요! ✏️" name="content" type="text"/>
+            <button class="gb-write-btn">남기기</button>
         </div>
     </form>
 
 
 </div>
 
-</body>
-</html>

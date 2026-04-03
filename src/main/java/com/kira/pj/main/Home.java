@@ -1,4 +1,4 @@
-package com.kira.pj.board;
+package com.kira.pj.main;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -7,19 +7,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet(name = "UpdateGBC", value = "/updateGB")
-public class UpdateGBC extends HttpServlet {
+@WebServlet(name = "Home", value = "/home")
+public class Home extends HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-
-        GuestBoardDAO.GBDAO.UpdateGuestBoard(request, response);
-        response.sendRedirect("board");
+        request.getRequestDispatcher("/main.jsp").forward(request, response);
 
     }
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-
-    }
     public void destroy() {
     }
 }

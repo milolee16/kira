@@ -13,4 +13,6 @@ VALUES ('Hype Boy - NewJeans', 'Km3K1-J26fM', 187, 1);
 INSERT INTO bgm_track (title, youtube_id, duration, track_order)
 VALUES ('Attention - NewJeans', 'b9PFMqKi7gg', 213, 2);
 
+select * from bgm_track;
+
 COMMIT;

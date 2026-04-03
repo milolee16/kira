@@ -7,63 +7,55 @@ import javax.servlet.http.HttpServletRequest;
 public class DiaryM {
 
     public static void getCalendar(HttpServletRequest req) {
-        // 1. 기본값 세팅 (에러 방지용 초기화)
+        // 1. 현재 날짜 구하기
         Calendar cal = Calendar.getInstance();
+
+        // 2. 사용자가 보낸 년도(y), 월(m) 파라미터 받기
+        String y = req.getParameter("y");
+        String m = req.getParameter("m");
+
+        // 파라미터가 없으면(null) 현재 날짜의 년/월을 사용
+        int year = (y == null) ? cal.get(Calendar.YEAR) : Integer.parseInt(y);
+        int month = (m == null) ? cal.get(Calendar.MONTH) : Integer.parseInt(m) - 1;
+
+        // 3. 계산을 위해 Calendar 객체 설정
+        cal.set(year, month, 1);
+
+        // 다시 정확한 년/월을 뽑음 (13월 입력 시 다음 해 1월로 자동 계산됨)
         int curYear = cal.get(Calendar.YEAR);
         int curMonth = cal.get(Calendar.MONTH); // 0~11
-        String showMode = "calendar";
-        String selectedDay = "";
-        ArrayList<String> posts = new ArrayList<>();
 
-        try {
-            // 2. 파라미터 받기
-            String y = req.getParameter("y");
-            String m = req.getParameter("m");
-            String d = req.getParameter("d");
-            String mode = req.getParameter("mode");
+        int startDay = cal.get(Calendar.DAY_OF_WEEK); // 1일의 요일 (1:일 ~ 7:토)
+        int lastDay = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
 
-            // 3. 년/월 계산
-            if (y != null && m != null) {
-                curYear = Integer.parseInt(y);
-                curMonth = Integer.parseInt(m) - 1;
-            }
-            cal.set(curYear, curMonth, 1);
+        // 4. JSP로 보낼 데이터 바구니(request)에 담기
+        req.setAttribute("startDay", startDay);
+        req.setAttribute("lastDay", lastDay);
+        req.setAttribute("curYear", curYear);
+        req.setAttribute("curMonth", curMonth + 1);
 
-            // Calendar가 자동 보정한 값을 다시 가져옴
-            curYear = cal.get(Calendar.YEAR);
-            curMonth = cal.get(Calendar.MONTH);
+        // [이전/다음 달 화살표 링크용 데이터]
+        req.setAttribute("prevYear", (curMonth == 0) ? curYear - 1 : curYear);
+        req.setAttribute("prevMonth", (curMonth == 0) ? 12 : curMonth);
+        req.setAttribute("nextYear", (curMonth == 11) ? curYear + 1 : curYear);
+        req.setAttribute("nextMonth", (curMonth == 11) ? 1 : curMonth + 2);
 
-            int startDay = cal.get(Calendar.DAY_OF_WEEK);
-            int lastDay = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+        // 5. 모드 제어 (d: 날짜 클릭, mode: 글쓰기)
+        String d = req.getParameter("d");
+        String mode = req.getParameter("mode");
 
-            // 4. 모드 결정
-            if ("write".equals(mode)) {
-                showMode = "write";
-                selectedDay = (d != null) ? d : "";
-            } else if (d != null) {
-                showMode = "list";
-                selectedDay = d;
-                posts.add(curYear + "년 " + (curMonth + 1) + "월 " + d + "일의 기록");
-            }
+        if ("write".equals(mode)) {
+            req.setAttribute("showMode", "write");
+            req.setAttribute("selectedDay", d);
+        } else if (d != null) {
+            req.setAttribute("showMode", "list");
+            req.setAttribute("selectedDay", d);
 
-            // 5. 모든 값을 request에 담기 (하나라도 빠지면 JSP에서 null 터짐)
-            req.setAttribute("startDay", startDay);
-            req.setAttribute("lastDay", lastDay);
-            req.setAttribute("curYear", curYear);
-            req.setAttribute("curMonth", curMonth + 1);
-            req.setAttribute("selectedDay", selectedDay);
-            req.setAttribute("showMode", showMode);
+            // DB 대신 사용할 임시 데이터
+            ArrayList<String> posts = new ArrayList<>();
+            posts.add(curYear + "년 " + (curMonth+1) + "월 " + d + "일의 첫 기록");
             req.setAttribute("posts", posts);
-
-            // 화살표 링크용
-            req.setAttribute("prevYear", (curMonth == 0) ? curYear - 1 : curYear);
-            req.setAttribute("prevMonth", (curMonth == 0) ? 12 : curMonth);
-            req.setAttribute("nextYear", (curMonth == 11) ? curYear + 1 : curYear);
-            req.setAttribute("nextMonth", (curMonth == 11) ? 1 : curMonth + 2);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            // 에러 발생 시 기본값이라도 나오게 세팅
+        } else {
             req.setAttribute("showMode", "calendar");
         }
     }

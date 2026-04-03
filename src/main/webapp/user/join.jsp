@@ -10,52 +10,67 @@
 
 <h2>회원가입</h2>
 
-<form id="joinForm">
-  <div>이름: <input name="name" required></div><br>
-  <div>생년월일: <input type="date" name="birth" required></div><br>
+<%
+  String msg = (String) request.getAttribute("msg");
+  if (msg != null) {
+%>
+<script>
+  alert("<%= msg %>");
+</script>
+<%
+  }
+%>
+
+<form action="${pageContext.request.contextPath}/join" method="post">
+  <div>
+    이름:
+    <input name="name" maxlength="30" required value="${name}">
+  </div>
+  <br>
+
+  <div>
+    생년월일:
+    <input type="date" name="birth" required value="${birth}">
+  </div>
+  <br>
 
   <div>
     아이디:
-    <input name="id" id="id" required>
-    <button type="button" id="idCheckBtn">중복확인</button>
-  </div><br>
+    <input name="id" maxlength="30" required value="${id}">
+    <button type="submit"
+            formaction="${pageContext.request.contextPath}/id-check"
+            formmethod="post">중복확인</button>
+  </div>
+  <br>
 
-  <div>비밀번호: <input type="password" name="pw" required></div><br>
-  <div>비밀번호 확인: <input type="password" name="pwChk" required></div><br>
+  <div>
+    비밀번호:
+    <input type="password" name="pw" maxlength="30" required value="${pw}">
+  </div>
+  <br>
+
+  <div>
+    비밀번호 확인:
+    <input type="password" name="pwChk" maxlength="30" required value="${pwChk}">
+  </div>
+  <br>
 
   <div>
     닉네임:
-    <input name="nickname" id="nickname" required>
-    <button type="button" id="nicknameCheckBtn">중복확인</button>
-  </div><br>
+    <input name="nickname" maxlength="30" required value="${nickname}">
+    <button type="submit"
+            formaction="${pageContext.request.contextPath}/nickname-check"
+            formmethod="post">중복확인</button>
+  </div>
+  <br>
 
-  <div>
-    이메일:
-    <input name="email" id="email" required>
-    <button type="button" id="emailSendBtn">인증번호 받기</button>
-  </div><br>
+  <input type="hidden" name="idChecked" value="${idChecked}">
+  <input type="hidden" name="checkedId" value="${checkedId}">
+  <input type="hidden" name="nicknameChecked" value="${nicknameChecked}">
+  <input type="hidden" name="checkedNickname" value="${checkedNickname}">
 
-  <div>
-    인증번호:
-    <input name="emailCode" id="emailCode">
-    <button type="button" id="emailCheckBtn">인증확인</button>
-  </div><br>
-
-  <input type="hidden" name="idChecked" id="idChecked" value="N">
-  <input type="hidden" name="checkedId" id="checkedId">
-
-  <input type="hidden" name="nicknameChecked" id="nicknameChecked" value="N">
-  <input type="hidden" name="checkedNickname" id="checkedNickname">
-
-  <input type="hidden" name="emailVerified" id="emailVerified" value="N">
-  <input type="hidden" name="verifiedEmail" id="verifiedEmail">
-
-  <button type="button" id="joinBtn">회원가입</button>
+  <button type="submit">회원가입</button>
 </form>
 
-<script>
-  window.appCtx = "${pageContext.request.contextPath}";
-</script>
-<script src="${pageContext.request.contextPath}/js/user/join.js"></script>
 </body>
 </html>

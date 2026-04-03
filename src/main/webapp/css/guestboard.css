@@ -16,6 +16,34 @@
 .flatpickr-day.today {
     border-color: #ff7675;
 }
+
+/* 1. 부모 영역: 공책의 하얀 종이 전체 */
+.gb-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    /* ⭐ 핵심: 부모(.notebook)가 준 높이를 강제로 다 쓰게 함 */
+    min-height: 0;      /* flex 자식일 때 높이 계산 오류 방지 */
+
+    padding: 20px 20px 20px 60px;
+    background: #fdfcf8;
+    position: relative;
+    overflow: hidden;   /* 내부 요소가 삐져나오지 않게 함 */
+}
+
+/* 2. 게시글 리스트 영역 */
+.gb-posts {
+    flex: 1;            /* ⭐ 남는 공간을 혼자 다 차지해서 아래 form을 바닥으로 밈 */
+    overflow-y: auto;   /* 게시글 많으면 여기만 스크롤 */
+    min-height: 0;      /* flex 레이아웃의 필수 설정 */
+    margin-bottom: 15px; /* 입력창과의 최소 간격 */
+}
+
+/* 3. 입력 폼 영역 (남기기 버튼 있는 곳) */
+.gbHi {
+    width: 100%;
+    flex-shrink: 0;     /* ⭐ 어떤 상황에도 작아지거나 밀려나지 않음 */
+}
 /* 1. 각 게시글 내용 줄을 가로로 정렬 */
 #gbContent {
     display: flex;             /* 가로 정렬 */
@@ -53,4 +81,85 @@
     width: 60%; /* 적당한 너비 */
     outline: none;
     color: #5a4a3a;
+}
+.gb-posts {
+    flex: 1; /* 남는 공간을 다 차지 */
+
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding-right: 5px; /* 스크롤바와 내용 사이 간격 */
+}
+.gb-post-item {
+    padding: 15px;
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid #f0eee5;
+    width:100%;
+    max-width: 100%;
+}
+.gb-post-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-family: "Nanum Pen Script", cursive;
+    border-bottom: 1px dashed #eee;
+    padding-bottom: 5px;
+}
+.gb-post-user {
+    font-size: 18px;
+    color: #f2a0a0;
+    font-weight: bold;
+}
+.gb-post-date {
+    font-size: 14px;
+    color: #c0b0a0;
+}
+.gb-post-text {
+    font-size: 20px;
+    color: #5a4a3a;
+    line-height: 1.7;
+    max-height: 450px;
+    overflow-y: auto;
+    word-break: break-all;
+}
+
+
+#gbCreatedAt{
+    font-size: 14px;
+    right:0;
+}
+.gb-write-row {
+    display: flex;
+    gap: 10px;
+    margin-top: auto;
+    padding: 15px;
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid #eee0d0;
+    width: 100%;
+
+}
+.gb-write-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid #f7cfcd;
+    padding: 8px 5px;
+    font-family: "Gaegu", cursive;
+    font-size: 18px;
+    color: #5a4a3a;
+    outline: none;
+    text-align: left;
+}
+.gb-write-btn {
+    padding: 8px 18px;
+    background: linear-gradient(135deg, #fceae8 0%, #f7cfcd 100%);
+    color: #8a7a78;
+    border: 1px solid #f2c0bd;
+    border-radius: 20px;
+    font-family: "Gaegu", cursive;
+    font-size: 13px;
+    cursor: pointer;
+    font-weight: bold;
 }

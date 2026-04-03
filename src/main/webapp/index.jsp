@@ -6,7 +6,6 @@
     <link rel="stylesheet" href="css/index.css">
     <script src="js/guestboard.js"></script>
     <link rel="stylesheet" href="css/visitor.css">
-    <script src="js/guestboard.js"></script>
     <link rel="stylesheet" href="css/guestboard.css">
     <%-- defer로 통일, 중복 스크립트 제거 --%>
     <script defer src="/js/minihome.js"></script>
@@ -30,8 +29,8 @@
                 <div class="menu-card">
                     <div class="menu-list">
                         <%-- data-src: 서블릿 경로 --%>
-                        <div class="menu-item ${content eq 'main.jsp' ? 'active' : ''}"
-                             data-src="/home?ajax=true">홈
+                        <div class="menu-item ${content eq 'main.jsp' or empty content ? 'active' : ''}"
+                             data-src="/main?ajax=true">홈
                         </div>
                         <div class="menu-item ${content eq 'diary/diary.jsp' ? 'active' : ''}"
                              data-src="/diary?ajax=true">다이어리

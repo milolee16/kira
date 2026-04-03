@@ -11,7 +11,7 @@ import java.io.IOException;
 public class UpdateGBC extends HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        System.out.println("ccc");
+
         GuestBoardDAO.GBDAO.UpdateGuestBoard(request, response);
         response.sendRedirect("board");
 

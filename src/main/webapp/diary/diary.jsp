@@ -6,6 +6,12 @@
     <title>JSP - Hello World</title>
 </head>
 <body>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JSP - Hello World</title>
+</head>
+<body>
 <div class="diary-container">
     <%-- [1] 달력 영역: 다이어리 버튼 누르면 가장 먼저 보이는 곳 --%>
     <div class="calendar-wrap">
@@ -78,5 +84,7 @@
         </div>
     </c:if>
 </div>
+</body>
+</html>
 </body>
 </html>

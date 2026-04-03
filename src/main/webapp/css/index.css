@@ -308,8 +308,7 @@ body::after {
     flex: 1;
     height: 100%;
     position: relative;
-    min-height: 500px;
-    min-width: 0;
+    min-height: 0;
     background: #fbfaff;
     border-radius: 10px;
     box-shadow: 5px 8px 25px rgba(100, 80, 110, 0.1);
@@ -511,10 +510,7 @@ body::after {
 }
 
 
-#gbCreatedAt {
-    font-size: 14px;
-    right: 0;
-}
+
 
 /* ============================
 오른쪽: MP3 & 포스트잇

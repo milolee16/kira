@@ -1,61 +1,142 @@
-html, body {
-    margin: 0;
-    padding: 0;
-    background: transparent;
-    font-family: 'Gaegu', cursive;
+@import url("https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gaegu:wght@300;400;700&display=swap");
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: "Gaegu", cursive;
+    background: #fdf6ec;
+    min-height: 100vh;
 }
 
+/* ── 전체 래퍼 ── */
 .bgm-wrap {
-    padding: 20px 20px 20px 60px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    align-items: flex-start;  /* 가로 좌측 정렬 */
-    justify-content: flex-start;  /* 세로 상단 정렬 */
-    height: 100%;
+    height: 100vh;
+    padding: 20px;
+    gap: 16px;
 }
 
+/* ── 헤더 ── */
 .bgm-header {
-    font-family: 'Nanum Pen Script', cursive;
-    font-size: 20px;
+    font-family: "Nanum Pen Script", cursive;
+    font-size: 22px;
     color: #8a7a78;
-    border-bottom: 1px dashed #f2c0bd;
-    padding-bottom: 8px;
-    margin-bottom: 5px;
+    padding-bottom: 10px;
+    border-bottom: 2px dashed #f2c0bd;
 }
 
-.bgm-track {
+/* ── 지금 재생 중 ── */
+.bgm-now {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 14px;
+    border: 1px solid #eee0d0;
+    box-shadow: 2px 3px 10px rgba(120,100,80,0.06);
+}
+
+.bgm-now-thumb {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    object-fit: cover;
+    background: #f0eee8;
+    flex-shrink: 0;
+    border: 1px solid #eee0d0;
+}
+
+.bgm-now-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+    min-width: 0;
+}
+
+.bgm-now-title {
+    font-family: "Nanum Pen Script", cursive;
+    font-size: 20px;
+    color: #5a4a3a;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.bgm-now-badge {
+    display: inline-block;
+    font-size: 11px;
+    background: linear-gradient(135deg, #fceae8, #f7cfcd);
+    color: #c07878;
+    padding: 2px 10px;
+    border-radius: 20px;
+    border: 1px solid #f2c0bd;
+    width: fit-content;
+}
+
+.bgm-now-bar {
+    width: 100%;
+    height: 4px;
+    background: #eee0d0;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.bgm-now-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #ee99aa, #f7cfcd);
+    width: 0%;
+    transition: width 1s linear;
+}
+
+/* ── 재생목록 ── */
+.bgm-queue-label {
+    font-family: "Nanum Pen Script", cursive;
+    font-size: 18px;
+    color: #9a8a7a;
+    padding: 4px 0;
+}
+
+#bgm-queue-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+/* ── 각 트랙 아이템 ── */
+.bgm-track-item {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 10px 15px;
+    padding: 10px 12px;
     background: #fff;
+    border-radius: 10px;
     border: 1px solid #f0eee5;
-    border-radius: 8px;
     cursor: pointer;
     transition: background 0.15s;
 }
 
-.bgm-track:hover {
-    background: rgba(240, 160, 160, 0.1);
+.bgm-track-item:hover {
+    background: rgba(240,160,160,0.08);
 }
 
-.bgm-track.playing {
-    background: rgba(240, 160, 160, 0.2);
+.bgm-track-item.active {
+    background: rgba(240,160,160,0.15);
     border-color: #f2c0bd;
 }
 
-.bgm-track-num {
-    font-size: 13px;
-    color: #c0b0a0;
-    width: 20px;
-    text-align: center;
+.bgm-track-thumb {
+    width: 48px;
+    height: 48px;
+    border-radius: 6px;
+    object-fit: cover;
+    background: #f0eee8;
     flex-shrink: 0;
-}
-
-.bgm-track.playing .bgm-track-num {
-    color: #f2a0a0;
-    font-weight: bold;
+    border: 1px solid #eee0d0;
 }
 
 .bgm-track-info {
@@ -64,31 +145,76 @@ html, body {
 }
 
 .bgm-track-title {
-    font-size: 17px;
+    font-size: 14px;
     color: #5a4a3a;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-.bgm-track.playing .bgm-track-title {
-    color: #f2a0a0;
-    font-weight: bold;
+.bgm-track-duration {
+    font-size: 12px;
+    color: #b0a090;
+    margin-top: 2px;
 }
 
-.bgm-track-duration {
+.bgm-track-num {
     font-size: 13px;
-    color: #c0b0a0;
+    color: #d0c0b0;
+    width: 20px;
+    text-align: center;
     flex-shrink: 0;
 }
 
-.bgm-now-playing {
-    font-size: 13px;
-    color: #f2a0a0;
-    animation: blink 1.2s ease-in-out infinite;
+.bgm-track-item.active .bgm-track-num {
+    color: #ee99aa;
+    font-weight: bold;
 }
 
-@keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.3; }
+/* ── 재생 중 애니메이션 ── */
+.bgm-playing-icon {
+    display: none;
+    gap: 2px;
+    align-items: flex-end;
+    height: 16px;
+    flex-shrink: 0;
+}
+
+.bgm-track-item.active .bgm-playing-icon {
+    display: flex;
+}
+
+.bgm-track-item.active .bgm-track-num {
+    display: none;
+}
+
+.bgm-playing-icon span {
+    display: block;
+    width: 3px;
+    background: #ee99aa;
+    border-radius: 2px;
+    animation: eq 0.8s ease-in-out infinite alternate;
+}
+.bgm-playing-icon span:nth-child(1) { height: 8px;  animation-delay: 0s; }
+.bgm-playing-icon span:nth-child(2) { height: 14px; animation-delay: 0.2s; }
+.bgm-playing-icon span:nth-child(3) { height: 10px; animation-delay: 0.4s; }
+
+@keyframes eq {
+    from { transform: scaleY(0.4); }
+    to   { transform: scaleY(1); }
+}
+
+.bgm-track-item.active {
+    background: linear-gradient(135deg, rgba(252,234,232,0.6), rgba(247,207,205,0.4));
+    border-color: #f2c0bd;
+    border-left: 3px solid #ee99aa;  /* 왼쪽 강조선 */
+}
+
+.bgm-track-item.active .bgm-track-title {
+    color: #c07878;
+    font-weight: bold;
+}
+
+.bgm-track-item.active .bgm-track-duration {
+    color: #ee99aa;
 }

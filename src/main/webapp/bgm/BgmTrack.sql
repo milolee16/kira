@@ -8,7 +8,7 @@ CREATE TABLE bgm_track (
 
 -- 더미 데이터
 INSERT INTO bgm_track (title, youtube_id, duration, track_order)
-VALUES ('Hype Boy - NewJeans', 'Km3K1-J26fM', 187, 1);
+VALUES ('NeedygirlOverdose', 'BnkhBwzBqlQ', 222, 1);
 
 INSERT INTO bgm_track (title, youtube_id, duration, track_order)
 VALUES ('Attention - NewJeans', 'b9PFMqKi7gg', 213, 2);

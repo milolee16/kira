@@ -15,6 +15,7 @@ public class BgmTrackVO {
         private String youtubeId;
         private int duration;
         private int trackOrder;
+        private String userId;
 
         public String getTitle()      { return title; }
         public void setTitle(String v){ this.title = v; }
@@ -24,5 +25,8 @@ public class BgmTrackVO {
         public void setDuration(int v){ this.duration = v; }
         public int getTrackOrder()      { return trackOrder; }
         public void setTrackOrder(int v){ this.trackOrder = v; }
+        public String getUserId()       { return userId; }
+        public void setUserId(String v) { this.userId = v; }
+
 
 }

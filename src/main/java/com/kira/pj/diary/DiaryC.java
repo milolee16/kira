@@ -14,8 +14,7 @@ public class DiaryC extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
         DiaryM.getCalendar(request);
-        request.setAttribute("content", "diary/diary.jsp");
-        request.getRequestDispatcher("index.jsp").forward(request, response);
+        request.getRequestDispatcher("/diary/diary.jsp").forward(request, response);
 
     }
 

@@ -30,7 +30,7 @@
                 <div class="menu-card">
                     <div class="menu-list">
                         <%-- data-src: 서블릿 경로 --%>
-                        <div class="menu-item ${content eq 'main.jsp' ? 'active' : ''}"
+                        <div class="menu-item ${content eq 'main.jsp' or empty content ? 'active' : ''}"
                              data-src="/home?ajax=true">홈
                         </div>
                         <div class="menu-item ${content eq 'diary/diary.jsp' ? 'active' : ''}"
@@ -67,7 +67,7 @@
             </div>
 
             <div class="nb-tabs">
-                <div class="nb-tab ${content eq 'main.jsp' ? 'active' : ''}"
+                <div class="nb-tab ${content eq 'main.jsp' or empty content ? 'active' : ''}"
                      data-src="/home?ajax=true">홈
                 </div>
                 <div class="nb-tab ${content eq 'diary/diary.jsp' ? 'active' : ''}"

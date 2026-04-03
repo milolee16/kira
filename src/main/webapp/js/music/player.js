@@ -96,3 +96,9 @@ function formatTime(sec) {
     const s = String(sec % 60).padStart(2, '0');
     return m + ':' + s;
 }
+
+function jumpTo(index) {
+    currentIndex = index;
+    ytPlayer.loadVideoById(playlist[currentIndex].youtubeId);
+    updateUI(currentIndex);
+}

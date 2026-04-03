@@ -13,6 +13,6 @@ public class HelloServlet extends HttpServlet {
         // 알맹이 파일 이름을 지정
         request.setAttribute("content", "/main.jsp");
         // 껍데기(틀) 파일로 포워딩
-        request.getRequestDispatcher("/index.jsp").forward(request, response);
+        request.getRequestDispatcher("/index2.jsp").forward(request, response);
     }
 }

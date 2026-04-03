@@ -1,46 +1,50 @@
 package com.kira.pj.visitor;
 
+import com.google.gson.Gson;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-@WebServlet("/visitor") // name 생략하고 깔끔하게 주소만 매핑
+@WebServlet("/visitor")
 public class VisitorC extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // 1. 파라미터 처리 (페이지 번호)
+        String ajax = request.getParameter("ajax");       // 기존: 탭 메뉴 이동용
+        String reqType = request.getParameter("reqType"); // 신규: JSON 데이터 요청용
         String pStr = request.getParameter("p");
         int p = (pStr == null) ? 1 : Integer.parseInt(pStr);
-        String ajax = request.getParameter("ajax");
 
-        // 2. DB 데이터 조회
-        VisitorDAO dao = new VisitorDAO();
-        String ownerId = "DongMin";
+        if ("json".equals(reqType)) {
+            // [1] 방명록 화면 안에서 JS(fetch)가 데이터만 요청할 때 -> JSON 반환
+            VisitorDAO dao = new VisitorDAO();
+            List<VisitorDTO> list = dao.getVisitorsByPage("DongMin", p);
 
-        // [A] 해당 페이지 방문자 목록 (7개)
-        List<VisitorDTO> list = dao.getVisitorsByPage(ownerId, p);
-        // [B] 우측 위젯용 최근 방문자 목록 (5개)
-        List<VisitorDTO> recent = dao.getRecentVisitors(ownerId);
+            Map<String, Object> resultMap = new HashMap<>();
+            resultMap.put("visitorList", list);
+            resultMap.put("currentPage", p);
 
-        // 3. JSP 데이터 공통 전달
-        request.setAttribute("visitorList", list);
-        request.setAttribute("recentVisitors", recent);
-        request.setAttribute("currentPage", p);
-        request.setAttribute("content", "visitor/visitor.jsp");
+            Gson gson = new Gson();
+            String jsonResponse = gson.toJson(resultMap);
 
-        // 4. 화면 포워딩 (AJAX 여부에 따른 분기)
-        if ("true".equals(ajax)) {
-            // 알맹이만 업데이트할 때 (CSS 깨짐 주의: visitor.jsp 상단에 <link> 확인)
+            response.setContentType("application/json; charset=UTF-8");
+            response.getWriter().print(jsonResponse);
+
+        } else if ("true".equals(ajax)) {
+            // [2] 방명록 탭 메뉴를 클릭했을 때 -> HTML 알맹이(visitor.jsp) 반환 (원상복구)
             request.getRequestDispatcher("visitor/visitor.jsp").forward(request, response);
+
         } else {
-            // 전체 페이지를 새로 그릴 때 (새로고침, 직접 주소 입력 등)
+            // [3] 브라우저 주소창에 직접 쳐서 들어왔을 때 -> 전체 페이지(index.jsp) 반환
+            request.setAttribute("content", "visitor/visitor.jsp");
             request.getRequestDispatcher("index.jsp").forward(request, response);
         }
     }
@@ -48,7 +52,7 @@ public class VisitorC extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+        // 기존 작성하신 비동기 POST 코드 그대로 유지! (수정 없음)
         request.setCharacterEncoding("UTF-8");
         String visitorName = request.getParameter("visitorName");
 
@@ -60,9 +64,11 @@ public class VisitorC extends HttpServlet {
 
             VisitorDAO dao = new VisitorDAO();
             dao.insertVisitor(dto);
-        }
 
-        // ⭐️ 핵심 수정: ajax=true를 빼야 전체 페이지(index.jsp)가 정상적으로 다시 그려집니다.
-        response.sendRedirect("visitor");
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.getWriter().print("success");
+        } else {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        }
     }
 }

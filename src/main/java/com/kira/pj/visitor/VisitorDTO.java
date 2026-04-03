@@ -17,4 +17,5 @@ public class VisitorDTO {
     private int v_emoji;        // 이모지 번호 (NUMBER)
     private String v_date;      // 방문 날짜 (DATE -> String으로 변환해서 사용)
 
+
 }

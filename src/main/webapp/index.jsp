@@ -75,6 +75,12 @@
              id="notebook">
             <div class="notebook-header">
                 <h2>📖 Team Kira의 소소한 일상</h2>
+                <div class="mini-search-wrapper">
+                    <input type="text" id="live-search-input" placeholder="이름, 닉네임 검색 🌊" autocomplete="off">
+                    <span class="search-icon">🔍</span>
+
+                    <div id="search-dropdown" class="search-dropdown hidden"></div>
+                </div>
                 <div class="visitor">Today 15 | Total 1,234</div>
             </div>
 

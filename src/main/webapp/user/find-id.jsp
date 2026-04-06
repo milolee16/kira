@@ -4,7 +4,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>로그인</title>
+    <title>아이디 찾기</title>
 
     <style>
         @import url("https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Gaegu:wght@300;400;700&display=swap");
@@ -41,6 +41,7 @@
                             transparent 50%
                     ),
                     linear-gradient(180deg, #f3e5dc 0%, #e2d2c2 100%);
+            padding: 30px 15px;
             position: relative;
         }
 
@@ -48,23 +49,21 @@
             content: "";
             position: absolute;
             inset: 0;
-            background: rgba(255,255,255,0.08);
+            background: rgba(255, 255, 255, 0.08);
             pointer-events: none;
         }
 
-        .login-wrapper {
+        .findid-wrapper {
             width: 100%;
             display: flex;
             justify-content: center;
-            align-items: center;
-            padding: 20px;
             position: relative;
             z-index: 1;
         }
 
-        .login-card {
+        .findid-card {
             width: 100%;
-            max-width: 420px;
+            max-width: 520px;
             background: #fffdfa;
             padding: 35px 30px;
             border-radius: 14px;
@@ -76,52 +75,52 @@
             transform: rotate(-1deg);
         }
 
-        .login-card::before {
+        .findid-card::before {
             content: "";
             position: absolute;
             top: -12px;
             left: 50%;
             transform: translateX(-50%) rotate(2deg);
-            width: 70px;
+            width: 75px;
             height: 20px;
             background: rgba(100, 210, 190, 0.55);
             border: 1px solid rgba(80, 180, 160, 0.35);
             border-radius: 2px;
         }
 
-        .login-title {
+        .findid-title {
             font-family: "Nanum Pen Script", cursive;
-            font-size: 38px;
+            font-size: 40px;
             color: #7a6b5c;
             text-align: center;
             margin-bottom: 8px;
         }
 
-        .login-subtitle {
+        .findid-subtitle {
             text-align: center;
             font-size: 15px;
             color: #9a8b7a;
             margin-bottom: 28px;
         }
 
-        #loginForm {
+        #findIdForm {
             display: flex;
             flex-direction: column;
             gap: 16px;
         }
 
-        .input-group {
+        .form-row {
             display: flex;
             flex-direction: column;
             gap: 6px;
         }
 
-        .input-group label {
+        .form-row label {
             font-size: 18px;
             color: #8a7b6a;
         }
 
-        .input-group input {
+        .form-row input {
             width: 100%;
             border: none;
             border-bottom: 2px solid #f7cfcd;
@@ -133,78 +132,152 @@
             outline: none;
         }
 
-        .input-group input::placeholder {
+        .form-row input::placeholder {
             color: #c0b0a0;
         }
 
-        .input-group input:focus {
+        .form-row input:focus {
             border-bottom: 2px solid #ee99aa;
         }
 
-        #loginBtn {
+        .inline-check {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .inline-check input {
+            flex: 1;
+        }
+
+        .sub-btn {
+            flex-shrink: 0;
+            padding: 10px 14px;
+            border: 1px solid #e8d5bf;
+            border-radius: 18px;
+            background: #fff8ef;
+            color: #8a7a78;
+            font-family: "Gaegu", cursive;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            white-space: nowrap;
+        }
+
+        .sub-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(180, 150, 120, 0.12);
+        }
+
+        #findIdBtn {
             margin-top: 10px;
-            padding: 12px 20px;
+            padding: 13px 20px;
             background: linear-gradient(135deg, #fceae8 0%, #f7cfcd 100%);
             color: #8a7a78;
             border: 1px solid #f2c0bd;
             border-radius: 24px;
             font-family: "Gaegu", cursive;
-            font-size: 19px;
+            font-size: 20px;
             font-weight: bold;
             cursor: pointer;
             transition: transform 0.15s ease, box-shadow 0.15s ease;
         }
 
-        #loginBtn:hover {
+        #findIdBtn:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 14px rgba(180, 140, 130, 0.15);
         }
 
-        .login-links {
+        .result-area {
+            margin-top: 22px;
+            padding: 18px;
+            background: #fff8ef;
+            border: 1px dashed #e8d5bf;
+            border-radius: 10px;
+            min-height: 60px;
+            color: #6a5a4a;
+            font-size: 18px;
+            line-height: 1.7;
+            white-space: pre-wrap;
+        }
+
+        .bottom-link {
             margin-top: 22px;
             padding-top: 16px;
             border-top: 1px dashed #e8d5bf;
             text-align: center;
-            line-height: 1.9;
         }
 
-        .login-links a {
+        .bottom-link a {
             color: #8a7a78;
             text-decoration: none;
             font-size: 17px;
-            margin: 0 4px;
         }
 
-        .login-links a:hover {
+        .bottom-link a:hover {
             color: #ee99aa;
+        }
+
+        input[type="hidden"] {
+            display: none;
+        }
+
+        @media (max-width: 620px) {
+            .findid-card {
+                padding: 28px 20px;
+            }
+
+            .inline-check {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .sub-btn {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
 
-<div class="login-wrapper">
-    <div class="login-card">
-        <h1 class="login-title">Login</h1>
-        <div class="login-subtitle">아이디와 비밀번호를 입력해주세요</div>
+<div class="findid-wrapper">
+    <div class="findid-card">
+        <h1 class="findid-title">Find ID</h1>
+        <div class="findid-subtitle">이메일 인증 후 등록된 아이디를 확인합니다</div>
 
-        <form id="loginForm">
-            <div class="input-group">
-                <label for="id">아이디</label>
-                <input id="id" name="id" placeholder="아이디 입력">
+        <form id="findIdForm">
+            <div class="form-row">
+                <label for="name">이름</label>
+                <input id="name" name="name" required placeholder="이름 입력">
             </div>
 
-            <div class="input-group">
-                <label for="pw">비밀번호</label>
-                <input id="pw" type="password" name="pw" placeholder="비밀번호 입력">
+            <div class="form-row">
+                <label for="findIdEmail">이메일</label>
+                <div class="inline-check">
+                    <input name="email" id="findIdEmail" required placeholder="이메일 입력">
+                    <button type="button" id="findIdEmailSendBtn" class="sub-btn">인증번호 받기</button>
+                </div>
             </div>
 
-            <button type="button" id="loginBtn">로그인</button>
+            <div class="form-row">
+                <label for="findIdEmailCode">인증번호</label>
+                <div class="inline-check">
+                    <input name="emailCode" id="findIdEmailCode" placeholder="인증번호 입력">
+                    <button type="button" id="findIdEmailCheckBtn" class="sub-btn">인증확인</button>
+                </div>
+            </div>
+
+            <input type="hidden" name="emailVerified" id="findIdEmailVerified" value="N">
+            <input type="hidden" name="verifiedEmail" id="findIdVerifiedEmail">
+
+            <button type="button" id="findIdBtn">아이디 찾기</button>
         </form>
 
-        <div class="login-links">
-            <a href="${pageContext.request.contextPath}/find-id">아이디 찾기</a> |
-            <a href="${pageContext.request.contextPath}/find-pw">비밀번호 찾기</a> |
-            <a href="${pageContext.request.contextPath}/join">회원가입</a>
+        <div id="foundIdArea" class="result-area"></div>
+
+        <div class="bottom-link">
+            <a href="${pageContext.request.contextPath}/login">로그인으로 돌아가기</a>
         </div>
     </div>
 </div>
@@ -212,6 +285,6 @@
 <script>
     window.appCtx = "${pageContext.request.contextPath}";
 </script>
-<script src="${pageContext.request.contextPath}/js/user/login.js"></script>
+<script src="${pageContext.request.contextPath}/js/user/find-id.js"></script>
 </body>
 </html>

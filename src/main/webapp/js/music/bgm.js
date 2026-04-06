@@ -1,198 +1,85 @@
-let syncTimer = null;
-// playlist, currentIndex, ytPlayer는 player.js에서 전역 선언됨 — 여기서 재선언 금지
+// bgm.js — bgm.jsp 안에서만 로드
+// YouTube API, player.js 절대 로드 금지
 
-// 썸네일 URL
-function thumbUrl(youtubeId) {
-    return 'https://img.youtube.com/vi/' + youtubeId + '/mqdefault.jpg';
-    // return 'https://img.youtube.com/vi/' + "BnkhBwzBqlQ" + '/mqdefault.jpg';
-}
-
-// 시간 포맷
-function formatTime(sec) {
-    if (!sec) return '0:00';
-    const m = Math.floor(sec / 60);
-    const s = String(sec % 60).padStart(2, '0');
-    return m + ':' + s;
-}
-
-// HTML escape
-function escapeHtml(str) {
-    if (!str) return '';
-    return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-}
-
-// 상단 "지금 재생 중" 업데이트
-function updateNowPlaying() {
-    if (!playlist || playlist.length === 0) return;
-
-    const track = playlist[currentIndex];
-
-    // ── bgm.jsp ──
-    const nowThumb = document.getElementById('now-thumb');
-    if (nowThumb) nowThumb.src = thumbUrl(track.youtubeId);
-
-    const nowTitle = document.getElementById('now-title');
-    if (nowTitle) nowTitle.textContent = track.title;
-
-    const nowBarFill = document.getElementById('now-bar-fill');
-    if (nowBarFill && ytPlayer && typeof ytPlayer.getCurrentTime === 'function') {
-        const pct = Math.min((ytPlayer.getCurrentTime() / (track.duration || 1)) * 100, 100);
-        nowBarFill.style.width = pct + '%';
+// ── parent 안전 참조 ──────────────────────────────────────────
+function getParent() {
+    try {
+        // 직접 URL 접속 방어
+        return window.parent !== window ? window.parent : null;
+    } catch (e) {
+        return null;
     }
-
-    // ── index.jsp 스마트폰 ──
-    const phoneThumb = document.getElementById('phone-thumb');
-    if (phoneThumb) phoneThumb.src = thumbUrl(track.youtubeId);
-
-    const bgmTitle = document.getElementById('bgm-title');
-    if (bgmTitle) bgmTitle.textContent = '♪  ' + track.title;
-
-    const progressBar = document.getElementById('bgm-progress-bar');
-    if (progressBar && ytPlayer && typeof ytPlayer.getCurrentTime === 'function') {
-        const pct = Math.min((ytPlayer.getCurrentTime() / (track.duration || 1)) * 100, 100);
-        progressBar.style.width = pct + '%';
-    }
-
-    const ytLink = document.getElementById('yt-link');
-    if (ytLink) ytLink.href = 'https://www.youtube.com/watch?v=' + track.youtubeId;
 }
 
-// 트랙 목록 렌더링
+// ── 전체 목록 렌더링 ──────────────────────────────────────────
 function renderQueue() {
-    const list = document.getElementById('bgm-queue-list');
-    if (!list) return;
+    const par = getParent();
+    if (!par) return;
+
+    const playlist = par.playlist;
+    const currentIndex = par.currentIndex || 0;
 
     if (!playlist || playlist.length === 0) {
-        list.innerHTML = '<div class="bgm-empty">재생목록이 비어있어요 🎵</div>';
+        setTimeout(renderQueue, 500);  // 아직 로드 안 됐으면 재시도
         return;
     }
 
-    const currentTrack = playlist[currentIndex];
-    document.getElementById('now-title').textContent = currentTrack.title;
-    document.getElementById('now-thumb').src = thumbUrl(currentTrack.youtubeId);
+    const container = document.getElementById('bgm-queue-list');
+    if (!container) return;
 
-    list.innerHTML = playlist.map((track, i) => {
-        const isActive = i === currentIndex;
-        return `
-            <div class="bgm-track-item ${isActive ? 'active' : ''}" data-index="${i}">
-                <div class="bgm-playing-icon">
-                    <span></span><span></span><span></span>
-                </div>
-                <span class="bgm-track-num">${i + 1}</span>
-                <img class="bgm-track-thumb"
-                     src="${thumbUrl(track.youtubeId)}"
-                     alt="${escapeHtml(track.title)}">
-                <div class="bgm-track-info">
-                    <div class="bgm-track-title">${escapeHtml(track.title)}</div>
-                    <div class="bgm-track-duration">${formatTime(track.duration)}</div>
-                </div>
-            </div>
+    container.innerHTML = '';
+    playlist.forEach((track, i) => {
+        const item = document.createElement('div');
+        item.className = 'bgm-queue-item' + (i === currentIndex ? ' active' : '');
+        item.innerHTML = `
+            <img class="bgm-queue-thumb"
+                 src="https://img.youtube.com/vi/${track.youtubeId}/mqdefault.jpg"
+                 alt="${track.title}">
+            <span class="bgm-queue-title">${track.title}</span>
+            <span class="bgm-queue-duration">${formatTime(track.duration)}</span>
         `;
-    }).join('');
+        item.addEventListener('click', () => {
+            if (typeof par.playTrack === 'function') {
+                par.playTrack(i);
+            }
+        });
+        container.appendChild(item);
+    });
+
+    updateNowPlaying(playlist[currentIndex], currentIndex);
 }
 
-// 트랙 클릭 시 재생
-function playTrack(index) {
-    if (!playlist[index]) return;
-    currentIndex = index;
+// ── 현재 재생 중 UI 갱신 ─────────────────────────────────────
+function updateNowPlaying(track, index) {
+    if (!track) return;
 
-    if (ytPlayer && typeof ytPlayer.loadVideoById === 'function') {
-        ytPlayer.loadVideoById(playlist[index].youtubeId);
-    }
+    const nowThumb = document.getElementById('now-thumb');
+    const nowTitle = document.getElementById('now-title');
+    const barFill  = document.getElementById('now-bar-fill');
 
-    // UI 갱신
-    renderQueue();           // bgm.jsp 전용
-    updateNowPlaying();      // bgm.jsp 전용
-    updateIndexNowPlaying(); // index.jsp 전용
-}
+    if (nowThumb) nowThumb.src          = 'https://img.youtube.com/vi/' + track.youtubeId + '/mqdefault.jpg';
+    if (nowTitle) nowTitle.textContent  = track.title;
 
-// 목록 클릭 이벤트 위임
-function bindQueueEvents() {
-    const list = document.getElementById('bgm-queue-list');
-    if (!list) return;
-
-    list.addEventListener('click', (e) => {
-        const item = e.target.closest('.bgm-track-item');
-        if (!item) return;
-
-        const index = Number(item.dataset.index);
-        if (Number.isNaN(index)) return;
-
-        playTrack(index);
+    // active 클래스 갱신
+    document.querySelectorAll('.bgm-queue-item').forEach((el, i) => {
+        el.classList.toggle('active', i === index);
     });
 }
 
-// 공통 1초 동기화
-function startSync() {
-    if (syncTimer) clearInterval(syncTimer);
+// ── parent가 호출하는 콜백 (곡 변경 알림 수신) ──────────────────
+window.onParentTrackChanged = function (index) {
+    const par = getParent();
+    if (!par || !par.playlist) return;
+    updateNowPlaying(par.playlist[index], index);
+};
 
-    syncTimer = setInterval(() => {
-        if (!playlist || playlist.length === 0) return;
-
-        // bgm.jsp용
-        document.querySelectorAll('.bgm-track-item').forEach((el, i) => {
-            el.classList.toggle('active', i === currentIndex);
-        });
-        updateNowPlaying();
-
-        // index.jsp용
-        updateIndexNowPlaying();
-    }, 1000);
+function formatTime(sec) {
+    const m = Math.floor(sec / 60);
+    const s = Math.floor(sec % 60);
+    return m + ':' + String(s).padStart(2, '0');
 }
 
-// player.js 데이터 로드 대기 후 렌더링
-function waitForPlaylist() {
-    let retry = 0;
-    const timer = setInterval(() => {
-        if (playlist && playlist.length > 0 && fetchDone) { // fetchDone 체크 추가
-            clearInterval(timer);
-            renderQueue();
-            updateNowPlaying();
-        }
-        if (++retry > 20) clearInterval(timer);
-    }, 500);
-}
-
-function init() {
-    bindQueueEvents();
-    startSync();
-
-    // playlist가 이미 있으면 바로 렌더링
-    if (playlist && playlist.length > 0 && fetchDone) {
-        renderQueue();
-        updateNowPlaying();
-    } else {
-        // 아직 playlist 준비 안되었으면 대기
-        waitForPlaylist();
-    }
-}
-
-window.addEventListener('beforeunload', () => {
-    if (syncTimer) clearInterval(syncTimer);
+// ── 진입점 ────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+    renderQueue();
 });
-
-// DOMContentLoaded가 이미 지난 경우도 커버
-if (document.readyState === 'loading') {
-    window.addEventListener('DOMContentLoaded', init);
-} else {
-    init();
-}
-
-// index.jsp 전용 UI 업데이트
-function updateIndexNowPlaying() {
-    if (!playlist || playlist.length === 0) return;
-    const track = playlist[currentIndex];
-
-    const thumbEl = document.getElementById('phone-thumb');
-    const titleEl = document.getElementById('bgm-title');
-    const linkEl = document.getElementById('yt-link');
-
-    if (thumbEl) thumbEl.src = 'https://img.youtube.com/vi/' + track.youtubeId + '/mqdefault.jpg';
-    if (titleEl) titleEl.textContent = '♪ ' + track.title;
-    if (linkEl) linkEl.href = 'https://www.youtube.com/watch?v=' + track.youtubeId;
-}

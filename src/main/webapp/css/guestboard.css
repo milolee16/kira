@@ -18,7 +18,7 @@
 }
 
 /* 1. 부모 영역: 공책의 하얀 종이 전체 */
-.gb-body {
+.gb-nb-body {
     display: flex;
     flex-direction: column;
     flex: 1;
@@ -39,13 +39,9 @@
     margin-bottom: 15px; /* 입력창과의 최소 간격 */
 }
 
-/* 3. 입력 폼 영역 (남기기 버튼 있는 곳) */
-.gbHi {
-    width: 100%;
-    flex-shrink: 0;     /* ⭐ 어떤 상황에도 작아지거나 밀려나지 않음 */
-}
+
 /* 1. 각 게시글 내용 줄을 가로로 정렬 */
-#gbContent {
+.gb-content-row {
     display: flex;             /* 가로 정렬 */
     align-items: center;       /* 세로 가운데 정렬 */
     width: 100%;               /* 전체 너비 사용 */
@@ -132,7 +128,6 @@
 .gb-write-row {
     display: flex;
     gap: 10px;
-    margin-top: auto;
     padding: 15px;
     background: #fff;
     border-radius: 8px;
@@ -152,6 +147,7 @@
     outline: none;
     text-align: left;
 }
+/* 1. 기본 버튼 스타일 (transition 한 줄 추가!) */
 .gb-write-btn {
     padding: 8px 18px;
     background: linear-gradient(135deg, #fceae8 0%, #f7cfcd 100%);
@@ -162,4 +158,46 @@
     font-size: 13px;
     cursor: pointer;
     font-weight: bold;
+    /* ⭐ 마우스를 올리고 뗄 때 0.2초 동안 부드럽게 변하도록 애니메이션 추가 */
+    transition: all 0.2s ease-in-out;
+}
+
+/* 2. 마우스 올렸을 때 (확실하게 티 내주기!) */
+.gb-write-btn:hover {
+    color: #8a7a78; /* 글자색은 그대로 유지하거나 약간만 진하게 */
+    /* ⭐ 배경색을 살짝 더 진한 그라데이션으로 변경 */
+    background: linear-gradient(135deg, #f7cfcd 0%, #f2c0bd 100%);
+    /* ⭐ 버튼이 위로 살짝 떠오르면서 */
+    transform: translateY(-2px);
+    /* ⭐ 아래에 예쁜 핑크빛 그림자가 생겨서 입체감이 살아납니다! */
+    box-shadow: 0 4px 8px rgba(242, 192, 189, 0.4);
+}
+
+/* 3. (보너스) 버튼을 진짜 클릭하는 순간! (눌리는 느낌) */
+.gb-write-btn:active {
+    transform: translateY(0); /* 다시 원래 위치로 내려감 */
+    box-shadow: 0 2px 4px rgba(242, 192, 189, 0.4); /* 그림자도 줄어듦 */
+}
+.gb-write-form {
+    width: 100%;
+    flex-shrink: 0;      /* 폼이 찌그러지지 않게 방어 */
+    margin-top: auto;    /* ⭐ 핵심: 위에 내용이 없어도 폼 전체를 바닥으로 쫙 밀어버립니다! */
+}
+
+/* 파도타기 닉네임 기본 상태 (밑줄 완벽 제거) */
+.gb-user-link {
+    color:#f2a0a0; /* 원래 닉네임 색상 */
+    font-weight: bold;
+    text-decoration: none !important; /* ⭐ 브라우저 기본 밑줄 강제 삭제! */
+    cursor: pointer;
+    display: inline-block; /* 둥실둥실 효과를 주려면 필수! */
+    transition: all 0.2s ease-in-out; /* 모든 변화를 0.2초 동안 부드럽게~ */
+}
+
+/* 마우스를 올렸을 때 (감성 한 스푼 효과) */
+.gb-user-link:hover {
+    color: #ee6161; /* 마우스를 올리면 코랄핑크색으로! (원하는 색으로 변경하세요) */
+    text-decoration: none !important; /* hover 시에도 밑줄 절대 금지 */
+    transform: translateY(-2px); /* ⭐ 위로 살짝(2px) 둥실~ 떠오르는 귀여운 효과 */
+     text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
 }

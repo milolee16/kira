@@ -8,10 +8,26 @@
     <script src="https://npmcdn.com/flatpickr/dist/l10n/ko.js"></script>
 
     <%-- CSS --%>
+<<<<<<< HEAD
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/index.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/visitor.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/guestboard.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/diary.css">
+
+    <%-- JS --%>
+    <script src="${pageContext.request.contextPath}/js/guestboard.js"></script>
+    <script src="${pageContext.request.contextPath}/js/diary.js"></script>
+    <script src="${pageContext.request.contextPath}/js/index.js"></script>
+    <script src="${pageContext.request.contextPath}/js/visitor.js"></script>
+
+    <script defer src="${pageContext.request.contextPath}/js/minihome.js"></script>
+    <script defer src="${pageContext.request.contextPath}/js/ajax.js"></script>
+=======
     <link rel="stylesheet" href="css/index.css">
     <link rel="stylesheet" href="css/visitor.css">
     <link rel="stylesheet" href="css/guestboard.css">
     <link rel="stylesheet" href="css/diary.css">
+    <link rel="stylesheet" href="css/main.css">
 
     <%-- JS --%>
     <script src="js/guestboard.js"></script>
@@ -20,6 +36,8 @@
     <script src="js/visitor.js"></script>
     <script defer src="/js/minihome.js"></script>
     <script defer src="/js/ajax.js"></script>
+    <script defer src="js/main.js"></script>
+>>>>>>> a586b6dfa02dd4b7e4c7a3c664ae960647f74b14
 
     <title>Team Kira - Minihompy</title>
 </head>
@@ -41,16 +59,16 @@
                 <div class="menu-card">
                     <div class="menu-list">
                         <div class="menu-item ${content eq 'main.jsp' ? 'active' : ''}"
-                             data-src="/home?ajax=true">홈
+                             data-src="${pageContext.request.contextPath}/home?ajax=true">홈
                         </div>
                         <div class="menu-item ${content eq 'diary/diary.jsp' ? 'active' : ''}"
-                             data-src="/diary?ajax=true">다이어리
+                             data-src="${pageContext.request.contextPath}/diary?ajax=true">다이어리
                         </div>
                         <div class="menu-item ${content eq 'pic/pic.jsp' ? 'active' : ''}"
-                             data-src="/pic?ajax=true">사진첩
+                             data-src="${pageContext.request.contextPath}/photo?ajax=true">사진첩
                         </div>
                         <div class="menu-item ${content eq 'board/board.jsp' ? 'active' : ''}"
-                             data-src="board/board.jsp">방명록
+                             data-src="${pageContext.request.contextPath}/bgm?ajax=true">방명록
                         </div>
                     </div>
                 </div>
@@ -73,6 +91,12 @@
              id="notebook">
             <div class="notebook-header">
                 <h2>📖 Team Kira의 소소한 일상</h2>
+                <div class="mini-search-wrapper">
+                    <input type="text" id="live-search-input" placeholder="이름, 닉네임 검색 🌊" autocomplete="off">
+                    <span class="search-icon">🔍</span>
+
+                    <div id="search-dropdown" class="search-dropdown hidden"></div>
+                </div>
                 <div class="visitor">Today 15 | Total 1,234</div>
             </div>
 
@@ -163,9 +187,9 @@
 <div class="desk-front"></div>
 
 <div id="yt-player-hidden" style="display:none;"></div>
-<script src="/js/music/player.js"></script>
-<script src="/js/music/router.js"></script>
-<script src="/js/music/bgm-index.js"></script>
+<script src="${pageContext.request.contextPath}/js/music/player.js"></script>
+<script src="${pageContext.request.contextPath}/js/music/router.js"></script>
+<script src="${pageContext.request.contextPath}/js/music/bgm-index.js"></script>
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
     // DOMContentLoaded 후 초기화

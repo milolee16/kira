@@ -20,7 +20,7 @@
         </div>
     </div>
 
-    <form action="board" method="post" class="gb-write-form">
+    <form class="gb-write-form">
         <div class="gb-write-row">
             <input class="gb-write-input" autocomplete="off" placeholder="인사를 남겨주세요! ✏️" name="content" type="text"/>
             <button class="gb-write-btn">남기기</button>

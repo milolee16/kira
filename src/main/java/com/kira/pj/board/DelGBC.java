@@ -11,11 +11,12 @@ import java.io.IOException;
 public class DelGBC extends HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        GuestBoardDAO.GBDAO.delGB(request, response);
+
     }
 
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-
+        response.setContentType("application/json; charset=utf-8");
+        response.getWriter().println(GuestBoardDAO.GBDAO.delGB(request, response));
     }
     public void destroy() {
     }

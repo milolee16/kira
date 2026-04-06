@@ -11,14 +11,11 @@ import java.io.IOException;
 public class UpdateGBC extends HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-
-        GuestBoardDAO.GBDAO.UpdateGuestBoard(request, response);
-        response.sendRedirect("board");
-
     }
 
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-
+        response.setContentType("application/json; charset=utf-8");
+        response.getWriter().println(GuestBoardDAO.GBDAO.UpdateGuestBoard(request, response));
     }
     public void destroy() {
     }

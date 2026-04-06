@@ -856,3 +856,89 @@ body::after {
 .nb-error button:hover {
     background: #f0e4d4;
 }
+/*============================================================================*/
+/* ⭐ 다이어리 감성 검색창 껍데기 */
+/*============================================================================*/
+.mini-search-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.6); /* 분홍색 배경 위에 자연스럽게 얹히도록 반투명 흰색 */
+    border: 1px dashed #f2a0a0; /* 공책 느낌의 점선 테두리 */
+    border-radius: 20px;
+    padding: 4px 15px;
+    width: 220px;
+    transition: all 0.2s ease;
+}
+
+/* 마우스 올리거나 클릭했을 때 진해지는 효과 */
+.mini-search-wrapper:focus-within, .mini-search-wrapper:hover {
+    background: #fff;
+    border: 1px solid #ff7675; /* 점선이 실선으로 바뀌면서 강조! */
+    box-shadow: 0 2px 6px rgba(242, 160, 160, 0.3);
+}
+
+/* 입력칸 글씨체 통일 */
+#live-search-input {
+    border: none;
+    background: transparent;
+    outline: none;
+    width: 100%;
+    font-family: "Gaegu", cursive;
+    font-size: 15px;
+    color: #5a4a3a;
+}
+#live-search-input::placeholder {
+    color: #c0b0a0;
+}
+
+.search-icon {
+    font-size: 14px;
+    margin-left: 5px;
+    opacity: 0.7;
+    cursor: pointer;
+}
+
+/* ⭐ 드롭다운 (다이어리 포스트잇 느낌으로!) */
+.search-dropdown {
+    position: absolute;
+    top: 38px; /* 검색창 바로 밑에 종이가 달린 것처럼 */
+    left: 0;
+    width: 100%;
+    background: #fdfcf8; /* 미니홈피 본문(공책) 배경색과 동일하게 */
+    border: 1px solid #eee0d0;
+    border-radius: 8px;
+    box-shadow: 2px 4px 10px rgba(0,0,0,0.08);
+    z-index: 9999;
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.search-dropdown.hidden {
+    display: none;
+}
+
+/* 드롭다운 안의 리스트 아이템 */
+.search-item {
+    padding: 10px;
+    border-bottom: 1px dashed #f0eee5; /* 여기도 점선! */
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.search-item:last-child {
+    border-bottom: none;
+}
+.search-item:hover {
+    background: #fceae8; /* 마우스 올리면 분홍색으로 살짝 물듦 */
+}
+.search-item-title {
+    font-family: "Gaegu", cursive;
+    font-size: 15px;
+    font-weight: bold;
+    color: #5a4a3a;
+}
+.search-item-desc {
+    font-size: 12px;
+    color: #a29bfe;
+    margin-top: 2px;
+}

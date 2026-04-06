@@ -86,5 +86,9 @@
   </div>
 </div>
 
+<script>
+  window.appCtx = "${pageContext.request.contextPath}";
+</script>
+<script src="${pageContext.request.contextPath}/js/user/join.js"></script>
 </body>
 </html>

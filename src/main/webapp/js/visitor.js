@@ -1,13 +1,10 @@
-// 현재 페이지 상태 저장
 let globalCurrentPage = 1;
 
-
-// 2. 방명록 작성 (POST 비동기) - 이벤트 위임 방식 사용
+// 1. 방명록 작성 (POST 비동기)
 document.addEventListener("submit", function (e) {
-    // 이벤트가 발생한 대상이 visitorForm일 때만 작동하도록 확인
-    if (e.target && e.target.id === "visitorForm") {
-        e.preventDefault(); // 기본 제출 방지
-        const nameInput = document.getElementById("visitorName");
+    if (e.target && e.target.id === "v-visitor-form") {
+        e.preventDefault();
+        const nameInput = document.getElementById("v-visitor-name");
 
         fetch("visitor", {
             method: "POST",
@@ -18,7 +15,7 @@ document.addEventListener("submit", function (e) {
                 if (response.ok) {
                     nameInput.value = "";
                     fetchVisitors(1);
-                    loadRecentVisitors(); // ⭐️ 작성 성공 시 우측 위젯도 새로고침!
+                    loadRecentVisitors();
                 } else {
                     alert("등록에 실패했습니다.");
                 }
@@ -27,9 +24,8 @@ document.addEventListener("submit", function (e) {
     }
 });
 
-// 3. 방명록 목록 불러오기 (GET 비동기)
+// 2. 방명록 목록 불러오기 (GET 비동기)
 function fetchVisitors(page) {
-    // ⭐️ 수정: ajax=true 대신 reqType=json 사용! 역슬래시(\) 제거!
     fetch(`visitor?reqType=json&p=${page}`)
         .then(response => response.json())
         .then(data => {
@@ -40,32 +36,26 @@ function fetchVisitors(page) {
         .catch(error => console.error("Error:", error));
 }
 
-// 4. 방명록 삭제
+// 3. 방명록 삭제
 function deleteVisitor(vId) {
     if (!confirm('삭제하시겠습니까?')) return;
 
-    // ⭐️ 역슬래시(\) 제거!
-    fetch(`visitorDel?vId=${vId}`, {
-        method: "GET"
-    })
+    fetch(`visitorDel?vId=${vId}`, { method: "GET" })
         .then(response => {
-            if (response.ok) {
-                fetchVisitors(globalCurrentPage);
-            } else {
-                alert("삭제에 실패했습니다.");
-            }
+            if (response.ok) fetchVisitors(globalCurrentPage);
+            else alert("삭제에 실패했습니다.");
         })
         .catch(error => console.error("Error:", error));
 }
 
 // --- UI 함수들 ---
 function renderPosts(visitorList) {
-    const container = document.getElementById("postsContainer");
+    const container = document.getElementById("v-posts-container");
     container.innerHTML = "";
 
     if (!visitorList || visitorList.length === 0) {
         container.innerHTML = `
-            <div class="post-item" style="text-align:center; color:#aaa; padding:100px 0; font-size:20px;">
+            <div class="v-post-item" style="text-align:center; color:#aaa; padding:100px 0; font-size:20px;">
                 아직 다녀간 사람이 없어요. 첫 발도장을 찍어주세요! 😊
             </div>`;
         return;
@@ -79,11 +69,10 @@ function renderPosts(visitorList) {
         else if (v.v_emoji == 3) emoji = '🐱';
         else if (v.v_emoji == 4) emoji = '🐶';
 
-        // ⭐️ v_writer_id(이름) 부분에 cursor:pointer와 onclick 이벤트를 추가했습니다.
         html += `
-            <div class="post-item" style="display:flex; justify-content:space-between; align-items:center; padding:12px 20px; background:#fff; border-radius:10px; border:1px solid #f0eee5; box-shadow: 2px 2px 5px rgba(0,0,0,0.02);">
+            <div class="v-post-item" style="display:flex; justify-content:space-between; align-items:center; padding:12px 20px; background:#fff; border-radius:10px; border:1px solid #f0eee5; box-shadow: 2px 2px 5px rgba(0,0,0,0.02);">
                 <div style="display:flex; align-items:center; gap:15px;">
-                    <span class="moving-emoji" style="font-size: 22px; display: inline-block;">${emoji}</span>
+                    <span class="v-moving-emoji" style="font-size: 22px; display: inline-block;">${emoji}</span>
                     <span style="font-size:18px; color:#5a4a3a;">
                         <strong 
                             style="color:#f2a0a0; cursor:pointer; text-decoration:underline; text-underline-offset: 3px;" 
@@ -103,12 +92,11 @@ function renderPosts(visitorList) {
 }
 
 function renderPaging(visitorList, currentPage) {
-    const container = document.getElementById("pagingContainer");
+    const container = document.getElementById("v-paging-container");
     let html = "";
 
-    // ⭐️ 역슬래시(\) 전부 제거!
     if (currentPage > 1) {
-        html += `<button class="page-btn" onclick="fetchVisitors(${currentPage - 1})" style="background:#fff; border:1px solid #f2c0bd; border-radius:15px; padding:5px 15px; cursor:pointer; font-family:'Gaegu'; color:#8a7a78;">◀ 이전</button>`;
+        html += `<button class="v-page-btn" onclick="fetchVisitors(${currentPage - 1})" style="background:#fff; border:1px solid #f2c0bd; border-radius:15px; padding:5px 15px; cursor:pointer; font-family:'Gaegu'; color:#8a7a78;">◀ 이전</button>`;
     } else {
         html += `<div style="width:70px;"></div>`;
     }
@@ -116,7 +104,7 @@ function renderPaging(visitorList, currentPage) {
     html += `<span style="font-family:'Nanum Pen Script'; color:#8a7a78; font-size:22px;">Page ${currentPage}</span>`;
 
     if (visitorList && visitorList.length === 7) {
-        html += `<button class="page-btn" onclick="fetchVisitors(${currentPage + 1})" style="background:#fff; border:1px solid #f2c0bd; border-radius:15px; padding:5px 15px; cursor:pointer; font-family:'Gaegu'; color:#8a7a78;">다음 ▶</button>`;
+        html += `<button class="v-page-btn" onclick="fetchVisitors(${currentPage + 1})" style="background:#fff; border:1px solid #f2c0bd; border-radius:15px; padding:5px 15px; cursor:pointer; font-family:'Gaegu'; color:#8a7a78;">다음 ▶</button>`;
     } else {
         html += `<div style="width:70px;"></div>`;
     }
@@ -124,41 +112,27 @@ function renderPaging(visitorList, currentPage) {
     container.innerHTML = html;
 }
 
-// 🌊 파도타기 (타인의 미니홈피로 이동) 함수
+// 🌊 파도타기 & 모달 함수들
 function goToMinihome(targetId) {
-    // 상대방의 PK(targetId)가 잘 넘어오는지 확인
-    console.log("이동할 상대방 PK:", targetId);
-
-    // 일단 클릭이 잘 되는지 알림창으로 확인!
-    alert(targetId + "님의 미니홈피로 파도타기 기능을 나중에 연결할 거예요! 🏄‍♂️");
-
-    // 나중에 실제 구현할 때 쓸 코드 예시:
-    // 방법 1. 아예 새 창으로 미니홈피 팝업 띄우기 (싸이월드 감성)
-    // window.open(`/minihome?id=${targetId}`, '_blank', 'width=1000, height=700');
-
-    // 방법 2. 현재 창 안에서 전체 껍데기를 그 사람의 데이터로 갈아끼우기
-    // location.href = `/main?id=${targetId}`;
+    customAlert(targetId + "님의 미니홈피로 파도타기 기능을 나중에 연결할 거예요! 🏄‍♂️");
 }
 
-// 🛠 커스텀 알림창을 띄우는 함수
 function customAlert(message) {
-    // 1. 메시지 내용 집어넣기
-    document.getElementById('customAlertMessage').innerText = message;
-    // 2. 모달창 보이게 하기 (flex로 설정해서 중앙 정렬)
-    document.getElementById('customModal').style.display = 'flex';
+    document.getElementById('v-custom-alert-message').innerText = message;
+    document.getElementById('v-custom-modal').style.display = 'flex';
 }
 
-// 🛠 커스텀 알림창을 닫는 함수
 function closeCustomAlert() {
-    document.getElementById('customModal').style.display = 'none';
+    document.getElementById('v-custom-modal').style.display = 'none';
 }
 
+// 🐾 우측 최근 방문자 로딩 함수
 function loadRecentVisitors() {
     fetch('/visitor?reqType=recent')
         .then(response => response.json())
         .then(data => {
             const listContainer = document.getElementById('v-recent-list');
-            listContainer.innerHTML = ""; // 초기화
+            listContainer.innerHTML = "";
 
             if (data.length === 0) {
                 listContainer.innerHTML = "<li class='v-empty'>아직 다녀간 사람이 없어요.</li>";
@@ -166,9 +140,18 @@ function loadRecentVisitors() {
             }
 
             data.forEach(v => {
+                let emoji = '✨';
+                if (v.v_emoji == 1) emoji = '🐾';
+                else if (v.v_emoji == 2) emoji = '👣';
+                else if (v.v_emoji == 3) emoji = '🐱';
+                else if (v.v_emoji == 4) emoji = '🐶';
+
                 const li = document.createElement('li');
                 li.innerHTML = `
-                    <strong onclick="goToMinihome('${v.v_writer_id}')">${v.v_writer_id}</strong>
+                    <span style="display:flex; align-items:center; gap:5px;">
+                        <span style="font-size: 11px;">${emoji}</span>
+                        <strong onclick="goToMinihome('${v.v_writer_id}')">${v.v_writer_id}</strong>
+                    </span>
                     <span class="v-date-small">${v.v_date}</span>
                 `;
                 listContainer.appendChild(li);
@@ -176,3 +159,8 @@ function loadRecentVisitors() {
         })
         .catch(err => console.error("최근 방문자 로딩 실패:", err));
 }
+
+// 페이지 최초 로드 시 실행
+document.addEventListener("DOMContentLoaded", function() {
+    loadRecentVisitors();
+});

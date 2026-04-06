@@ -1,28 +1,28 @@
 /* =========================================
-   방문자(Visitor) 공통 애니메이션
+   🐾 방문자(Visitor) 공통 애니메이션
    ========================================= */
-@keyframes floatingEmoji {
+@keyframes v-floatingEmoji {
     0% { transform: translateY(0) rotate(0deg); }
     50% { transform: translateY(-5px) rotate(5deg); }
     100% { transform: translateY(0) rotate(0deg); }
 }
 
-.moving-emoji {
+.v-moving-emoji {
     display: inline-block;
     font-size: 22px;
-    animation: floatingEmoji 2s infinite ease-in-out;
+    animation: v-floatingEmoji 2s infinite ease-in-out;
 }
 
 /* 짝수번째 아이콘은 타이틀을 다르게 하여 더 자연스럽게 */
-.post-item:nth-child(even) .moving-emoji {
+.v-post-item:nth-child(even) .v-moving-emoji {
     animation-duration: 2.5s;
     animation-delay: 0.5s;
 }
 
 /* =========================================
-   방문자 작성 영역 (Form)
+   🐾 방문자 작성 영역 (Form)
    ========================================= */
-.vWrite-row {
+.v-write-row {
     display: flex;
     gap: 15px;
     margin-bottom: 20px;
@@ -37,9 +37,9 @@
 }
 
 /* =========================================
-   페이징 & 버튼 스타일
+   🐾 페이징 & 버튼 스타일
    ========================================= */
-.paging-box {
+.v-paging-box {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -47,7 +47,7 @@
     padding: 0 10px;
 }
 
-.page-btn {
+.v-page-btn {
     background: #ffffff;
     border: 1px solid #f2c0bd;
     border-radius: 20px;
@@ -60,15 +60,15 @@
     transition: all 0.2s;
 }
 
-.page-btn:hover {
+.v-page-btn:hover {
     background: #fceae8;
     transform: translateY(-1px);
 }
 
 /* =========================================
-   우측 컬럼: 최근 방문자 위젯 (Widget)
+   🐾 우측 컬럼: 이전 위젯 스타일 (백업용)
    ========================================= */
-.visitor-widget {
+.v-visitor-widget {
     width: 180px;
     background: #ffffff;
     border: 1px solid #f2c0bd;
@@ -80,23 +80,14 @@
     margin-bottom: 10px;
 }
 
-.widget-title {
-    font-family: "Nanum Pen Script", cursive;
-    font-size: 18px;
-    color: #8a7a78;
-    border-bottom: 1px dashed #f2c0bd;
-    padding-bottom: 5px;
-    margin-bottom: 8px;
-}
-
-.widget-list {
+.v-widget-list {
     display: flex;
     flex-direction: column;
     gap: 5px;
     margin-bottom: 10px;
 }
 
-.widget-item {
+.v-widget-item {
     display: flex;
     justify-content: space-between;
     font-size: 13px;
@@ -104,7 +95,7 @@
     padding: 2px 0;
 }
 
-.w-name {
+.v-w-name {
     font-weight: bold;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -112,12 +103,12 @@
     max-width: 80px;
 }
 
-.w-date {
+.v-w-date {
     font-size: 11px;
     color: #c0b0a0;
 }
 
-.visitor-btn-wrap {
+.v-visitor-btn-wrap {
     background: #fceae8;
     border-radius: 8px;
     padding: 6px;
@@ -126,11 +117,11 @@
     transition: background 0.2s;
 }
 
-.visitor-btn-wrap:hover {
+.v-visitor-btn-wrap:hover {
     background: #f7cfcd;
 }
 
-.visitor-text {
+.v-visitor-text {
     font-family: "Nanum Pen Script", cursive;
     font-size: 15px;
     color: #8a7a78;
@@ -138,9 +129,10 @@
 }
 
 /* =========================================
-   페이지별 특수 예외 처리
+   🐾 페이지별 특수 예외 처리 (수정 금지)
    ========================================= */
 /* 방문자 페이지일 때 공책 왼쪽 선 제거 및 스크롤 제어 */
+/* 주의: .notebook은 인덱스 뼈대 클래스이므로 v-를 붙이지 않습니다 */
 .notebook.is-visitor::before {
     display: none !important;
 }
@@ -150,55 +142,57 @@
     padding-bottom: 10px;
     overflow-y: hidden;   /* 페이징을 위해 세로 스크롤 숨김 */
 }
-/* 🌊 모달 전체를 덮는 투명 배경 */
-.modal-overlay {
+
+/* =========================================
+   💌 방명록 모달창 (Modal)
+   ========================================= */
+.v-modal-overlay {
     position: fixed;
     top: 0; left: 0;
     width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.4); /* 배경 딤 처리 */
-    display: none; /* 평소에는 숨김 */
+    background: rgba(0, 0, 0, 0.4);
+    display: none;
     align-items: center; justify-content: center;
-    z-index: 10000; /* 가장 위에 띄우기 */
+    z-index: 10000;
 }
 
-/* 💌 모달 콘텐츠 박스 (미니홈피 스타일) */
-.modal-content {
+.v-modal-content {
     background: #fff;
     width: 320px;
-    border: 3px dotted #f2c0bd; /* 싸이월드 도트 테두리 */
+    border: 3px dotted #f2c0bd;
     border-radius: 15px;
-    box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.05); /* 소소한 그림자 */
-    animation: modalPop 0.3s ease; /* 나타날 때 팝! 애니메이션 */
+    box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.05);
+    animation: v-modalPop 0.3s ease;
 }
 
-/* 팝 애니메이션 정의 */
-@keyframes modalPop {
+@keyframes v-modalPop {
     from { transform: scale(0.8); opacity: 0; }
     to { transform: scale(1); opacity: 1; }
 }
 
-/* 💖 모달 헤더 */
-.modal-header {
+.v-modal-header {
     padding: 10px 15px;
-    border-bottom: 2px dashed #f0eee5; /* 대시 점선 */
+    border-bottom: 2px dashed #f0eee5;
     display: flex; justify-content: space-between; align-items: center;
 }
-.modal-header h3 {
+
+.v-modal-header h3 {
     margin: 0;
     font-family: 'Gaegu', cursive;
     color: #f2a0a0;
     font-size: 20px;
 }
-.close-modal {
+
+.v-close-modal {
     font-size: 28px;
     cursor: pointer;
     color: #aaa;
     font-weight: bold;
 }
-.close-modal:hover { color: #ff9999; }
 
-/* 💖 모달 바디 */
-.modal-body {
+.v-close-modal:hover { color: #ff9999; }
+
+.v-modal-body {
     padding: 25px 20px;
     text-align: center;
     font-family: 'Gaegu', cursive;
@@ -207,15 +201,13 @@
     line-height: 1.5;
 }
 
-/* 💖 모달 푸터 (버튼 영역) */
-.modal-footer {
+.v-modal-footer {
     padding: 10px;
     text-align: center;
     border-top: 2px dashed #f0eee5;
 }
 
-/* 💖 확인 버튼 (기존 '다녀감' 버튼 스타일 응용) */
-.modal-btn {
+.v-modal-btn {
     padding: 6px 25px;
     background: linear-gradient(135deg, #fceae8, #f7cfcd);
     border: 1px solid #f2c0bd;
@@ -227,11 +219,15 @@
     font-size: 16px;
     transition: all 0.2s;
 }
-.modal-btn:hover {
+
+.v-modal-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 3px 5px rgba(0,0,0,0.1);
 }
-/* 🐾 방문자 위젯 전체 박스 */
+
+/* =========================================
+   🐾 우측 컬럼: 신규 통합 방문자 위젯
+   ========================================= */
 .v-recent-widget {
     background: #fff;
     border: 2px dotted #f2c0bd;
@@ -239,10 +235,9 @@
     padding: 12px 10px;
     margin-bottom: 15px;
     font-family: 'Gaegu', cursive;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.03); /* 귀여운 그림자 */
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.03);
 }
 
-/* 위젯 제목 (방문자) */
 .v-widget-title {
     font-size: 15px;
     color: #f2a0a0;
@@ -250,15 +245,14 @@
     margin-bottom: 8px;
     border-bottom: 1px dashed #f0eee5;
     padding-bottom: 5px;
-    text-align: center; /* 가운데 정렬 */
+    text-align: center;
 }
 
-/* 최근 방문자 리스트 */
 #v-recent-list {
     list-style: none;
     padding: 0;
-    margin: 0 0 10px 0; /* 아래쪽 버튼과의 간격 */
-    min-height: 50px; /* 로딩 중 찌그러짐 방지 */
+    margin: 0 0 10px 0;
+    min-height: 50px;
 }
 
 #v-recent-list li {
@@ -291,7 +285,6 @@
     justify-content: center !important;
 }
 
-/* 🐾 박스 안으로 쏙 들어간 버튼 */
 .v-widget-btn {
     text-align: center;
     background: #fdf8f7;
@@ -303,7 +296,7 @@
 }
 
 .v-widget-btn:hover {
-    background: #fceae8; /* 마우스 올리면 살짝 진해짐 */
+    background: #fceae8;
 }
 
 .v-btn-text {

@@ -1,5 +1,8 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-         pageEncoding="UTF-8" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+
+
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -12,12 +15,14 @@
     <script src="https://npmcdn.com/flatpickr/dist/l10n/ko.js"></script>
 
     <%-- CSS --%>
+
     <link rel="stylesheet" href="css/index.css"/>
     <link rel="stylesheet" href="css/music.css">
     <link rel="stylesheet" href="css/visitor.css"/>
     <link rel="stylesheet" href="css/guestboard.css"/>
     <link rel="stylesheet" href="css/diary.css"/>
     <link rel="stylesheet" href="css/main.css"/>
+
 
     <%-- JS --%>
     <script src="js/guestboard.js"></script>
@@ -34,6 +39,7 @@
     <div class="desk-surface">
         <%-- ══ 왼쪽: 프로필 + 메뉴 + 색연필통 ══ --%>
         <div class="left-col">
+
             <div class="profile">
                 <div class="profile-card">
                     <div class="profile-photo">🌬️</div>
@@ -71,6 +77,7 @@
                         </div>
                     </div>
                 </div>
+
             </div>
 
             <div class="pencil-jar-wrap">
@@ -196,26 +203,21 @@
                 ></div>
             </div>
 
-            <%-- 방문자 보기도 iframe 방식으로 --%>
-            <div
-              class="phone-home"
-              data-src="/bgm?ajax=true"
-              style="cursor: pointer"
-            ></div>
-          </div>
+        <%-- 방문자 보기도 iframe 방식으로 --%>
 
-          <div class="v-recent-widget">
+        <div class="v-recent-widget">
             <div class="v-widget-title">방문자</div>
 
             <ul id="v-recent-list">
-              <li class="v-empty">불러오는 중...</li>
+                <li class="v-empty">불러오는 중...</li>
             </ul>
 
             <div class="v-widget-btn" onclick="loadPage('visitor/visitor.jsp')">
-              <span class="v-btn-text">방문자 보기 ▶</span>
+                <span class="v-btn-text">방문자 보기 ▶</span>
             </div>
-          </div>
+        </div>
 
+        </div>
         <div class="postit">
             오늘도<br/>몽글몽글한<br/>하루 보내장🌤<br/>
             <span style="font-size: 12px; color: #8a8030">— 2026.03.31</span>

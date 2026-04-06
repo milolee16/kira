@@ -300,7 +300,7 @@ public class UserDAO {
                 session.setAttribute("loginUserNickname", rs.getString("u_nickname"));
                 session.setAttribute("loginUserEmail", rs.getString("u_email"));
 
-                return json(true, "로그인 성공", "/");
+                return json(true, "로그인 성공", "/main");
             }
 
             return json(false, "아이디 또는 비밀번호가 올바르지 않습니다.");

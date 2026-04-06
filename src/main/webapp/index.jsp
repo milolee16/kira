@@ -23,8 +23,7 @@ pageEncoding="UTF-8" %>
     <script src="js/diary.js"></script>
     <script src="js/index.js"></script>
     <script src="js/visitor.js"></script>
-    <script defer src="/js/minihome.js"></script>
-    <script defer src="/js/ajax.js"></script>
+<%--    <script defer src="/js/ajax.js"></script>--%>
     <script defer src="js/main.js"></script>
 
     <title>Team Kira - Minihompy</title>
@@ -119,7 +118,7 @@ pageEncoding="UTF-8" %>
             </div>
             <div
               class="nb-tab ${content eq 'photo/photo.jsp' ? 'active' : ''}"
-              data-src="/photo?ajax=true"
+              data-src="photo/photo.jsp"
             >
               사진첩
             </div>
@@ -221,6 +220,7 @@ pageEncoding="UTF-8" %>
     <script src="${pageContext.request.contextPath}/js/music/player.js"></script>
     <script src="${pageContext.request.contextPath}/js/music/router.js"></script>
     <script src="${pageContext.request.contextPath}/js/music/bgm-index.js"></script>
+    <script src="${pageContext.request.contextPath}/js/photo.js"></script>
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
       // DOMContentLoaded 후 초기화

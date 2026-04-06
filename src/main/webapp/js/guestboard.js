@@ -1,7 +1,7 @@
 // 방명록 데이터 불러오기 함수
 function loadGuestBoard(date = "") {
     const gbUrl = date ? `/board?date=${date}` : `/board`;
-
+    console.log(gbUrl);
     fetch(gbUrl)
         .then(response => response.json())
         .then(showGB => {

@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // 2. 메뉴/탭 버튼 클릭 이벤트 등록
     document.querySelectorAll('.menu-item, .nb-tab').forEach(button => {
-        button.addEventListener('click', function() {
+        button.addEventListener('click', function () {
             const targetUrl = this.getAttribute('data-src');
 
             // 클릭한 탭 색상 활성화
@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const correspondingTabs = document.querySelectorAll(`[data-src="${targetUrl}"]`);
             correspondingTabs.forEach(el => el.classList.add('active'));
 
+            console.log(targetUrl);
             loadPage(targetUrl);
         });
     });
@@ -32,9 +33,13 @@ const pageRoutes = {
     "diary.jsp": {
         initFunc: () => loadDiary(),      // (나중에 만들 함수)
         cssClass: ""
+    },
+    "photo.jsp": {
+        initFunc: () => loadPhoto(), // 사진첩 로드 후 실행할 초기화 함수 (필요시)
+        cssClass: "is-photo"
+        // 페이지가 늘어나면 여기에 한 줄씩만 추가하면 끝!
     }
-    // 페이지가 늘어나면 여기에 한 줄씩만 추가하면 끝!
-};
+}
 
 // 화면 갈아끼우기 함수
 function loadPage(url) {
@@ -72,26 +77,29 @@ function loadPage(url) {
         .catch(error => console.error("페이지 로드 실패:", error));
 }
 
-<<<<<<< HE
 // index.jsp 하단 script 부분 혹은 index.js
 document.querySelectorAll('.menu-item, .nb-tab').forEach(tab => {
-    tab.addEventListener('click', function() {
+    tab.addEventListener('click', function () {
         const target = this.getAttribute('data-src');
 
         if (target.includes('diary')) {
             loadDiary(); // 다이어리 비동기 로드 함수 호출
         } else if (target.includes('board')) {
             loadGuestBoard(); // f팀원분이 만든 방명록 함수 호출
+        } else if(target.includes('photo')){
+            loadPhoto();
         }
-        // ... 다른 메뉴 처리
+    });
+});
+// ... 다른 메뉴 처리
 //=============================================================================================
 // 검색창 js 인데 수정할거 !!
 //=============================================================================================
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     const searchInput = document.getElementById('live-search-input');
     const searchDropdown = document.getElementById('search-dropdown');
 
-    searchInput.addEventListener('input', function() {
+    searchInput.addEventListener('input', function () {
         const keyword = searchInput.value.trim();
 
         if (keyword === "") {
@@ -102,13 +110,13 @@ document.addEventListener("DOMContentLoaded", function() {
 
         // 🚨 임시 테스트용 더미 데이터
         const dummyData = [
-            { pk: "user1", nick: "동민", name: "김동민", title: "동민이의 소소한 일상" },
-            { pk: "user2", nick: "코딩요정", name: "박자바", title: "버그 없는 청정구역" }
+            {pk: "user1", nick: "동민", name: "김동민", title: "동민이의 소소한 일상"},
+            {pk: "user2", nick: "코딩요정", name: "박자바", title: "버그 없는 청정구역"}
         ];
 
         renderDropdown(dummyData);
     });
-
+});
     function renderDropdown(users) {
         searchDropdown.innerHTML = '';
 
@@ -132,9 +140,8 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // 다른 곳 클릭하면 드롭다운 닫기
-    document.addEventListener('click', function(e) {
-        if (!searchInput.contains(e.target) && !searchDropdown.contains(e.target)) {
-            searchDropdown.classList.add('hidden');
-        }
-    });
-});
+    // document.addEventListener('click', function (e) {
+    //     if (!searchInput.contains(e.target) && !searchDropdown.contains(e.target)) {
+    //         searchDropdown.classList.add('hidden');
+    //     }
+    // });

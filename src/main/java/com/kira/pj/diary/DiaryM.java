@@ -47,10 +47,10 @@ public class DiaryM {
         String mode = req.getParameter("mode");
 
         if ("write".equals(mode)) {
-            req.setAttribute("showMode", "write");
+            req.setAttribute("showMode", "write"); // 글쓰기 모드
             req.setAttribute("selectedDay", d);
         } else if (d != null) {
-            req.setAttribute("showMode", "list");
+            req.setAttribute("showMode", "list"); // 날짜별 일기 목록 모드
             req.setAttribute("selectedDay", d);
 
             // DB 대신 사용할 임시 데이터
@@ -58,7 +58,7 @@ public class DiaryM {
             posts.add(curYear + "년 " + (curMonth+1) + "월 " + d + "일의 첫 기록");
             req.setAttribute("posts", posts);
         } else {
-            req.setAttribute("showMode", "calendar");
+            req.setAttribute("showMode", "calendar"); // 그냥 기본 달력 모드
 
         }
     }

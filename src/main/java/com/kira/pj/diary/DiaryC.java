@@ -22,7 +22,7 @@ public class DiaryC extends HttpServlet {
         response.setContentType("application/json; charset=UTF-8");
 
         DiaryM.getCalendar(request);
-        request.getRequestDispatcher("/diary/diary.jsp").forward(request, response);
+        request.getRequestDispatcher("diary/diary.jsp").forward(request, response);
 
     }
 

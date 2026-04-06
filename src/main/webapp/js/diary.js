@@ -23,22 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-// ⭐ 1. 라우터 맵: 어떤 페이지에서 어떤 함수/디자인을 쓸지 한곳에 정리합니다.
-const pageRoutes = {
-  "board.jsp": {
-    initFunc: () => loadGuestBoard(),
-    cssClass: "", // 특별한 CSS가 필요 없으면 빈칸
-  },
-  "visitor.jsp": {
-    initFunc: () => fetchVisitors(1), // (나중에 만들 함수)
-    cssClass: "is-visitor", // 방문자 전용 CSS 클래스
-  },
-  "diary.jsp": {
-    initFunc: () => loadDiary(), // (나중에 만들 함수)
-    cssClass: "",
-  },
-  // 페이지가 늘어나면 여기에 한 줄씩만 추가하면 끝!
-};
+
 
 // 화면 갈아끼우기 함수
 function loadPage(url) {

@@ -1,4 +1,4 @@
-package com.kira.pj.main;
+package com.kira.pj.search;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -7,12 +7,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet(name = "Home", value = "/home")
-public class Home extends HttpServlet {
+@WebServlet(name = "SearchC", value = "/search-users")
+public class SearchC extends HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-       HomeDAO.mainCheck(request, response);
-       request.getRequestDispatcher("main.jsp").forward(request, response);
+        response.setContentType("application/json;charset=UTF-8");
+
+        response.getWriter().println(SearchDAO.searchUsers(request));
+
 
     }
 

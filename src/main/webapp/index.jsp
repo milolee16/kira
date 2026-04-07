@@ -15,6 +15,14 @@
     <script src="https://npmcdn.com/flatpickr/dist/l10n/ko.js"></script>
 
     <%-- CSS --%>
+<<<<<<< HEAD
+    <link rel="stylesheet" href="css/index.css" />
+    <link rel="stylesheet" href="css/visitor.css" />
+    <link rel="stylesheet" href="css/guestboard.css" />
+    <link rel="stylesheet" href="css/diary.css" />
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/search.css" />
+=======
 
     <link rel="stylesheet" href="css/index.css"/>
     <link rel="stylesheet" href="css/music.css">
@@ -27,6 +35,7 @@
 
 
 
+>>>>>>> 9318867042de181002389cf7fc7c8f9226ee87dc
 
     <%-- JS --%>
     <script src="js/guestboard.js"></script>
@@ -112,6 +121,18 @@
                 class="notebook ${content eq 'board/board.jsp' ? 'is-visitor' : ''}"
                 id="notebook"
         >
+<<<<<<< HEAD
+          <div class="notebook-header">
+            <h2> <span id="host-title"> 📖 Team Kira의 소소한 일상</span></h2>
+            <div class="mini-search-wrapper">
+              <input
+                type="text"
+                id="live-search-input"
+                placeholder="이름, 닉네임 검색 🌊"
+                autocomplete="off"
+              />
+              <span class="search-icon">🔍</span>
+=======
             <div class="notebook-header">
                 <h2>📖 Team Kira의 소소한 일상</h2>
                 <div class="mini-search-wrapper">
@@ -122,6 +143,7 @@
                             autocomplete="off"
                     />
                     <span class="search-icon">🔍</span>
+>>>>>>> 9318867042de181002389cf7fc7c8f9226ee87dc
 
                     <div id="search-dropdown" class="search-dropdown hidden"></div>
                 </div>

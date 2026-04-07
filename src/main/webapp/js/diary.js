@@ -1,3 +1,5 @@
+<<<<<<< HEAD
+=======
 document.addEventListener("DOMContentLoaded", function () {
   // 1. 처음 켜졌을 때 메인 화면(main.jsp) 로드
   loadPage("main.jsp");
@@ -58,6 +60,7 @@ function loadPage(url) {
     })
     .catch((error) => console.error("페이지 로드 실패:", error));
 }
+>>>>>>> 9318867042de181002389cf7fc7c8f9226ee87dc
 
 // 다이어리 내용을 비동기(fetch)로 불러와서 화면을 갈아끼우는 함수
 function loadDiary(url = "/diary?ajax=true") {

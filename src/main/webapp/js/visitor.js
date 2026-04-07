@@ -1,3 +1,10 @@
+<<<<<<< HEAD
+document.addEventListener("DOMContentLoaded", function () {
+
+
+// 현재 페이지 상태 저장
+=======
+>>>>>>> 9318867042de181002389cf7fc7c8f9226ee87dc
 let globalCurrentPage = 1;
 
 // [핵심 추가] 현재 주소창(URL)에서 접속 중인 미니홈피 주인의 식별자를 추출한다.
@@ -42,8 +49,13 @@ document.addEventListener("submit", function (e) {
             .catch(error => console.error("Error:", error));
     }
 });
+<<<<<<< HEAD
+});
+// 3. 방명록 목록 불러오기 (GET 비동기)
+=======
 
 // 2. 방명록 목록 불러오기 (GET 비동기)
+>>>>>>> 9318867042de181002389cf7fc7c8f9226ee87dc
 function fetchVisitors(page) {
     if (!currentOwnerPk) return;
 

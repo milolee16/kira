@@ -6,6 +6,7 @@ import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -82,15 +83,16 @@ public class GuestBoardDAO {
         Connection con = null;
         PreparedStatement ps = null;
         String addHiResult = "{\"result\": \"fail\"}";
+        HttpSession hs = request.getSession();
         try {
             con = DBManager.connect();
             request.setCharacterEncoding("utf-8");
 
 
             String pk = NanoIdUtils.randomNanoId(NanoIdUtils.DEFAULT_NUMBER_GENERATOR, NanoIdUtils.DEFAULT_ALPHABET, 15);
-            String guest_pk = "2";
+            String guest_pk = (String) hs.getAttribute("loginUserId");
             String host_id = "2";
-            String guest_nick = "test2";
+            String guest_nick = (String) hs.getAttribute("loginUserNickname");
             String board_content = request.getParameter("content");
             int is_private = 0;
 

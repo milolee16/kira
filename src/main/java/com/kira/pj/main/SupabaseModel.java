@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Properties;
 import java.util.UUID;
 
 public class SupabaseModel {
@@ -16,7 +17,12 @@ public class SupabaseModel {
         String fileUrl = null;
         try {
             InputStream is = req.getServletContext().getResourceAsStream("/WEB-INF/config.properties");
-            String bucket = "upload/photo";
+            Properties props = new Properties();
+            props.load(is);
+
+            String supabaseUrl = props.getProperty("supabase.url");
+            String apiKey = props.getProperty("supabase.key");
+            String bucket = props.getProperty("supabase.bucket");
 
             // 1️⃣ 클라이언트가 보낸 파일 가져오기
             Part filePart = req.getPart("file"); // input 태그 name과 동일
@@ -31,12 +37,8 @@ public class SupabaseModel {
 
             // 3️⃣ UUID 기반 랜덤 파일명 + 확장자
             String fileName = UUID.randomUUID().toString().split("-")[0] + ext;
-
             // 4️⃣ Supabase Storage URL 및 인증
-            String supabaseUrl = "";
-            String apiKey = "";
             URL url = new URL(supabaseUrl + "/storage/v1/object/" + bucket + "/" + fileName);
-
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setDoOutput(true);
             conn.setRequestMethod("POST"); // PUT 필수

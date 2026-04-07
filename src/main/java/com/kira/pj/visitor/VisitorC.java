@@ -7,6 +7,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -24,13 +25,19 @@ public class VisitorC extends HttpServlet {
         String pStr = request.getParameter("p");
         int p = (pStr == null) ? 1 : Integer.parseInt(pStr);
 
-        // TODO: 향후 단일 서비스가 아닌 다중 회원 서비스로 확장할 경우,
-        // 하드코딩된 "DongMin"을 request.getParameter("ownerId") 등으로 받아와야 합니다.
-        String ownerId = "DongMin";
+        // [핵심 수정] 하드코딩 제거. 이제 프론트엔드(JS)에서 &ownerPk=XXX 형태로 홈피 주인의 PK를 반드시 보내야 한다.
+        String ownerPk = request.getParameter("ownerPk");
+
+        // 만약 프론트에서 누구의 홈피인지 보내주지 않았다면 에러 처리
+        if (ownerPk == null || ownerPk.trim().isEmpty()) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
 
         if ("json".equals(reqType)) {
             VisitorDAO dao = new VisitorDAO();
-            List<VisitorDTO> list = dao.getVisitorsByPage(ownerId, p);
+            // TODO: DAO의 getVisitorsByPage 메서드도 ownerId 대신 ownerPk를 받도록 수정된 상태여야 함
+            List<VisitorDTO> list = dao.getVisitorsByPage(ownerPk, p);
 
             Map<String, Object> resultMap = new HashMap<>();
             resultMap.put("visitorList", list);
@@ -42,7 +49,7 @@ public class VisitorC extends HttpServlet {
 
         } else if ("recent".equals(reqType)) {
             VisitorDAO dao = new VisitorDAO();
-            List<VisitorDTO> recentList = dao.getRecentVisitors(ownerId);
+            List<VisitorDTO> recentList = dao.getRecentVisitors(ownerPk);
 
             Gson gson = new Gson();
             response.setContentType("application/json; charset=UTF-8");
@@ -50,42 +57,41 @@ public class VisitorC extends HttpServlet {
 
         } else if ("true".equals(ajax)) {
             request.getRequestDispatcher("visitor/visitor.jsp").forward(request, response);
-
         } else {
             request.setAttribute("content", "visitor/visitor.jsp");
             request.getRequestDispatcher("index.jsp").forward(request, response);
         }
     }
 
-    // ... (전략) ...
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         request.setCharacterEncoding("UTF-8");
 
-        String visitorName = request.getParameter("visitorName");
-        String visitorEmojiStr = request.getParameter("visitorEmoji");
-        String ownerId = request.getParameter("ownerId");
+        // 1. [철통 보안] 세션에서 로그인한 사용자의 PK를 꺼낸다.
+        HttpSession session = request.getSession();
+        String writerPk = (String) session.getAttribute("loginUserPk");
 
-        // [추가] 클라이언트의 IP 주소 추출
-        // 로드밸런서나 프록시 환경(Nginx 등)을 거쳐올 경우 X-Forwarded-For 헤더를 확인해야 함
-        String clientIp = request.getHeader("X-Forwarded-For");
-        if (clientIp == null || clientIp.isEmpty() || "unknown".equalsIgnoreCase(clientIp)) {
-            clientIp = request.getRemoteAddr();
+        // 로그인을 안 했거나 세션이 만료된 사용자의 접근 차단 (401 Unauthorized)
+        if (writerPk == null || writerPk.trim().isEmpty()) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().print("로그인이 필요합니다.");
+            return;
         }
 
-        if (visitorName != null && !visitorName.trim().isEmpty() &&
-                visitorEmojiStr != null && ownerId != null) {
+        // 2. 클라이언트에서는 방명록 주인의 PK와 이모지 값만 보내면 된다. (이름, IP 수집 폐기)
+        String ownerPk = request.getParameter("ownerPk");
+        String visitorEmojiStr = request.getParameter("visitorEmoji");
 
+        if (ownerPk != null && !ownerPk.trim().isEmpty() && visitorEmojiStr != null) {
             try {
                 int emojiInt = Integer.parseInt(visitorEmojiStr);
 
                 VisitorDTO dto = new VisitorDTO();
-                dto.setV_writer_id(visitorName.trim());
-                dto.setV_owner_id(ownerId);
+                dto.setV_writer_pk(writerPk); // 세션에서 꺼낸 확실한 내 신분증
+                dto.setV_owner_pk(ownerPk);   // 누구의 홈피에 글을 남기는지
                 dto.setV_emoji(emojiInt);
-                dto.setV_ip(clientIp); // [추가] DTO에 IP 세팅
 
                 VisitorDAO dao = new VisitorDAO();
                 int result = dao.upsertVisitor(dto);
@@ -102,6 +108,8 @@ public class VisitorC extends HttpServlet {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
         } else {
+            // 필수 파라미터 누락
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
-    }}
+    }
+}

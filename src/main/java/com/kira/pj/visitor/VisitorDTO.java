@@ -8,12 +8,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 
-
 public class VisitorDTO {
     private int v_id;
-    private String v_writer_id;
-    private String v_owner_id;
+    private String v_writer_pk; // 작성자의 식별자 (userReg의 u_pk)
+    private String v_owner_pk;  // 홈피 주인의 식별자 (userReg의 u_pk)
     private int v_emoji;
     private String v_date;
-    private String v_ip; // [추가] 접속자 IP 저장용
-    }
+}

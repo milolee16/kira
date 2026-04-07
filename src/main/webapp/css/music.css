@@ -228,3 +228,133 @@ body {
 .bgm-track-item.active .bgm-track-duration {
     color: #ee99aa;
 }
+
+/* ── 곡 추가 버튼 행 ── */
+.bgm-add-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2px;
+}
+
+.bgm-add-btn {
+    font-family: "Gaegu", cursive;
+    font-size: 13px;
+    color: #c07878;
+    background: linear-gradient(135deg, #fceae8, #f7cfcd);
+    border: 1px solid #f2c0bd;
+    border-radius: 20px;
+    padding: 4px 14px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+}
+
+.bgm-add-btn:hover {
+    background: linear-gradient(135deg, #f7cfcd, #ee99aa33);
+    transform: scale(1.04);
+}
+
+/* ── 트랙 삭제 버튼 ── */
+.bgm-track-delete {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1px solid #f2c0bd;
+    background: transparent;
+    color: #d0a0a0;
+    font-size: 13px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.15s, background 0.15s;
+}
+
+.bgm-track-item:hover .bgm-track-delete {
+    opacity: 1;
+}
+
+.bgm-track-delete:hover {
+    background: #fceae8;
+    color: #ee6680;
+    border-color: #ee99aa;
+}
+
+/* ── 모달 ── */
+.bgm-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(120, 90, 80, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+}
+
+.bgm-modal {
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px 20px;
+    width: 280px;
+    border: 1px solid #eee0d0;
+    box-shadow: 4px 6px 20px rgba(120, 100, 80, 0.12);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.bgm-modal-title {
+    font-family: "Nanum Pen Script", cursive;
+    font-size: 20px;
+    color: #8a7a78;
+}
+
+.bgm-modal-input {
+    font-family: "Gaegu", cursive;
+    font-size: 14px;
+    border: 1px solid #eee0d0;
+    border-radius: 8px;
+    padding: 8px 12px;
+    outline: none;
+    color: #5a4a3a;
+    transition: border-color 0.15s;
+}
+
+.bgm-modal-input:focus {
+    border-color: #f2c0bd;
+}
+
+.bgm-modal-btns {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.bgm-modal-cancel,
+.bgm-modal-submit {
+    font-family: "Gaegu", cursive;
+    font-size: 14px;
+    border-radius: 20px;
+    padding: 5px 16px;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.bgm-modal-cancel {
+    background: transparent;
+    border: 1px solid #eee0d0;
+    color: #b0a090;
+}
+
+.bgm-modal-cancel:hover { background: #f5f0eb; }
+
+.bgm-modal-submit {
+    background: linear-gradient(135deg, #fceae8, #f7cfcd);
+    border: 1px solid #f2c0bd;
+    color: #c07878;
+}
+
+.bgm-modal-submit:hover { background: linear-gradient(135deg, #f7cfcd, #ee99aa55); }

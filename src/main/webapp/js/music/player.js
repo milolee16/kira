@@ -13,12 +13,14 @@ window.ytPlayer = null;
 window.fetchDone = false;
 window.apiReady = false;
 window.playerReady = false;
+window.isDefaultPlaylist = true;
 
 const dummyPlaylist = [
-    { title: 'heavy day', youtubeId: 'aPE5UUCPHyY', duration: 258, trackOrder: 1 },
+    { title: 'Extras', youtubeId: 'MgWVEKk-KUY', duration: 338, trackOrder: 1 },
     { title: 'Needygirl Overdose', youtubeId: 'BnkhBwzBqlQ', duration: 214, trackOrder: 2 },
     { title: '차가운 상어 아가씨', youtubeId: 'wZlv3qDPfjk', duration: 155, trackOrder: 3 },
     { title: '처형박수 (Execution Clap)', youtubeId: 'YcxhmHEykPg', duration: 194, trackOrder: 4 },
+    { title: 'Legend-Changer', youtubeId: 'Kpf2mmyzuMM', duration: 241, trackOrder: 5 },
 ];
 
 function formatTime(sec) {
@@ -145,31 +147,43 @@ function initPlayer() {
 function loadPlaylist(userId) {
 
     currentIndex = restoreCurrentIndex(playlist.length);
-
-    // 비로그인시 더미트랙
-    if (!userId) {
+/*
+    // 1) 비로그인 사용자 → 기본 재생목록
+    if (!userId || userId.trim() === '') {
         playlist = dummyPlaylist;
-        currentIndex =  restoreCurrentIndex(dummyPlaylist.length);  //playlist 확정 후 복원
+        window.isDefaultPlaylist = true;
+        currentIndex = restoreCurrentIndex(dummyPlaylist.length); // playlist 확정 후 복원
         fetchDone = true;
         if (apiReady) initPlayer();
         return;
     }
-
-    // 실제 DB 연동 시:
-    fetch('/api/bgm?userId=' + userId)
+*/
+    // 2) 로그인 사용자 → 무조건 DB 조회
+    fetch('/api/bgm')
         .then(r => r.json())
         .then(tracks => {
-            playlist = tracks;
-            currentIndex = restoreCurrentIndex(playlist.length); //track확정 후 복원
+            // 3) DB에 재생목록이 0개면 기본 재생목록
+            if (!tracks || tracks.length === 0) {
+                playlist = dummyPlaylist;
+                window.isDefaultPlaylist = true;
+                currentIndex = restoreCurrentIndex(dummyPlaylist.length);
+            } else {
+                // 4) DB에 내 곡이 있으면 개인 재생목록
+                playlist = tracks;
+                window.isDefaultPlaylist = false;
+                currentIndex = restoreCurrentIndex(tracks.length);
+            }
+
             fetchDone = true;
             if (apiReady) initPlayer();
         })
         .catch(err => {
             console.error('플레이리스트 로드 실패:', err);
 
-            // DB 연동 실패 시 더미로 폴백
+            // 5) DB 조회 실패 시 기본 재생목록으로 폴백
             playlist = dummyPlaylist;
-            currentIndex = restoreCurrentIndex(dummyPlaylist.length);   //폴백 후 복원
+            window.isDefaultPlaylist = true;
+            currentIndex = restoreCurrentIndex(dummyPlaylist.length);
             fetchDone = true;
             if (apiReady) initPlayer();
         });
@@ -187,8 +201,8 @@ if (window.YT && window.YT.Player) {
 }
 
 // ── 페이지 이탈 직전 현재 곡/재생 위치 저장 ──────────────────────
-window.addEventListener('pageshow', function (event){
-    if (event.persisted){
+window.addEventListener('pageshow', function (event) {
+    if (event.persisted) {
         playerReady = false;
         ytPlayer = null;
 

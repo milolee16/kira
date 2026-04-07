@@ -4,7 +4,7 @@ pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html>
 <head>
-    <title>미니홈피 홈</title>
+    <title>test-title</title>
 </head>
 <body>
 <div class="nb-body home-wrapper">
@@ -13,7 +13,7 @@ pageEncoding="UTF-8" %>
         <div class="status-left">
             <span class="d-day">✈️ 도쿄 출국 D-100</span>
             <div class="home-status-msg">
-                <span id="status-text">요즘 코딩이 제일 재밌어요! 💻✨</span>
+                <span id="status-text">test-message</span>
                 <button onclick="editStatus()" class="status-edit-btn">[수정]</button>
             </div>
             <div class="post-text">
@@ -25,7 +25,7 @@ pageEncoding="UTF-8" %>
     </div>
 
     <div class="home-visual">
-        <span class="visual-placeholder">(예쁜 미니룸 이미지나 커버 사진)</span>
+        <span class="visual-placeholder">${searchMain.main_img}</span>
 
         <div onclick="toggleLike()" class="like-btn">
             <span id="like-icon">🤍</span>
@@ -48,7 +48,7 @@ pageEncoding="UTF-8" %>
 
         <div class="home-qna">
             <h3 class="qna-title">🎲 오늘의 문답</h3>
-            <p class="qna-question">Q. 타임머신을 타고 갈 수 있다면?</p>
+            <p class="qna-question">Q. ${question}</p>
 
             <div class="qna-input-area">
                 <textarea id="qna-answer" placeholder="다이어리에 기록해 보세요! ✏️"></textarea>

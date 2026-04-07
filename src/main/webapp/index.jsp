@@ -1,8 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-
-
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -15,19 +12,13 @@
     <script src="https://npmcdn.com/flatpickr/dist/l10n/ko.js"></script>
 
     <%-- CSS --%>
-
-    <link rel="stylesheet" href="css/index.css"/>
-    <link rel="stylesheet" href="css/music.css">
-    <link rel="stylesheet" href="css/visitor.css"/>
-    <link rel="stylesheet" href="css/guestboard.css"/>
-    <link rel="stylesheet" href="css/diary.css"/>
-    <link rel="stylesheet" href="css/main.css"/>
-        <link rel="stylesheet" href="css/user/loginbox.css"
-
-
-
-
-
+    <link rel="stylesheet" href="css/index.css" />
+    <link rel="stylesheet" href="css/visitor.css" />
+    <link rel="stylesheet" href="css/guestboard.css" />
+    <link rel="stylesheet" href="css/diary.css" />
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/search.css" />
+        <link rel="stylesheet" href="css/user/loginbox.css"/>
     <%-- JS --%>
     <script src="js/guestboard.js"></script>
     <script src="js/diary.js"></script>
@@ -88,7 +79,7 @@
                         </div>
                         <div
                                 class="menu-item ${content eq 'board/board.jsp' ? 'active' : ''}"
-                                data-src="${pageContext.request.contextPath}/bgm?ajax=true"
+                                data-src="${pageContext.request.contextPath}/board/board.jsp"
                         >
                             방명록
                         </div>
@@ -112,16 +103,18 @@
                 class="notebook ${content eq 'board/board.jsp' ? 'is-visitor' : ''}"
                 id="notebook"
         >
-            <div class="notebook-header">
-                <h2>📖 Team Kira의 소소한 일상</h2>
-                <div class="mini-search-wrapper">
-                    <input
-                            type="text"
-                            id="live-search-input"
-                            placeholder="이름, 닉네임 검색 🌊"
-                            autocomplete="off"
-                    />
-                    <span class="search-icon">🔍</span>
+
+          <div class="notebook-header">
+            <h2> <span id="host-title"> 📖 Team Kira의 소소한 일상</span></h2>
+            <div class="mini-search-wrapper">
+              <input
+                type="text"
+                id="live-search-input"
+                placeholder="이름, 닉네임 검색 🌊"
+                autocomplete="off"
+              />
+              <span class="search-icon">🔍</span>
+
 
                     <div id="search-dropdown" class="search-dropdown hidden"></div>
                 </div>
@@ -214,7 +207,7 @@
                     <a id="yt-link" href="#" target="_blank" class="phone-yt-link"
                     >▶ YouTube에서 보기</a
                     >
-                    <div id="bgm-title-phone" style="cursor: pointer">♪ 곡 제목</div>
+                    <div class="text" id="bgm-title-phone" style="cursor: pointer">♪ 곡 제목</div>
                 </div>
                 <div
                         class="phone-home"

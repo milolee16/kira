@@ -78,11 +78,11 @@
                             <div class="post-item">
                                 <div style="display:flex; justify-content:space-between; border-bottom:1px dashed #eee; padding-bottom:10px; margin-bottom:10px;">
                                         <%-- ★ ${p} 대신 진짜 제목을 꺼냅니다 --%>
-                                    <span style="font-weight:bold; font-size:22px; color:#555;">${p.d_title}</span>
+                                    <span style="font-weight:bold; font-size:22px; color:#555;">${p.title}</span>
                                     <span style="font-size:14px; color:#bbb;">${curYear}.${curMonth}.${selectedDay}</span>
                                 </div>
                                     <%-- ★ 가짜 내용 지우고 진짜 내용 출력! 줄바꿈 유지 CSS 추가 --%>
-                                <div style="font-size:18px; color:#666; line-height:1.6; white-space: pre-wrap;">${p.d_txt}</div>
+                                <div style="font-size:18px; color:#666; line-height:1.6; white-space: pre-wrap;">${p.txt}</div>
                             </div>
                         </c:forEach>
                     </div>

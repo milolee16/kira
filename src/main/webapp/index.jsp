@@ -137,7 +137,7 @@
                 </div>
                 <div
                         class="nb-tab ${content eq 'diary/diary.jsp' ? 'active' : ''}"
-                        data-src="/diary?ajax=true"
+                        data-src="diary/diary.jsp"
                 >
                     다이어리
                 </div>

@@ -14,7 +14,7 @@ public class SMainVO {
     private String st_message;
     private String my_img;
     private String main_img;
-
+    private String st_date;
 
     public String toJSON() {
         Gson gson = new Gson();

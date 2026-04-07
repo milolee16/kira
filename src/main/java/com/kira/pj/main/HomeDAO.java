@@ -11,16 +11,6 @@ import java.sql.ResultSet;
 
 public class HomeDAO {
     public static void mainCheck(HttpServletRequest request, HttpServletResponse response) {
-        String host_id = request.getParameter("host_id");
-
-        HttpSession hs = request.getSession();
-
-        if(host_id == null) {
-            host_id = (String) hs.getAttribute("loginUserId") ;
-            System.out.println(host_id);
-            request.setAttribute("host_id", host_id);
-        }
-        request.setAttribute("searchMain",SearchDAO.searchMain(request));
 
         Connection con = null;
         PreparedStatement ps = null;

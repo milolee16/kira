@@ -12,6 +12,7 @@ public class SearchC extends HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         response.setContentType("application/json;charset=UTF-8");
+
         response.getWriter().println(SearchDAO.searchUsers(request));
 
 

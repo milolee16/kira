@@ -1,5 +1,7 @@
 package com.kira.pj.search;
 
+import com.google.gson.Gson;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -12,7 +14,9 @@ public class SearchMainC extends HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         response.setContentType("application/json;charset=UTF-8");
-        response.getWriter().println(SearchDAO.searchMain(request));
+        Gson gson = new Gson();
+        String jsonRes = gson.toJson(SearchDAO.searchMain(request));
+        response.getWriter().println(jsonRes);
 
 
     }

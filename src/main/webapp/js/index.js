@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 .then(response => response.json())
                 .then(showSearchR => {
                     searchDropdown.innerHTML = ''; // 그리기 전에 깔끔하게 도화지 비우기
-
+                    console.log(showSearchR)
                     // 검색 결과가 0명일 때
                     if (showSearchR.length === 0) {
                         searchDropdown.innerHTML = `<div style="padding:15px; text-align:center; color:#c0b0a0; font-family:'Gaegu', cursive; font-size:14px;">결과가 없어요! 😢</div>`;
@@ -111,7 +111,7 @@ const pageRoutes = {
 function loadPage(url) {
     if (!url) return;
 
-    fetch(url)
+   return fetch(url)
         .then(response => response.text())
         .then(htmlData => {
             // 1. 도화지에 가져온 HTML 껍데기 넣기
@@ -138,31 +138,37 @@ function loadPage(url) {
         .catch(error => console.error("페이지 로드 실패:", error));
 }
 
-function goSearchMain(id , nick){
+function goSearchMain(id, nick) {
     // 1. 클릭하는 순간 거추장스러운 검색 드롭다운 창 숨기기
     document.getElementById('search-dropdown').classList.add('hidden');
     document.getElementById('live-search-input').value = ''; // 검색어 비우기
-
+    console.log(id);
     const searchUrl = `/search-main?host_id=${id}`;
     fetch(searchUrl)
         .then(response => response.json())
-        .then(searchData =>{
+        .then(searchData => {
+            console.log(searchData);
 
             // 왼쪽 프로필 이름 변경
             document.querySelector('.profile-name').innerText = nick;
 
             // 상단 미니홈피 제목 변경 (예: 📖 김동민의 소소한 일상)
-            const titleElement = document.querySelector('.notebook-header h2');
-            if(titleElement) titleElement.innerText = `📖 ${searchData.hompy_title}`;
+            const titleElement = document.querySelector('#host-title');
+            if (titleElement) titleElement.innerText = `${searchData.hompy_title}`;
 
-            // 왼쪽 프로필 상태메시지 변경
-            const moodElement = document.querySelector('.profile-mood');
-            if(moodElement) {
-                moodElement.innerHTML = `${searchData.st_message} <br>
-                                         <span style="font-size: 11px; color: #c0b0a0">since 2026</span>`;
+
+            // 왼쪽 프로필 상태메시지  변경
+            const stElement = document.querySelector('#status-text');
+
+            if (stElement) {
+                stElement.innerHTML = `${searchData.st_message}`;
+            }
+            const stDate = document.querySelector(".status-since")
+            if (searchData.st_date) {
+                // "2026-03-31" 에서 앞 4글자("2026")만 자름!
+                stDate.innerHTML = `${searchData.st_date.substring(0, 4)}`;
             }
 
-            loadPage(`/home?ajax=true&host_id=${id}`);
         })
         .catch(error => console.error("파도타기 데이터 로드 실패:", error));
 }

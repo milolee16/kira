@@ -46,12 +46,13 @@ public class SearchDAO {
         return null;
     }
 
-    public static ArrayList<String> searchMain(HttpServletRequest request) {
+    public static SMainVO searchMain(HttpServletRequest request) {
 
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
         String host_id = request.getParameter("host_id");
+
         String sql = "select * from main_test where host_id = ?";
         try {
             con = DBManager.connect();
@@ -59,7 +60,7 @@ public class SearchDAO {
             ps.setString(1, host_id);
             rs = ps.executeQuery();
             SMainVO main = null;
-            ArrayList<String> searchMain = new ArrayList<>();
+
             if (rs.next()) {
                 main = new SMainVO();
                 main.setHost_id(rs.getString("host_id"));
@@ -67,10 +68,11 @@ public class SearchDAO {
                 main.setSt_message(rs.getString("st_message"));
                 main.setMy_img(rs.getString("my_img"));
                 main.setMain_img(rs.getString("main_img"));
+                main.setSt_date(rs.getString("st_date"));
+                System.out.println(main);
 
-                searchMain.add(main.toJSON());
             }
-            return searchMain;
+            return main;
 
         }catch (Exception e){
             e.printStackTrace();

@@ -26,7 +26,7 @@ document.getElementById("visitorForm").addEventListener("submit", function (e) {
         })
         .catch(error => console.error("Error:", error));
 });
-
+});
 // 3. 방명록 목록 불러오기 (GET 비동기)
 function fetchVisitors(page) {
     // ⭐️ 수정: ajax=true 대신 reqType=json 사용! 역슬래시(\) 제거!
@@ -138,4 +138,3 @@ function goToMinihome(targetId) {
     // 방법 2. 현재 창 안에서 전체 껍데기를 그 사람의 데이터로 갈아끼우기
     // location.href = `/main?id=${targetId}`;
 }
-});

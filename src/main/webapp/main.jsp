@@ -4,7 +4,7 @@ pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html>
 <head>
-    <title>${searchMain.hompy_title}</title>
+    <title>test-title</title>
 </head>
 <body>
 <div class="nb-body home-wrapper">
@@ -13,7 +13,7 @@ pageEncoding="UTF-8" %>
         <div class="status-left">
             <span class="d-day">✈️ 도쿄 출국 D-100</span>
             <div class="home-status-msg">
-                <span id="status-text">${searchMain.st_message}</span>
+                <span id="status-text">test-message</span>
                 <button onclick="editStatus()" class="status-edit-btn">[수정]</button>
             </div>
             <div class="post-text">

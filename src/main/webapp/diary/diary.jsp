@@ -12,7 +12,7 @@
                     <button onclick="loadDiary('diary?y=${curYear}&m=${curMonth}&d=${selectedDay}')" class="write-btn">취소</button>
                 </div>
 
-                <form action="diary.write" method="post" style="display: flex; flex-direction: column; gap: 15px;">
+                <form id="diaryWriteForm" style="display: flex; flex-direction: column; gap: 15px;">
                     <input type="hidden" name="d_year" value="${curYear}">
                     <input type="hidden" name="d_month" value="${curMonth}">
                     <input type="hidden" name="d_date" value="${selectedDay}">
@@ -22,7 +22,10 @@
                         <%-- 💡 나중에 이 부분을 지우고 네이버 스마트 에디터를 넣으시면 됩니다! --%>
                     <textarea name="d_txt" placeholder="내용을 입력하세요..." style="width:100%; height:250px; border:none; padding:15px; font-family:'Gaegu'; font-size:20px; outline:none; resize:none; box-sizing: border-box;"></textarea>
 
-                    <div style="text-align:right;"><button class="write-btn">등록하기</button></div>
+                    <div style="text-align:right;">
+                            <%-- ★ 핵심: type="button"으로 바꾸고, 자바스크립트 함수(submitDiaryForm)를 연결합니다! --%>
+                        <button type="button" class="write-btn" onclick="submitDiaryForm()">등록하기</button>
+                    </div>
                 </form>
             </div>
         </c:when>
@@ -74,12 +77,12 @@
                         <c:forEach var="p" items="${posts}">
                             <div class="post-item">
                                 <div style="display:flex; justify-content:space-between; border-bottom:1px dashed #eee; padding-bottom:10px; margin-bottom:10px;">
-                                    <span style="font-weight:bold; font-size:22px; color:#555;">${p}</span>
+                                        <%-- ★ ${p} 대신 진짜 제목을 꺼냅니다 --%>
+                                    <span style="font-weight:bold; font-size:22px; color:#555;">${p.d_title}</span>
                                     <span style="font-size:14px; color:#bbb;">${curYear}.${curMonth}.${selectedDay}</span>
                                 </div>
-                                <div style="font-size:18px; color:#666; line-height:1.6;">
-                                    오늘의 일기 본문 내용입니다.
-                                </div>
+                                    <%-- ★ 가짜 내용 지우고 진짜 내용 출력! 줄바꿈 유지 CSS 추가 --%>
+                                <div style="font-size:18px; color:#666; line-height:1.6; white-space: pre-wrap;">${p.d_txt}</div>
                             </div>
                         </c:forEach>
                     </div>

@@ -5,11 +5,13 @@ CREATE SEQUENCE visitor_seq START WITH 1 INCREMENT BY 1;
 CREATE TABLE visitor_log
 (
     v_id        NUMBER PRIMARY KEY,
-    v_writer_id VARCHAR2(50) NOT NULL,
-    v_owner_id  VARCHAR2(50) NOT NULL,
+    v_writer_id VARCHAR2(50)  NOT NULL,
+    v_owner_id  VARCHAR2(50)  NOT NULL,
     v_emoji     NUMBER DEFAULT 1,
     v_date      DATE   DEFAULT SYSDATE
 );
+
+ALTER TABLE visitor_log ADD (v_ip VARCHAR2(100));
 
 -- 1. 첫 번째 방문자
 INSERT INTO visitor_log (v_writer_id, v_owner_id, v_emoji)

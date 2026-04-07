@@ -16,5 +16,8 @@ public class DiaryDTO {
     private String d_title;
     private String d_txt;
     private Date d_created_at;
+
+    public void setD_date(String formattedDate) {
+    }
 }
 

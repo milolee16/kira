@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 
 
@@ -22,6 +22,10 @@
     <link rel="stylesheet" href="css/guestboard.css"/>
     <link rel="stylesheet" href="css/diary.css"/>
     <link rel="stylesheet" href="css/main.css"/>
+        <link rel="stylesheet" href="css/user/loginbox.css"
+
+
+
 
 
     <%-- JS --%>
@@ -37,17 +41,30 @@
 <body>
 <div class="desk-wrapper">
     <div class="desk-surface">
+
+        <!-- 로그인 박스 -->
+        <div class="top-login-box">
+            <div class="top-login-name">${sessionScope.loginUserNickname}님</div>
+            <div class="top-login-text">환영합니다 🌷</div>
+
+            <div class="top-login-btns">
+                <a href="${pageContext.request.contextPath}/mypage" class="top-login-btn">마이페이지</a>
+                <a href="${pageContext.request.contextPath}/logout" class="top-login-btn logout">로그아웃</a>
+            </div>
+        </div>
+
         <%-- ══ 왼쪽: 프로필 + 메뉴 + 색연필통 ══ --%>
         <div class="left-col">
 
             <div class="profile">
                 <div class="profile-card">
                     <div class="profile-photo">🌬️</div>
-                    <div class="profile-name">DongMin</div>
+                    <div class="profile-name">${sessionScope.loginUserNickname}</div>
                     <div class="profile-mood">
                         햇살 가득한 오후,<br/>기분 좋은 바람... 🍃<br/>
                         <span style="font-size: 11px; color: #c0b0a0">since 2005</span>
                     </div>
+
                 </div>
                 <div class="menu-card">
                     <div class="menu-list">
@@ -181,6 +198,9 @@
                     <div class="mp3-btn" onclick="playNext()">▶▶</div>
                 </div>
             </div>
+
+
+
 
             <!-- 스마트폰 영역 -->
             <div class="smartphone">

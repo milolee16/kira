@@ -215,3 +215,40 @@ input[type="hidden"] {
         width: 100%;
     }
 }
+
+/* 강도 영역 */
+#pw-strength {
+    margin-top: 6px;
+}
+
+.pw-bar {
+    height: 6px;
+    width: 0;
+    border-radius: 6px;
+    background: #eee;
+    transition: all 0.3s ease;
+    margin-bottom: 4px;
+}
+
+.pw-text {
+    font-size: 12px;
+    color: #999;
+}
+
+/* 조건 안내 */
+.pw-hint {
+    font-size: 12px;
+    color: #aaa;
+    margin-top: 4px;
+}
+
+/* 일치 여부 */
+#pw-match-text {
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+/* 상태 색 */
+.weak { background: #ff6b6b; width: 33%; }
+.medium { background: #ffb84d; width: 66%; }
+.strong { background: #4cd964; width: 100%; }

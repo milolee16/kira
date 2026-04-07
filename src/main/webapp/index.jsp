@@ -214,7 +214,7 @@
                     <a id="yt-link" href="#" target="_blank" class="phone-yt-link"
                     >▶ YouTube에서 보기</a
                     >
-                    <div id="bgm-title-phone" style="cursor: pointer">♪ 곡 제목</div>
+                    <div class="text" id="bgm-title-phone" style="cursor: pointer">♪ 곡 제목</div>
                 </div>
                 <div
                         class="phone-home"

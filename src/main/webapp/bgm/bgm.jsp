@@ -29,8 +29,31 @@
         </div>
     </div>
 
-    <div class="bgm-queue-label">🎶 전체 목록</div>
+    <%-- ── 곡 추가 버튼 영역 ── --%>
+    <div class="bgm-add-row">
+        <span class="bgm-queue-label">재생목록</span>
+        <br>
+        <button class="bgm-add-btn" id="bgm-add-btn" title="곡 추가">
+            ＋ 곡 추가
+        </button>
+    </div>
+
+    <%-- ── 재생목록 ── --%>
     <div id="bgm-queue-list"></div>
+
+    <%-- ── 곡 추가 모달 ── --%>
+    <div id="bgm-modal-overlay" class="bgm-modal-overlay" style="display:none;">
+        <div class="bgm-modal">
+            <div class="bgm-modal-title">♪ 곡 추가</div>
+            <input id="bgm-input-id"    class="bgm-modal-input" type="text" placeholder="YouTube ID (예: 5y_KJAg8bHI)">
+            <input id="bgm-input-title" class="bgm-modal-input" type="text" placeholder="곡 제목">
+            <input id="bgm-input-dur"   class="bgm-modal-input" type="number" placeholder="재생시간 (초)">
+            <div class="bgm-modal-btns">
+                <button class="bgm-modal-cancel" id="bgm-modal-cancel">취소</button>
+                <button class="bgm-modal-submit" id="bgm-modal-submit">추가</button>
+            </div>
+        </div>
+    </div>
 
 </div>
 

@@ -15,16 +15,25 @@ window.apiReady = false;
 window.playerReady = false;
 
 const dummyPlaylist = [
-    {title: 'wake me up - avicii', youtubeId: '5y_KJAg8bHI', duration: 251, trackOrder: 1},
-    {title: 'Needygirl Overdose', youtubeId: 'BnkhBwzBqlQ', duration: 214, trackOrder: 2},
-    {title: '차가운 상어 아가씨', youtubeId: 'wZlv3qDPfjk', duration: 155, trackOrder: 3},
-    {title: '처형박수 (Execution Clap)', youtubeId: 'YcxhmHEykPg', duration: 194, trackOrder: 4},
+    { title: 'heavy day', youtubeId: 'aPE5UUCPHyY', duration: 258, trackOrder: 1 },
+    { title: 'Needygirl Overdose', youtubeId: 'BnkhBwzBqlQ', duration: 214, trackOrder: 2 },
+    { title: '차가운 상어 아가씨', youtubeId: 'wZlv3qDPfjk', duration: 155, trackOrder: 3 },
+    { title: '처형박수 (Execution Clap)', youtubeId: 'YcxhmHEykPg', duration: 194, trackOrder: 4 },
 ];
 
 function formatTime(sec) {
     const m = Math.floor(sec / 60);
     const s = Math.floor(sec % 60);
     return m + ':' + String(s).padStart(2, '0');
+}
+
+function saveCurrentIndex() {
+    localStorage.setItem('bgmCurrentIndex', String(currentIndex));
+}
+
+function restoreCurrentIndex(playlistLength) {
+    const saved = parseInt(localStorage.getItem('bgmCurrentIndex') || '0', 10);
+    return Math.min(saved, playlistLength - 1)
 }
 
 // ── index.jsp 미니플레이어 UI 갱신 ──────────────────────────────
@@ -61,13 +70,14 @@ function notifyBgmFrame() {
     }
 }
 
-// ── 재생 제어 (bgm.js에서도 window.playTrack으로 호출) ──
+// ── 재생 제어 (bgm.js에서도 window.playTrack으로 호출) ───────────
 function playTrack(index) {
     if (!playerReady) return;
     currentIndex = index;
     ytPlayer.loadVideoById(playlist[currentIndex].youtubeId);
     updateIndexNowPlaying();
     notifyBgmFrame();
+    saveCurrentIndex();
 }
 
 function playNext() {
@@ -76,6 +86,7 @@ function playNext() {
     ytPlayer.loadVideoById(playlist[currentIndex].youtubeId);
     updateIndexNowPlaying();
     notifyBgmFrame();
+    saveCurrentIndex();
 }
 
 function playPrev() {
@@ -84,10 +95,12 @@ function playPrev() {
     ytPlayer.loadVideoById(playlist[currentIndex].youtubeId);
     updateIndexNowPlaying();
     notifyBgmFrame();
+    saveCurrentIndex();
 }
 
 function togglePlay() {
-    if (!playerReady) return;  // ✅ 핵심 수정
+    if (!playerReady || !ytPlayer || typeof ytPlayer.getPlayerState !== 'function')
+        return;  // ✅ 핵심 수정
     ytPlayer.getPlayerState() === YT.PlayerState.PLAYING
         ? ytPlayer.pauseVideo()
         : ytPlayer.playVideo();
@@ -97,22 +110,31 @@ function togglePlay() {
 function initPlayer() {
     if (!playlist.length || !apiReady) return;
 
+    // ✅ 이전 플레이어 잔재 제거
+    const holder = document.getElementById('yt-player-hidden');
+    if (holder) holder.innerHTML = '';
+    ytPlayer = null;
+    playerReady = false;
+
     ytPlayer = new YT.Player('yt-player-hidden', {
-        width: '0', height: '0',
+        width: '0',
+        height: '0',
         videoId: playlist[currentIndex].youtubeId,
-        playerVars: {autoplay: 1, controls: 0, rel: 0, playsinline: 1},
+        playerVars: { autoplay: 1, controls: 0, rel: 0, playsinline: 1 },
         events: {
             onReady: (event) => {
                 playerReady = true;
-                event.target.playVideo();  // ✅ onReady 안에서 명시적으로 playVideo() 호출
+                event.target.playVideo();
                 updateIndexNowPlaying();
                 setInterval(updateIndexNowPlaying, 1000);
                 notifyBgmFrame();
             },
             onStateChange: (e) => {
                 if (e.data === YT.PlayerState.ENDED) playNext();
+
                 const btn = document.getElementById('bgm-toggle');
                 if (btn) btn.textContent = e.data === YT.PlayerState.PLAYING ? '⏸' : '▶';
+
                 notifyBgmFrame();
             }
         }
@@ -122,30 +144,32 @@ function initPlayer() {
 // ── 플레이리스트 로드 ─────────────────────────────────────────
 function loadPlaylist(userId) {
 
+    currentIndex = restoreCurrentIndex(playlist.length);
+
     // 비로그인시 더미트랙
     if (!userId) {
         playlist = dummyPlaylist;
-        currentIndex = 0;
+        currentIndex =  restoreCurrentIndex(dummyPlaylist.length);  //playlist 확정 후 복원
         fetchDone = true;
         if (apiReady) initPlayer();
         return;
     }
 
     // 실제 DB 연동 시:
-
     fetch('/api/bgm?userId=' + userId)
         .then(r => r.json())
         .then(tracks => {
             playlist = tracks;
-            currentIndex = 0;
+            currentIndex = restoreCurrentIndex(playlist.length); //track확정 후 복원
             fetchDone = true;
             if (apiReady) initPlayer();
         })
         .catch(err => {
             console.error('플레이리스트 로드 실패:', err);
+
             // DB 연동 실패 시 더미로 폴백
             playlist = dummyPlaylist;
-            currentIndex = 0;
+            currentIndex = restoreCurrentIndex(dummyPlaylist.length);   //폴백 후 복원
             fetchDone = true;
             if (apiReady) initPlayer();
         });
@@ -157,12 +181,43 @@ window.onYouTubeIframeAPIReady = function () {
     if (fetchDone) initPlayer();
 };
 
-// playTrack(0) 호출 금지 — initPlayer → onReady에서 자동 시작
+// ✅ API가 이미 로드된 상태면 직접 호출
+if (window.YT && window.YT.Player) {
+    window.onYouTubeIframeAPIReady();
+}
 
+// ── 페이지 이탈 직전 현재 곡/재생 위치 저장 ──────────────────────
+window.addEventListener('pageshow', function (event){
+    if (event.persisted){
+        playerReady = false;
+        ytPlayer = null;
+
+        if (fetchDone && apiReady) {
+            initPlayer();
+        }
+    }
+});
+
+// playTrack(0) 호출 금지 — initPlayer → onReady에서 자동 시작
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
         loadPlaylist(loginUserId);
+
+        // ✅ 이전/다음 버튼 연결
+        const prevBtn = document.getElementById('bgm-prev');
+        const nextBtn = document.getElementById('bgm-next');
+
+        if (prevBtn) prevBtn.addEventListener('click', playPrev);
+        if (nextBtn) nextBtn.addEventListener('click', playNext);
+
     });
 } else {
     loadPlaylist(loginUserId);
+
+    // ✅ 이전/다음 버튼 연결
+    const prevBtn = document.getElementById('bgm-prev');
+    const nextBtn = document.getElementById('bgm-next');
+
+    if (prevBtn) prevBtn.addEventListener('click', playPrev);
+    if (nextBtn) nextBtn.addEventListener('click', playNext);
 }

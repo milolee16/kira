@@ -4,12 +4,26 @@ let globalCurrentPage = 1;
 document.addEventListener("submit", function (e) {
     if (e.target && e.target.id === "v-visitor-form") {
         e.preventDefault();
+
         const nameInput = document.getElementById("v-visitor-name");
+        const emojiSelect = document.getElementById("v-visitor-emoji"); // 추가된 요소
+
+        if (!nameInput.value.trim()) {
+            alert("이름을 입력해주세요.");
+            return;
+        }
+
+        // 서버로 전송할 데이터 묶음
+        const requestData = new URLSearchParams({
+            visitorName: nameInput.value,
+            visitorEmoji: emojiSelect ? emojiSelect.value : "1", // 이모지 선택값 추출
+            ownerId: "DongMin" // 주의: 향후 다중 사용자 지원 시 동적으로 변경해야 함
+        });
 
         fetch("visitor", {
             method: "POST",
             headers: {"Content-Type": "application/x-www-form-urlencoded"},
-            body: new URLSearchParams({visitorName: nameInput.value})
+            body: requestData
         })
             .then(response => {
                 if (response.ok) {
@@ -17,7 +31,7 @@ document.addEventListener("submit", function (e) {
                     fetchVisitors(1);
                     loadRecentVisitors();
                 } else {
-                    alert("등록에 실패했습니다.");
+                    alert("등록에 실패했습니다. 서버 오류가 발생했습니다.");
                 }
             })
             .catch(error => console.error("Error:", error));
@@ -126,15 +140,15 @@ function closeCustomAlert() {
     document.getElementById('v-custom-modal').style.display = 'none';
 }
 
-// 🐾 우측 최근 방문자 로딩 함수
+// 🐾 우측 최근 방문자 로딩 함수 (완성)
 function loadRecentVisitors() {
-    fetch('/visitor?reqType=recent')
+    fetch('visitor?reqType=recent')
         .then(response => response.json())
         .then(data => {
             const listContainer = document.getElementById('v-recent-list');
             listContainer.innerHTML = "";
 
-            if (data.length === 0) {
+            if (!data || data.length === 0) {
                 listContainer.innerHTML = "<li class='v-empty'>아직 다녀간 사람이 없어요.</li>";
                 return;
             }
@@ -150,7 +164,7 @@ function loadRecentVisitors() {
                 li.innerHTML = `
                     <span style="display:flex; align-items:center; gap:5px;">
                         <span style="font-size: 11px;">${emoji}</span>
-                        <strong onclick="goToMinihome('${v.v_writer_id}')">${v.v_writer_id}</strong>
+                        <strong style="cursor:pointer;" onclick="goToMinihome('${v.v_writer_id}')">${v.v_writer_id}</strong>
                     </span>
                     <span class="v-date-small">${v.v_date}</span>
                 `;

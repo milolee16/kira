@@ -10,12 +10,10 @@ import lombok.NoArgsConstructor;
 
 
 public class VisitorDTO {
-
-    private int v_id;           // PK (자동증가 NUMBER)
-    private String v_writer_id;  // 작성자 ID (방문한 사람)
-    private String v_owner_id;   // 홈피 주인 ID
-    private int v_emoji;        // 이모지 번호 (NUMBER)
-    private String v_date;      // 방문 날짜 (DATE -> String으로 변환해서 사용)
-
-
-}
+    private int v_id;
+    private String v_writer_id;
+    private String v_owner_id;
+    private int v_emoji;
+    private String v_date;
+    private String v_ip; // [추가] 접속자 IP 저장용
+    }

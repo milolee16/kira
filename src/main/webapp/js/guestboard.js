@@ -1,7 +1,10 @@
 // 방명록 데이터 불러오기 함수
 function loadGuestBoard(date = "") {
 
-    let currentHostId = sessionStorage.getItem("currentHostId") || loginUserId;
+    let currentHostId = sessionStorage.getItem("currentHostId") ;
+    if(currentHostId == null || currentHostId == "null") {
+        currentHostId = loginUserId;
+    }
     const gbUrl = date ? `/board?date=${date}&host_id=${currentHostId}` : `/board?host_id=${currentHostId}`;
 
 
@@ -20,8 +23,8 @@ function loadGuestBoard(date = "") {
                 // 1. 권한 체크 (내 아이디 vs 글쓴이 아이디 / 내 아이디 vs 홈피 주인 아이디)
                 // loginUserId는 index.jsp 맨 아래에 선언해둔 전역 변수를 그대로 씁니다.sessionScope.loginUserId
 
-                const isMyPost = (loginUserId == gb.guest_pk); // 이 글을 내가 썼는가?
-                const isMyHompy = (loginUserId == gb.host_id); // 이 홈피가 내 홈피인가?
+                const isMyPost = (loginUserId === gb.guest_pk); // 이 글을 내가 썼는가?
+                const isMyHompy = (loginUserId === gb.host_id); // 이 홈피가 내 홈피인가?
 
                 // 2. 버튼 HTML을 담을 빈 바구니 준비
                 let editBtnHtml = '';

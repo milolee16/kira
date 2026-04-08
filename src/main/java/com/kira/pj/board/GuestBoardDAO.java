@@ -35,6 +35,9 @@ public class GuestBoardDAO {
         ResultSet rs = null;
         HttpSession hs = request.getSession();
         String host_id = request.getParameter("host_id");
+        if(host_id == null || host_id.isEmpty() || host_id.equals("null")) {
+            host_id = (String) hs.getAttribute("loginUserId");
+        }
 
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd a hh:mm", Locale.KOREAN);

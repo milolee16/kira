@@ -704,11 +704,42 @@ body::after {
     color: #aaa;
 }
 
-#phone-thumb {
-    width: 175px;
+/* index.css */
+
+/* 썸네일 컨테이너: 크기를 여기서 결정하세요 */
+.phone-thumb-wrapper {
+    position: relative;
+    width: 175px;   /* 100px이 작다면 120px~130px로 조절 */
     height: 175px;
+    margin: 0 auto 10px auto;
+    overflow: hidden;
+    border-radius: 12px;
+    background-color: #000;
+
+    /* ✅ 이 3줄이 이미지를 정중앙으로 모셔옵니다 */
+    display: flex !important;
+    align-items: center !important;    /* 수직 중앙 정렬 */
+    justify-content: center !important; /* 수평 중앙 정렬 */
+}
+
+/* 배경 블러 처리 */
+#phone-thumb-blur {
+    position: absolute;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
-    display: block;
+    filter: blur(8px) brightness(0.5);
+    opacity: 0.8;
+}
+
+/* 메인 썸네일: 잘림이 거슬린다면 contain, 꽉 채우고 싶다면 cover */
+#phone-thumb {
+    position: relative;
+    z-index: 1;
+
+    width: 100%;
+    height: 65%;
+    object-fit: cover; /* 영역내에서 꽉차게 */
 }
 
 /* YT IFrame API가 생성하는 iframe */

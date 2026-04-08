@@ -52,6 +52,9 @@ public class SearchDAO {
         PreparedStatement ps = null;
         ResultSet rs = null;
         String host_id = request.getParameter("host_id");
+        if (host_id == null || host_id.isEmpty()) {
+            host_id = (String) request.getAttribute("host_id");
+        }
 
         String sql = "select * from main_test where host_id = ?";
         try {

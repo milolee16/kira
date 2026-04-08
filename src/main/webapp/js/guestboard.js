@@ -1,7 +1,10 @@
 // 방명록 데이터 불러오기 함수
 function loadGuestBoard(date = "") {
-    const gbUrl = date ? `/board?date=${date}` : `/board`;
-    console.log(gbUrl);
+
+    let currentHostId = sessionStorage.getItem("currentHostId") || loginUserId;
+    const gbUrl = date ? `/board?date=${date}&host_id=${currentHostId}` : `/board?host_id=${currentHostId}`;
+
+
     fetch(gbUrl)
         .then(response => response.json())
         .then(showGB => {
@@ -14,18 +17,41 @@ function loadGuestBoard(date = "") {
 
             // 받아온 리스트를 화면에 그리기
             showGB.guestBoards.forEach(gb => {
+                // 1. 권한 체크 (내 아이디 vs 글쓴이 아이디 / 내 아이디 vs 홈피 주인 아이디)
+                // loginUserId는 index.jsp 맨 아래에 선언해둔 전역 변수를 그대로 씁니다.sessionScope.loginUserId
+
+                const isMyPost = (loginUserId == gb.guest_pk); // 이 글을 내가 썼는가?
+                const isMyHompy = (loginUserId == gb.host_id); // 이 홈피가 내 홈피인가?
+
+                // 2. 버튼 HTML을 담을 빈 바구니 준비
+                let editBtnHtml = '';
+                let delBtnHtml = '';
+
+                // 3. 조건에 맞춰 버튼 HTML 채워넣기
+
+                // [수정 버튼] ➡️ 오직 '글쓴이(나)'만 가능
+                if (isMyPost) {
+                    editBtnHtml = `<a href="javascript:void(0);" onclick="gbEditMode('${gb.gboard_pk}', '${gb.board_content}','${showGB.selectedDate}')" class="gbUp">📝</a>`;
+                }
+
+                // [삭제 버튼] ➡️ '글쓴이(나)' 이거나 '홈피 주인(나)'일 때 가능
+                if (isMyPost || isMyHompy) {
+                    delBtnHtml = `<a href="javascript:void(0);" onclick="gbDelete('${gb.gboard_pk}','${showGB.selectedDate}')" class="gbDel">🗑️</a>`;
+                }
+
+                // 4. 완성된 버튼 변수를 템플릿에 쏙 끼워넣기
                 const htmlTemplate = `
-                      <div class="gb-content-row">
-                       <span class="gb-text-part">
-                       <a href="javascript:void(0);" onclick="guestHome('${gb.guest_pk}')" class="gb-user-link" >${gb.guest_nick}</a> : <span id="guestHi_${gb.gboard_pk}"> ${gb.board_content}</span>
-                       </span>
-                             <a href="javascript:void(0);" onclick="gbEditMode('${gb.gboard_pk}', '${gb.board_content}','${showGB.selectedDate}')" class="gbUp">📝</a>
-                             <a href="javascript:void(0);" onclick="gbDelete('${gb.gboard_pk}','${showGB.selectedDate}')" class="gbDel">🗑️</a>
-                      </div>
-                      <div class="gb-created-at">
-                            ${gb.created_at}
-                      </div>
-               `;
+          <div class="gb-content-row">
+           <span class="gb-text-part">
+               <a href="javascript:void(0);" onclick="guestHome('${gb.guest_pk}')" class="gb-user-link" >${gb.guest_nick}</a> : <span id="guestHi_${gb.gboard_pk}"> ${gb.board_content}</span>
+           </span>
+               ${editBtnHtml}
+               ${delBtnHtml}
+          </div>
+          <div class="gb-created-at">
+                ${gb.created_at}
+          </div>
+   `;
                 gbContent.insertAdjacentHTML('beforeend', htmlTemplate);
             })
 
@@ -53,7 +79,6 @@ function initFlatpickr(defaultDate) {
 }
 
 
-// ✅ 이벤트 위임 방식으로 변경! (document 전체를 감시합니다)
 document.addEventListener("submit", function (e) {
     // 폼이 제출되었을 때, 그 폼의 클래스가 'gb-write-form'이 맞는지 확인합니다.
     //다른 페이지에서 무언가 제출이 일어났을 때 이 함수 사용을 막기위한 장치!
@@ -75,7 +100,8 @@ document.addEventListener("submit", function (e) {
         }
         console.log("4. 서버로 fetch 요청 출발합니다!");
 
-        fetch('/board', {
+        let currentHostId = sessionStorage.getItem("currentHostId") || loginUserId;
+        fetch(`/board?host_id=${currentHostId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
@@ -106,85 +132,86 @@ document.addEventListener("submit", function (e) {
 //
 // .then() : 서버에서 작업이 다 끝나고 대답(response)이 돌아왔을 때 실행할 행동입니다. 여기서 새로고침 대신 loadGuestBoard()를 호출해서 새 글이 뿅! 하고 나타나게 만드는 것이 비동기의 묘미입니다.
 
-function gbEditMode(pk,content,date){
-        const updateGB = document.getElementById(`guestHi_${pk}`);
+function gbEditMode(pk, content, date) {
+    const updateGB = document.getElementById(`guestHi_${pk}`);
 
-        updateGB.innerHTML = `
+    updateGB.innerHTML = `
         <input type="text" id="gb_edit_${pk}" value="${content}" class="gb_edit">
         <a href="javascript:void(0);" onclick="updateGuestBoard('${pk}','${date}')" style="font-size:12px; margin-left:5px; color:#a29bfe;">[확인]</a>
         <a href="javascript:void(0);" onclick="loadGuestBoard('${date}')" style="font-size:12px; margin-left:5px; color:#ff7675;">[취소]</a>
         `;
 
-        document.getElementById(`gb_edit_${pk}`).focus();
+    document.getElementById(`gb_edit_${pk}`).focus();
 }
-function updateGuestBoard(pk,date){
+
+function updateGuestBoard(pk, date) {
     const newGB = document.getElementById(`gb_edit_${pk}`).value;
 
-    if(newGB.trim() ===""){
+    if (newGB.trim() === "") {
         alert("수정할 내용을 입력해주세요!");
         return;
     }
 
-    fetch('/updateGB',{
+    fetch('/updateGB', {
         method: 'POST',
         headers: {
-            'Content-Type':'application/x-www-form-urlencoded'
+            'Content-Type': 'application/x-www-form-urlencoded'
         },
         body: new URLSearchParams({
-            pk:pk,
+            pk: pk,
             content: newGB
         })
     })
         .then(response => response.json())
         .then(upGB => {
-            if(upGB.result == "success"){
+            if (upGB.result == "success") {
                 loadGuestBoard(date);
-            }else{
+            } else {
                 alert("방명록 수정에 실패했습니다.");
             }
         })
         .catch(error => console.error("수정 통신 에러:", error));
 }
-function gbDelete(pk, date){
-    fetch('/delGB',{
+
+function gbDelete(pk, date) {
+    fetch('/delGB', {
         method: 'POST',
         headers: {
-            'Content-Type':'application/x-www-form-urlencoded'
+            'Content-Type': 'application/x-www-form-urlencoded'
         },
         body: new URLSearchParams({
-            pk:pk
+            pk: pk
 
         })
     })
         .then(response => response.json())
         .then(delGB => {
-            if(delGB.result == "success"){
+            if (delGB.result == "success") {
                 loadGuestBoard(date);
-            }else{
+            } else {
                 alert("방명록 삭제에 실패했습니다.");
             }
         })
         .catch(error => console.error("수정 통신 에러:", error));
 
 
-
-
 }
-function guestHome(pk){
-    fetch('/guestHome',{
+
+function guestHome(pk) {
+    fetch('/guestHome', {
         method: 'POST',
         headers: {
-            'Content-Type':'application/x-www-form-urlencoded'
+            'Content-Type': 'application/x-www-form-urlencoded'
         },
         body: new URLSearchParams({
             pk: pk
         })
-        })
+    })
         .then(response => response.json())
         .then(guestH => {
-            if(guestH.result == "success"){
+            if (guestH.result == "success") {
                 loadGuestHome(pk);
-            }else{
+            } else {
                 alert("접속 실패!");
             }
         })

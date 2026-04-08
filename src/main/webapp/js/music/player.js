@@ -46,11 +46,17 @@ function updateIndexNowPlaying() {
     const track = playlist[currentIndex];
 
     const phoneThumb = document.getElementById('phone-thumb');
+    const phoneThumbBlur = document.getElementById('phone-thumb-blur'); // ✅ 추가: 배경 블러 요소 참조
     const ytLink = document.getElementById('yt-link');
     const bgmTitleMp3 = document.getElementById('bgm-title-mp3');
     const bgmTitlePhone = document.getElementById('bgm-title-phone');
 
-    if (phoneThumb) phoneThumb.src = 'https://img.youtube.com/vi/' + track.youtubeId + '/mqdefault.jpg';
+    const thumbUrl = 'https://img.youtube.com/vi/' + track.youtubeId + '/mqdefault.jpg';
+
+    // ✅ 썸네일 업데이트 (메인과 배경 둘 다)
+    if (phoneThumb) phoneThumb.src = thumbUrl;
+    if (phoneThumbBlur) phoneThumbBlur.src = thumbUrl; // ✅ 추가: 배경 이미지도 같은 주소로 설정
+
     if (ytLink) ytLink.href = 'https://www.youtube.com/watch?v=' + track.youtubeId;
     if (bgmTitleMp3) bgmTitleMp3.textContent = '♪ ' + track.title;
     if (bgmTitlePhone) bgmTitlePhone.textContent = '♪ ' + track.title;

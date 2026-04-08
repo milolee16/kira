@@ -13,8 +13,8 @@ pageEncoding="UTF-8" %>
         <div class="status-left">
             <span class="d-day">✈️ 도쿄 출국 D-100</span>
             <div class="home-status-msg">
-                <span id="status-text">test-message</span>
-                <button onclick="editStatus()" class="status-edit-btn">[수정]</button>
+                <span id="status-text">${searchMain.st_message}</span>
+                <button onclick="editStatus('${sessionScope.loginUserId}')" class="status-edit-btn">[수정]</button>
             </div>
             <div class="post-text">
               기능 구현 준비 완료! 이 자리에 DB 데이터를 뿌려주세요. 😊

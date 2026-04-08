@@ -49,10 +49,17 @@
 
             <input id="bgm-add-url" class="bgm-modal-input" type="text" placeholder="YouTube URL을 붙여넣어요" />
 
-            <div id="bgm-duration-input-row" style="display:none; margin-top: 15px; margin-bottom: 10px; gap: 8px; justify-content: center; align-items: center; font-family: 'Gaegu', sans-serif;">
-                <span style="font-size: 0.9em; color: #666;">재생 시간:</span>
-                <input id="bgm-input-min" type="number" min="0" placeholder="0" style="width: 45px; padding: 5px; border: 1px solid #ddd; border-radius: 5px; text-align: center;"> 분
-                <input id="bgm-input-sec" type="number" min="0" max="59" placeholder="0" style="width: 45px; padding: 5px; border: 1px solid #ddd; border-radius: 5px; text-align: center;"> 초
+            <div id="bgm-duration-input-row" style="display:none; margin-top: 15px; margin-bottom: 10px; flex-direction: column; gap: 8px; align-items: center; font-family: 'Gaegu', sans-serif;">
+                <div style="display: flex; gap: 8px; justify-content: center; align-items: center;">
+                    <span style="font-size: 0.9em; color: #666;">재생 시간:</span>
+                    <input id="bgm-input-min" type="number" min="0" placeholder="0" style="width: 45px; padding: 5px; border: 1px solid #ddd; border-radius: 5px; text-align: center;"> 분
+                    <input id="bgm-input-sec" type="number" min="0" max="59" placeholder="0" style="width: 45px; padding: 5px; border: 1px solid #ddd; border-radius: 5px; text-align: center;"> 초
+                </div>
+
+                <div style="font-size: 0.85em; color: #88a; background: #f0f7ff; padding: 4px 10px; border-radius: 12px; margin-top: 5px; text-align: center; line-height: 1.4;">
+                    💡 길이를 잘 모르면 1분인 상태로 그냥 추가하셔도 돼요!<br>
+                    재생이 한번 실행된 이후에 자동적으로 맞춰진답니다!
+                </div>
             </div>
 
             <div id="bgm-add-preview" class="bgm-add-preview" style="display:none;">

@@ -236,3 +236,31 @@ function goSearchMain(id, nick) {
             loadPage("main.jsp"); // 에러 나도 화면은 넘겨줌
         });
 }
+
+// ==========================================
+// 4. 조회수(Today/Total) 갱신 함수
+// ==========================================
+function updateHitCount() {
+    const savedOwnerPk = sessionStorage.getItem("currentHostId");
+    const targetOwnerPk = savedOwnerPk ? savedOwnerPk : loginUserPk;
+
+    if (!targetOwnerPk) return;
+
+    // 캐시 방지용 꼬리표
+    const noCache = new Date().getTime();
+    fetch(`/visitor?reqType=hitCount&ownerPk=${targetOwnerPk}&t=${noCache}`)
+        .then(res => {
+            if (!res.ok) throw new Error("서버 응답 오류");
+            return res.json();
+        })
+        .then(data => {
+            // 화면의 숫자를 교체한다!
+            const todayEl = document.getElementById("v-today");
+            const totalEl = document.getElementById("v-total");
+
+            if (todayEl) todayEl.innerText = data.today;
+            if (totalEl) totalEl.innerText = data.total;
+        })
+        .catch(err => console.error("조회수 갱신 실패:", err));
+}
+

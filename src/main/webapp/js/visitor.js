@@ -96,11 +96,8 @@ function loadRecentVisitors() {
 
     if (!currentOwnerPk) return;
 
-    // [핵심 해결책] 브라우저 캐싱 완벽 차단 (Cache Buster)
-    // 브라우저가 서버 몰래 과거 데이터를 보여주는 것을 막기 위해, 매번 바뀌는 현재 시간을 붙인다.
     const noCache = new Date().getTime();
 
-    // fetch URL 끝에 &t=시간 을 붙이고, 헤더에도 캐시 금지 명령을 내린다.
     fetch(`visitor?reqType=recent&ownerPk=${currentOwnerPk}&t=${noCache}`, {
         method: 'GET',
         headers: {
@@ -116,30 +113,33 @@ function loadRecentVisitors() {
 
             if (!data || data.length === 0) {
                 listContainer.innerHTML = "<li class='v-empty'>아직 다녀간 사람이 없어요.</li>";
-                return;
-            }
+            } else {
+                data.forEach(v => {
+                    let emoji = '✨';
+                    if (v.v_emoji == 1) emoji = '🐾';
+                    else if (v.v_emoji == 2) emoji = '👣';
+                    else if (v.v_emoji == 3) emoji = '🐱';
+                    else if (v.v_emoji == 4) emoji = '🐶';
 
-            data.forEach(v => {
-                let emoji = '✨';
-                if (v.v_emoji == 1) emoji = '🐾';
-                else if (v.v_emoji == 2) emoji = '👣';
-                else if (v.v_emoji == 3) emoji = '🐱';
-                else if (v.v_emoji == 4) emoji = '🐶';
-
-                const li = document.createElement('li');
-                li.innerHTML = `
+                    const li = document.createElement('li');
+                    li.innerHTML = `
                     <span style="display:flex; align-items:center; gap:5px;">
                         <span style="font-size: 11px;">${emoji}</span>
                         <strong style="cursor:pointer;" onclick="goSearchMain('${v.v_writer_pk}', '${v.v_writer_nickname}')">${v.v_writer_nickname}</strong>
                     </span>
                     <span class="v-date-small">${v.v_date}</span>
                 `;
-                listContainer.appendChild(li);
-            });
+                    listContainer.appendChild(li);
+                });
+            }
+
+            // 🚨 [핵심 타이밍] 리스트를 화면에 다 그린 직후, 조회수를 갱신하는 방아쇠를 당긴다!
+            if (typeof updateHitCount === "function") {
+                updateHitCount();
+            }
         })
         .catch(err => console.error("최근 방문자 로딩 실패:", err));
 }
-
 // =========================================================================
 // 4. 방명록 삭제 로직
 // =========================================================================
@@ -276,4 +276,5 @@ function vloadPage(url) {
                     <button onclick="loadPage('${url}')">다시 시도</button>
                 </div>`;
         });
+
 }

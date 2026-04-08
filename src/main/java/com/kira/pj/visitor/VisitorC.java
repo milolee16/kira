@@ -76,6 +76,15 @@ public class VisitorC extends HttpServlet {
             response.setContentType("application/json; charset=UTF-8");
             response.getWriter().print(gson.toJson(recentList));
 
+        } else if ("hitCount".equals(reqType)) {
+            // [조회수 요청 처리]
+            VisitorDAO dao = new VisitorDAO();
+            Map<String, Integer> hitCount = dao.getHitCount(ownerPk);
+
+            Gson gson = new Gson();
+            response.setContentType("application/json; charset=UTF-8");
+            response.getWriter().print(gson.toJson(hitCount));
+
         } else if ("true".equals(ajax)) {
             request.getRequestDispatcher("visitor/visitor.jsp").forward(request, response);
         } else {

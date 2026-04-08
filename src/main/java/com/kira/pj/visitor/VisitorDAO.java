@@ -4,7 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.kira.pj.main.DBManager;
 
@@ -43,7 +45,10 @@ public class VisitorDAO {
 
         } catch (Exception e) {
             // 중간에 에러가 나면 데이터를 롤백(취소)하여 DB를 보호한다.
-            try { if (con != null) con.rollback(); } catch (Exception ex) {}
+            try {
+                if (con != null) con.rollback();
+            } catch (Exception ex) {
+            }
             e.printStackTrace();
             throw new RuntimeException("방명록 갱신 오류: " + e.getMessage(), e);
         } finally {
@@ -51,6 +56,7 @@ public class VisitorDAO {
             DBManager.close(null, pstmtDel, null);
         }
     }
+
     // 2. 전체 방문자 목록 조회
     public List<VisitorDTO> getAllVisitors(String ownerPk) {
         Connection con = null;
@@ -187,4 +193,44 @@ public class VisitorDAO {
         }
         return list;
     }
+
+    // 6. 방문자 수 통계 (Today / Total)
+    public Map<String, Integer> getHitCount(String ownerPk) {
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        Map<String, Integer> map = new HashMap<>();
+
+        // 기본값 세팅
+        map.put("today", 0);
+        map.put("total", 0);
+
+        try {
+            con = DBManager.connect();
+
+            // 1. 토탈(Total) 조회: 해당 홈피의 전체 방문 기록 수
+            String sqlTotal = "SELECT COUNT(*) FROM visitor_log WHERE v_owner_pk = ?";
+            pstmt = con.prepareStatement(sqlTotal);
+            pstmt.setString(1, ownerPk);
+            rs = pstmt.executeQuery();
+            if (rs.next()) map.put("total", rs.getInt(1));
+            rs.close();
+            pstmt.close();
+
+            // 2. 투데이(Today) 조회: 해당 홈피의 '오늘' 방문 기록 수
+            String sqlToday = "SELECT COUNT(*) FROM visitor_log WHERE v_owner_pk = ? AND TRUNC(v_date) = TRUNC(SYSDATE)";
+            pstmt = con.prepareStatement(sqlToday);
+            pstmt.setString(1, ownerPk);
+            rs = pstmt.executeQuery();
+            if (rs.next()) map.put("today", rs.getInt(1));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBManager.close(con, pstmt, rs);
+        }
+        return map;
+    }
+
+
 }

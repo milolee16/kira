@@ -118,7 +118,7 @@
 
                     <div id="search-dropdown" class="search-dropdown hidden"></div>
                 </div>
-                <div class="visitor">Today 15 | Total 1,234</div>
+                <div class="visitor">Today <span id="v-today">0</span> | Total <span id="v-total">0</span></div>
             </div>
             <div class="nb-tabs">
                 <div

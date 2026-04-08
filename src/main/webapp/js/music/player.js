@@ -277,7 +277,7 @@ window.addEventListener('pageshow', function (event) {
 // playTrack(0) 호출 금지 — initPlayer → onReady에서 자동 시작
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
-        loadPlaylist(loginUserId);
+        loadPlaylist(window.loginUserId || "");
 
         // ✅ 이전/다음 버튼 연결
         const prevBtn = document.getElementById('bgm-prev');

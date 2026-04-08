@@ -240,6 +240,8 @@
 <script>
     // 로그인 시 u_id, 비로그인 시 null
     const loginUserPk = "${sessionScope.loginUserPk}";
+    // player.js나 다른 JS 파일들이 어떤 이름을 쓰더라도 호환되도록 별칭(Alias) 설정
+    const loginUserId = loginUserPk;
 </script>
 
 <div id="yt-player-hidden" style="display: none"></div>

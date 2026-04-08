@@ -111,25 +111,36 @@ async function deleteTrack(youtubeId) {
     if (!confirm('정말 삭제할까요?')) return;
 
     try {
-        // 서버에 삭제 요청 (DAO에서 삭제 + 재정렬이 일어남)
         const res = await fetch(`/api/bgm?youtubeId=${youtubeId}`, {
             method: 'DELETE'
         });
         const json = await res.json();
 
         if (json.result === 'ok') {
-            // ✅ 핵심: 서버에서 1, 2, 3...으로 재정렬된 목록을 새로 받아옴
-            // 이렇게 해야 '2번'을 지웠을 때 '3번'이었던 곡이 '2번'으로 UI에 그려집니다.
+            // 1. 현재 재생 중인 곡이 삭제 대상인지 확인
+            const currentTrack = window.playlist[window.currentIndex];
+            const isPlayingDeleted = (currentTrack && currentTrack.youtubeId === youtubeId);
+
+            // 2. 서버에서 최신 목록(재정렬된 목록) 다시 가져오기
             await reloadPlaylist();
-        } else {
-            alert(json.msg || '삭제에 실패했습니다.');
+
+            // 3. 만약 재생 중인 곡을 지웠다면?
+            if (isPlayingDeleted) {
+                alert('재생 중인 곡이 삭제되어 다음 곡을 재생합니다.');
+                if (window.playlist.length > 0) {
+                    // 현재 인덱스가 리스트 범위를 벗어나지 않게 조정 후 재생
+                    window.currentIndex = window.currentIndex % window.playlist.length;
+                    playTrack(window.currentIndex);
+                } else {
+                    // 남은 곡이 없으면 플레이어 중지
+                    if (window.ytPlayer) window.ytPlayer.stopVideo();
+                }
+            }
         }
     } catch (e) {
-        console.error("삭제 중 에러 발생:", e);
-        alert('서버와 통신 중 오류가 발생했습니다.');
+        console.error("삭제 중 오류:", e);
     }
 }
-
 // ✅ player.js가 곡을 바꿀 때 호출하는 콜백
 window.onTrackChanged = function(index) {
     updateNowPlaying(window.playlist[index], index);

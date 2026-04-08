@@ -124,11 +124,6 @@ body {
     background: rgba(240,160,160,0.08);
 }
 
-.bgm-track-item.active {
-    background: rgba(240,160,160,0.15);
-    border-color: #f2c0bd;
-}
-
 .bgm-track-thumb {
     width: 48px;
     height: 48px;
@@ -176,11 +171,6 @@ body {
     flex-shrink: 0;
 }
 
-.bgm-track-item.active .bgm-track-num {
-    color: #ee99aa;
-    font-weight: bold;
-}
-
 /* ── 재생 중 애니메이션 ── */
 .bgm-playing-icon {
     display: none;
@@ -192,10 +182,6 @@ body {
 
 .bgm-track-item.active .bgm-playing-icon {
     display: flex;
-}
-
-.bgm-track-item.active .bgm-track-num {
-    display: none;
 }
 
 .bgm-playing-icon span {
@@ -214,19 +200,74 @@ body {
     to   { transform: scaleY(1); }
 }
 
+.bgm-track-item.active .bgm-track-title {
+    font-weight: bold;
+}
+
+/* ── 기본 테마 (더미, 분홍) ── */
+.bgm-wrap.theme-default {
+    --bgm-accent: #ee99aa;
+    --bgm-accent-light: rgba(238,153,170,0.15);
+    --bgm-accent-border: #f2c0bd;
+    --bgm-active-bg: linear-gradient(135deg, rgba(252,234,232,0.6), rgba(247,207,205,0.4));
+    --bgm-label-color: #c07878;
+    --bgm-hint-color: #c8b8a8;
+}
+
+/* ── 개인 테마 (파랑) ── */
+.bgm-wrap.theme-personal {
+    --bgm-accent: #6bb5d6;
+    --bgm-accent-light: rgba(107,181,214,0.15);
+    --bgm-accent-border: #a8d8ea;
+    --bgm-active-bg: linear-gradient(135deg, rgba(220,240,250,0.6), rgba(168,216,234,0.4));
+    --bgm-label-color: #4a90a8;
+    --bgm-hint-color: #8ab8c8;
+}
+
+/* ── 공통 (변수 참조) ── */
 .bgm-track-item.active {
-    background: linear-gradient(135deg, rgba(252,234,232,0.6), rgba(247,207,205,0.4));
-    border-color: #f2c0bd;
-    border-left: 3px solid #ee99aa;  /* 왼쪽 강조선 */
+    background: var(--bgm-active-bg);
+    border-color: var(--bgm-accent-border);
+    border-left: 3px solid var(--bgm-accent);
 }
 
 .bgm-track-item.active .bgm-track-title {
-    color: #c07878;
+    color: var(--bgm-label-color);
     font-weight: bold;
 }
 
 .bgm-track-item.active .bgm-track-duration {
-    color: #ee99aa;
+    color: var(--bgm-accent);
+}
+
+.bgm-track-item.active .bgm-track-num {
+    display: none;
+    font-weight: bold;
+    color: var(--bgm-accent);
+}
+
+.bgm-playing-icon span {
+    background: var(--bgm-accent);
+}
+
+.bgm-queue-status-label {
+    font-family: "Nanum Pen Script", cursive;
+    font-size: 16px;
+    color: var(--bgm-label-color);
+}
+
+.bgm-queue-hint {
+    font-size: 11px;
+    color: var(--bgm-hint-color);
+}
+
+.bgm-queue-count {
+    font-size: 11px;
+    background: var(--bgm-accent-light);
+    color: var(--bgm-accent);
+    padding: 1px 8px;
+    border-radius: 20px;
+    border: 1px solid var(--bgm-accent-border);
 }
 
 /* ── 곡 추가 버튼 행 ── */

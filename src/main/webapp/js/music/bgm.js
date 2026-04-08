@@ -21,9 +21,12 @@ function updateNowPlaying(track, index) {
 
 function renderQueueHeader() {
     const header = document.getElementById('bgm-queue-header');
+    const wrap = document.querySelector('.bgm-wrap');
     if (!header) return;
 
     if (window.isDefaultPlaylist) {
+        wrap.classList.remove('theme-personal');
+        wrap.classList.add('theme-default');
         header.innerHTML = `
             <div class="bgm-queue-status default">
                 <span class="bgm-queue-status-label">🎵 기본 BGM</span>
@@ -31,6 +34,8 @@ function renderQueueHeader() {
             </div>
         `;
     } else {
+        wrap.classList.remove('theme-default');
+        wrap.classList.add('theme-personal');
         header.innerHTML = `
             <div class="bgm-queue-status personal">
                 <span class="bgm-queue-status-label">🎶 내 재생목록</span>

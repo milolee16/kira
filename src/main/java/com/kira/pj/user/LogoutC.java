@@ -8,7 +8,7 @@ import java.io.IOException;
 public class LogoutC extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        UserDAO.DAO.logout(request);
+//        UserDAO.DAO.logout(request);
         response.sendRedirect(request.getContextPath() + "/login");
     }
 }

@@ -318,16 +318,16 @@ body::after {
     overflow: hidden;
 }
 
-.notebook::before {
-    content: "";
-    position: absolute;
-    left: 40px;
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    background: linear-gradient(90deg, #eae5f5, #fff);
-    z-index: 1;
-}
+/*.notebook::before {*/
+/*    content: "";*/
+/*    position: absolute;*/
+/*    left: 40px;*/
+/*    top: 0;*/
+/*    bottom: 0;*/
+/*    width: 2px;*/
+/*    background: linear-gradient(90deg, #eae5f5, #fff);*/
+/*    z-index: 1;*/
+/*}*/
 
 .notebook-header {
     background: linear-gradient(135deg, #fceae8 0%, #f7cfcd 100%);

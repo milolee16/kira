@@ -58,6 +58,7 @@ function fetchVisitors(page) {
             return response.json();
         })
         .then(data => {
+            console.log(data);
             globalCurrentPage = data.currentPage || page;
             renderPosts(data.visitorList);
             renderPaging(data.visitorList, globalCurrentPage);

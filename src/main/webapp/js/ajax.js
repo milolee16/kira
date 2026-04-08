@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const contentToUrl = {
         'main.jsp':            '/home?ajax=true',
         'diary/diary.jsp':     '/diary?ajax=true',
-        'pic/pic.jsp':         '/pic?ajax=true',
+        'photo/photo.jsp':         '/photo?ajax=true',
         'board/board.jsp': '/board?ajax=true',
         'bgm/bgm.jsp':     '/bgm?ajax=true',
     };

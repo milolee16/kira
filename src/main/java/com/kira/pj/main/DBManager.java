@@ -16,10 +16,13 @@ public class DBManager {
         dataSource.setMaxIdle(100);       // 최대 유휴 커넥션
         dataSource.setMaxOpenPreparedStatements(200); // 풀에서 열린 최대 준비된 sql문 개수
 
+
     }
     public static Connection connect() throws SQLException {
+        System.out.println("you?");
         return dataSource.getConnection();
     }
+
 
     public static Connection connection() throws SQLException {
          Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@10.1.82.127:1521:XE", "c##kira", "kira1004");

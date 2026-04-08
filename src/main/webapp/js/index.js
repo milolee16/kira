@@ -102,20 +102,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // ⭐ 라우터 맵: 어떤 페이지에서 어떤 함수/디자인을 쓸지 한 곳에 정리!
 const pageRoutes = {
-  "board.jsp": {
-    initFunc: () => loadGuestBoard(), // 방명록 로드 함수 (나중에 추가)
-    cssClass: "",
-  },
-  "visitor.jsp": {
-    initFunc: () => fetchVisitors(1), // 방문자 로드 함수 (나중에 추가)
-    cssClass: "is-visitor", // 특정 페이지 전용 CSS 클래스
-  },
-  "diary.jsp": {
-    initFunc: () => loadDiary(), // 다이어리 로드 함수 (나중에 추가)
-    cssClass: "",
-  },
-};
-
+    "board.jsp": {
+        initFunc: () => loadGuestBoard(),
+        cssClass: ""               // 특별한 CSS가 필요 없으면 빈칸
+    },
+    "visitor.jsp": {
+        initFunc: () => fetchVisitors(1),    // (나중에 만들 함수)
+        cssClass: "is-visitor"     // 방문자 전용 CSS 클래스
+    },
+    "diary.jsp": {
+        initFunc: () => loadDiary(),      // (나중에 만들 함수)
+        cssClass: ""
+    },
+    "photo.jsp": {
+        initFunc: () => loadPhoto(), // 사진첩 로드 후 실행할 초기화 함수 (필요시)
+        cssClass: "is-photo"
+        // 페이지가 늘어나면 여기에 한 줄씩만 추가하면 끝!
+    }
+}
 // 화면(수첩 속지) 갈아끼우기 함수
 function loadPage(url) {
   if (!url) return;
@@ -167,6 +171,7 @@ function loadPage(url) {
       });
 }
 
+
 function goSearchMain(id, nick) {
   // 1. 클릭하는 순간 거추장스러운 검색 드롭다운 창 숨기기
   document.getElementById("search-dropdown").classList.add("hidden");
@@ -182,7 +187,6 @@ function goSearchMain(id, nick) {
     .then((searchData) => {
       // 왼쪽 프로필 이름 변경
       document.querySelector(".profile-name").innerText = nick;
-
       // 상단 미니홈피 제목 변경 (예: 📖 김동민의 소소한 일상)
       const titleElement = document.querySelector("#host-title");
       if (titleElement) titleElement.innerText = `${searchData.hompy_title}`;

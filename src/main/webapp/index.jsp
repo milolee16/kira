@@ -120,7 +120,6 @@
                 </div>
                 <div class="visitor">Today 15 | Total 1,234</div>
             </div>
-
             <div class="nb-tabs">
                 <div
                         class="nb-tab ${content eq 'main.jsp' ? 'active' : ''}"
@@ -136,7 +135,7 @@
                 </div>
                 <div
                         class="nb-tab ${content eq 'photo/photo.jsp' ? 'active' : ''}"
-                        data-src="/photo?ajax=true"
+                        data-src="photo/photo.jsp"
                 >
                     사진첩
                 </div>
@@ -239,6 +238,7 @@
 </div>
 <div class="desk-front"></div>
 
+
 <script>
     // 로그인 시 u_id, 비로그인 시 null
     const loginUserId = "${not empty sessionScope.loginUser ? sessionScope.loginUser.u_id : ''}";
@@ -248,5 +248,6 @@
 <script src="https://www.youtube.com/iframe_api"></script>
 <script src="js/music/player.js"></script>
 <script src="js/music/router.js"></script>
+<script src="js/photo.js"></script>
 </body>
 </html>

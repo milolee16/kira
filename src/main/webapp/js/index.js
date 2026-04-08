@@ -2,10 +2,19 @@ document.addEventListener("DOMContentLoaded", function () {
     const savedId = sessionStorage.getItem("currentHostId");
     const savedNick = sessionStorage.getItem("currentHostNick");
 
+<<<<<<< HEAD
+  // 메모가 있으면 그 사람 홈피로 다시 돌려놓고, 없으면 내 홈피(main.jsp) 틀어줘
+  if (savedId && savedNick) {
+    goSearchMain(savedId, savedNick);
+  } else {
+    loadPage("/home?ajax=true");
+  }
+=======
     if (savedId && savedNick) {
         goSearchMain(savedId, savedNick);
     } else {
         loadPage("main.jsp"); // 기본 화면 로드
+>>>>>>> 79fef3eff3d517ffccbc6bb85978590fb904a043
 
         // 🚨 [핵심 추가] 초기 진입 시에도 우측 위젯을 즉시 불러오도록 방아쇠를 당긴다.
         if (typeof loadRecentVisitors === "function") {
@@ -198,6 +207,28 @@ function goSearchMain(id, nick) {
     sessionStorage.setItem("currentHostId", id);
     sessionStorage.setItem("currentHostNick", nick);
 
+<<<<<<< HEAD
+    loadPage(`/home?ajax=true&host_id=${id}`);
+  const searchUrl = `/search-main?host_id=${id}`;
+  fetch(searchUrl)
+    .then((response) => response.json())
+    .then((searchData) => {
+
+        // 1) 모든 메뉴와 탭의 불빛(active)을 끕니다.
+        document.querySelectorAll(".menu-item, .nb-tab").forEach((el) => el.classList.remove("active"));
+
+        // ⭐ 2) 수정된 부분: ".menu-item" 뿐만 아니라 ".nb-tab"도 같이 찾아서 불을 켜줍니다!
+        document.querySelectorAll(".menu-item, .nb-tab").forEach(el => {
+            const src = el.getAttribute("data-src");
+            // 주소에 'home'이라는 단어가 포함되어 있으면 무조건 불을 켭니다.
+            if(src && src.includes("home")) {
+                el.classList.add("active");
+            }
+        });
+
+      // 왼쪽 프로필 이름 변경
+      document.querySelector(".profile-name").innerText = nick;
+=======
     const searchUrl = `/search-main?host_id=${id}`;
     fetch(searchUrl)
         .then((response) => response.json())
@@ -206,6 +237,7 @@ function goSearchMain(id, nick) {
             const hostTitle = searchData && searchData.hompy_title ? searchData.hompy_title : `${nick}님의 미니홈피`;
             const stMsg = searchData && searchData.st_message ? searchData.st_message : "반갑습니다!";
             const stYear = (searchData && searchData.st_date) ? searchData.st_date.substring(0, 4) : "2026";
+>>>>>>> 79fef3eff3d517ffccbc6bb85978590fb904a043
 
             const profileName = document.querySelector(".profile-name");
             if (profileName) profileName.innerText = nick;

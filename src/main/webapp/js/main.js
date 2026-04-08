@@ -1,13 +1,49 @@
 // 1. 상태메시지 수정 기능
-function editStatus() {
-    const currentStatus = document.getElementById('status-text').innerText;
-    const newStatus = prompt("새로운 상태 메시지를 입력하세요:", currentStatus);
+function editStatus(host_id) {
+    //기존 정보 저장
+    const stmSpan = document.getElementById("status-text");
+    const originalStm = stmSpan.innerText;
 
-    // 사용자가 취소를 누르지 않았고 빈칸이 아닐 때만 작동
-    if (newStatus !== null && newStatus.trim() !== "") {
-        document.getElementById('status-text').innerText = newStatus;
-        // 추후 fetch로 DB에 상태메시지 수정 내역을 보내세요!
-    }
+    //수정버튼 숨기기
+    const originalEditBtn = document.querySelector(".status-edit-btn");
+    originalEditBtn.style.display = "none";
+
+    //확인 취소 버튼 , 입력창
+    stmSpan.innerHTML = `
+    <input type="text" id="edit-status-input" value="${originalStm}" style="width:150px; font-family:'Gaegu', cursive;">
+    <button id="btn-confirm" class="status-edit-btn">[확인]</button>
+    <button id="btn-cancel" class="status-edit-btn">[취소]</button>
+    `;
+
+    //취소버튼
+    document.getElementById("btn-cancel").addEventListener("click", () => {
+        stmSpan.innerText = originalStm;
+        originalEditBtn.style.display = "inline-block";
+    });
+
+    //확인버튼
+    document.getElementById("btn-confirm").addEventListener("click", () => {
+        const editStM = document.getElementById('edit-status-input').value;
+        if(editStM == originalStm){
+            stmSpan.innerHTML = originalStm;
+            originalEditBtn.style.display = "inline-block";
+            return;
+        }
+        const encodedMsg = encodeURIComponent(editStM);
+        fetch(`/editStMessage?host_id=${host_id}&editStM=${encodedMsg}`)
+            .then(response => response.json())
+            .then(editRes => {
+                stmSpan.innerText = editStM;
+                originalEditBtn.style.display = "inline-block";
+            })
+            .catch(error => {
+                console.error('상태메세지 수정 실패:', error);
+                stmSpan.innerText = originalStm;
+                originalEditBtn.style.display = "inline-block";
+            });
+    })
+
+
 }
 
 // 2. 랜덤 문답 제출 기능

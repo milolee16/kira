@@ -33,6 +33,9 @@ public class GuestBoardDAO {
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
+        HttpSession hs = request.getSession();
+        String host_id = request.getParameter("host_id");
+
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd a hh:mm", Locale.KOREAN);
             String selectedDate = request.getParameter("date");
@@ -43,9 +46,10 @@ public class GuestBoardDAO {
                 selectedDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
             }
 
-            String sql = "select * from guestboard_test where to_char(created_at, 'YYYY-MM-DD') = ? order by created_at desc ";
+            String sql = "select * from guestboard_test where to_char(created_at, 'YYYY-MM-DD') = ? and host_id = ? order by created_at desc ";
             ps = con.prepareStatement(sql);
             ps.setString(1, selectedDate);
+            ps.setString(2, host_id);
             rs = ps.executeQuery();
 
             ArrayList<GuestBoardVO> guestBoards = new ArrayList<>();
@@ -91,7 +95,10 @@ public class GuestBoardDAO {
 
             String pk = NanoIdUtils.randomNanoId(NanoIdUtils.DEFAULT_NUMBER_GENERATOR, NanoIdUtils.DEFAULT_ALPHABET, 15);
             String guest_pk = (String) hs.getAttribute("loginUserId");
-            String host_id = "2";
+            String host_id =  request.getParameter("host_id");
+            if(host_id == null || host_id.isEmpty() || host_id.equals("null")) {
+                host_id = guest_pk; // 주인이 없으면 내 홈피니까 내 아이디로 덮어쓰기!
+            }
             String guest_nick = (String) hs.getAttribute("loginUserNickname");
             String board_content = request.getParameter("content");
             int is_private = 0;

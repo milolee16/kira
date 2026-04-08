@@ -37,11 +37,25 @@
       <div class="form-row">
         <label for="pw">비밀번호</label>
         <input id="pw" type="password" name="pw" required placeholder="비밀번호 입력">
+
+        <!-- 강도 -->
+        <div id="pw-strength">
+          <div class="pw-bar"></div>
+          <span class="pw-text">비밀번호를 입력하세요</span>
+        </div>
+
+        <!-- 조건 -->
+        <div class="pw-hint">
+          8자 이상 / 문자 / 숫자 / 특수문자 포함
+        </div>
       </div>
 
       <div class="form-row">
         <label for="pwChk">비밀번호 확인</label>
         <input id="pwChk" type="password" name="pwChk" required placeholder="비밀번호 다시 입력">
+
+        <!-- 일치 여부 -->
+        <div id="pw-match-text"></div>
       </div>
 
       <div class="form-row">

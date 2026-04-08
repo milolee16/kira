@@ -1,0 +1,232 @@
+body {
+    background: #fdf7f4;
+    font-family: 'Pretendard', sans-serif;
+}
+
+/* 전체 카드 */
+.mypage-container {
+    width: 420px;
+    margin: 70px auto;
+    padding: 30px 28px;
+
+    border-radius: 22px;
+    background: linear-gradient(145deg, #fffaf7, #f8ece7);
+    border: 2px solid #ecd7d1;
+
+    box-shadow:
+            0 10px 22px rgba(0,0,0,0.08),
+            inset 0 1px 0 rgba(255,255,255,0.6);
+
+    transition: all 0.3s ease;
+}
+
+.mypage-container:hover {
+    transform: translateY(-4px);
+    box-shadow:
+            0 14px 28px rgba(0,0,0,0.12),
+            inset 0 1px 0 rgba(255,255,255,0.6);
+}
+
+/* 제목 */
+.mypage-container h2 {
+    text-align: center;
+    margin-bottom: 28px;
+    color: #7b5d57;
+}
+
+/* 정보 영역 */
+.mypage-item {
+    margin-bottom: 18px;
+}
+
+.mypage-item span {
+    font-size: 12px;
+    color: #a1827a;
+}
+
+.mypage-item div {
+    font-size: 17px;
+    font-weight: 700;
+    color: #5f4a45;
+    margin-top: 4px;
+}
+
+/* 구분선 느낌 */
+.mypage-item {
+    padding-bottom: 10px;
+    border-bottom: 1px dashed #ead8d1;
+}
+
+/* 액션 영역 */
+.mypage-actions {
+    margin-top: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+/* 입력창 */
+.mypage-actions input {
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1px solid #e3d4cd;
+    background: #fff;
+    outline: none;
+    transition: 0.2s;
+}
+
+.mypage-actions input:focus {
+    border-color: #eababa;
+    box-shadow: 0 0 0 2px rgba(234,186,186,0.2);
+}
+
+/* 버튼 공통 */
+.mypage-actions button {
+    padding: 11px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+
+    font-weight: 600;
+    font-size: 14px;
+
+    background: linear-gradient(145deg, #f7dede, #efcfcf);
+    color: #6c5555;
+
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    transition: all 0.2s ease;
+}
+
+/* 버튼 hover */
+.mypage-actions button:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(145deg, #f1cfcf, #eababa);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+}
+
+/* 회원탈퇴 버튼 */
+.mypage-actions .danger {
+    background: linear-gradient(145deg, #f3efe9, #e8e1d7);
+    color: #6b625b;
+    border: 1px solid #ddd2c8;
+}
+
+.mypage-actions .danger:hover {
+    background: linear-gradient(145deg, #e9e2d8, #ded4c9);
+}
+
+/* 하단 링크 */
+.mypage-back {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.mypage-back a {
+    text-decoration: none;
+    font-size: 13px;
+    color: #9c8078;
+    transition: 0.2s;
+}
+
+.mypage-back a:hover {
+    color: #7b5d57;
+}
+
+/* 강도 */
+#pw-strength {
+    margin-top: 6px;
+}
+
+.pw-bar {
+    height: 6px;
+    border-radius: 6px;
+    background: #eee;
+    transition: all 0.3s ease;
+    margin-bottom: 4px;
+    width: 0;
+}
+
+.pw-text {
+    font-size: 12px;
+    color: #999;
+}
+
+/* 조건 안내 */
+.pw-hint {
+    font-size: 12px;
+    color: #aaa;
+    margin-top: 4px;
+}
+
+/* 일치 여부 */
+#pw-match-text {
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+/* 상태 색 */
+.weak { background: #ff6b6b; width: 33%; }
+.medium { background: #ffb84d; width: 66%; }
+.strong { background: #4cd964; width: 100%; }
+
+#mypage-actions button {
+    width: 100%;
+    margin-top: 10px;
+}
+
+#pwBox, #deleteBox {
+    margin-top: 10px;
+}
+/*변경하기 버튼*/
+.inline-pw-confirm {
+    display: flex;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.inline-pw-confirm input {
+    flex: 1;
+}
+
+.inline-pw-confirm button {
+    white-space: nowrap;
+    padding: 0 14px;
+    border-radius: 10px;
+    border: none;
+    background: #f7dede;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.inline-pw-confirm button:hover {
+    background: #f1cfcf;
+}
+/*회원탈퇴 칸*/
+.inline-delete {
+    display: flex;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.inline-delete input {
+    flex: 1;
+}
+
+.inline-delete button {
+    white-space: nowrap;
+    padding: 0 14px;
+    height: 38px;
+
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+
+    background: #f5b5b5;
+    color: #6b5555;
+
+    transition: 0.2s;
+}
+
+.inline-delete button:hover {
+    background: #e88989;
+}

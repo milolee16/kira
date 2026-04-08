@@ -1,61 +1,52 @@
-<<<<<<< HEAD
 document.addEventListener("DOMContentLoaded", function () {
-
-
 // 현재 페이지 상태 저장
-=======
->>>>>>> 9318867042de181002389cf7fc7c8f9226ee87dc
-let globalCurrentPage = 1;
+    let globalCurrentPage = 1;
 
 // [핵심 추가] 현재 주소창(URL)에서 접속 중인 미니홈피 주인의 식별자를 추출한다.
 // 예: http://localhost:8080/minihome?id=test123 접속 시 'test123' 추출
-const urlParams = new URLSearchParams(window.location.search);
-const currentOwnerPk = urlParams.get('id');
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentOwnerPk = urlParams.get('id');
 
 // 1. 방명록 작성 (POST 비동기)
-document.addEventListener("submit", function (e) {
-    if (e.target && e.target.id === "v-visitor-form") {
-        e.preventDefault();
+    document.addEventListener("submit", function (e) {
+        if (e.target && e.target.id === "v-visitor-form") {
+            e.preventDefault();
 
-        const emojiSelect = document.getElementById("v-visitor-emoji");
+            const emojiSelect = document.getElementById("v-visitor-emoji");
 
-        // 접속 대상(주인)의 식별자가 없으면 에러 처리
-        if (!currentOwnerPk) {
-            alert("잘못된 접근입니다. (미니홈피 주인을 찾을 수 없음)");
-            return;
-        }
+            // 접속 대상(주인)의 식별자가 없으면 에러 처리
+            if (!currentOwnerPk) {
+                alert("잘못된 접근입니다. (미니홈피 주인을 찾을 수 없음)");
+                return;
+            }
 
-        // 서버로 전송할 데이터 묶음 (작성자 정보는 서버가 세션에서 알아서 꺼내므로 안 보냄)
-        const requestData = new URLSearchParams({
-            visitorEmoji: emojiSelect ? emojiSelect.value : "1",
-            ownerPk: currentOwnerPk // 하드코딩 제거, 동적 식별자 전송
-        });
+            // 서버로 전송할 데이터 묶음 (작성자 정보는 서버가 세션에서 알아서 꺼내므로 안 보냄)
+            const requestData = new URLSearchParams({
+                visitorEmoji: emojiSelect ? emojiSelect.value : "1",
+                ownerPk: currentOwnerPk // 하드코딩 제거, 동적 식별자 전송
+            });
 
-        fetch("visitor", {
-            method: "POST",
-            headers: {"Content-Type": "application/x-www-form-urlencoded"},
-            body: requestData
-        })
-            .then(response => {
-                if (response.ok) {
-                    fetchVisitors(1);
-                    loadRecentVisitors();
-                } else if (response.status === 401) {
-                    alert("로그인이 필요한 서비스입니다.");
-                } else {
-                    alert("등록에 실패했습니다. 서버 오류가 발생했습니다.");
-                }
+            fetch("visitor", {
+                method: "POST",
+                headers: {"Content-Type": "application/x-www-form-urlencoded"},
+                body: requestData
             })
-            .catch(error => console.error("Error:", error));
-    }
+                .then(response => {
+                    if (response.ok) {
+                        fetchVisitors(1);
+                        loadRecentVisitors();
+                    } else if (response.status === 401) {
+                        alert("로그인이 필요한 서비스입니다.");
+                    } else {
+                        alert("등록에 실패했습니다. 서버 오류가 발생했습니다.");
+                    }
+                })
+                .catch(error => console.error("Error:", error));
+        }
+    });
 });
-<<<<<<< HEAD
-});
-// 3. 방명록 목록 불러오기 (GET 비동기)
-=======
 
 // 2. 방명록 목록 불러오기 (GET 비동기)
->>>>>>> 9318867042de181002389cf7fc7c8f9226ee87dc
 function fetchVisitors(page) {
     if (!currentOwnerPk) return;
 
@@ -77,7 +68,7 @@ function fetchVisitors(page) {
 function deleteVisitor(vId) {
     if (!confirm('삭제하시겠습니까?')) return;
 
-    fetch(`visitorDel?vId=${vId}`, { method: "GET" })
+    fetch(`visitorDel?vId=${vId}`, {method: "GET"})
         .then(response => {
             if (response.ok) fetchVisitors(globalCurrentPage);
             else alert("삭제에 실패했습니다.");
@@ -227,7 +218,7 @@ function loadRecentVisitors() {
 }
 
 // 페이지 최초 로드 시 실행
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     loadRecentVisitors();
     // 참고: 탭 이동 시 fetchVisitors(1)이 호출되도록 HTML 구조가 잡혀 있어야 함.
 });

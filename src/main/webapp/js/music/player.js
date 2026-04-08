@@ -47,12 +47,21 @@ function updateIndexNowPlaying() {
 
     const phoneThumb = document.getElementById('phone-thumb');
     const phoneThumbBlur = document.getElementById('phone-thumb-blur'); // ✅ 추가: 배경 블러 요소 참조
+<<<<<<< queue
+
+    const thumbUrl = 'https://img.youtube.com/vi/' + track.youtubeId + '/mqdefault.jpg';
+
+=======
+>>>>>>> bgm
     const ytLink = document.getElementById('yt-link');
     const bgmTitleMp3 = document.getElementById('bgm-title-mp3');
     const bgmTitlePhone = document.getElementById('bgm-title-phone');
 
+<<<<<<< queue
+=======
     const thumbUrl = 'https://img.youtube.com/vi/' + track.youtubeId + '/mqdefault.jpg';
 
+>>>>>>> bgm
     // ✅ 썸네일 업데이트 (메인과 배경 둘 다)
     if (phoneThumb) phoneThumb.src = thumbUrl;
     if (phoneThumbBlur) phoneThumbBlur.src = thumbUrl; // ✅ 추가: 배경 이미지도 같은 주소로 설정
@@ -212,12 +221,12 @@ function initPlayer() {
 }
 
 // ── 플레이리스트 로드 ─────────────────────────────────────────
-function loadPlaylist(userId) {
+function loadPlaylist(userPk) {
 
     currentIndex = restoreCurrentIndex(playlist.length);
     /*
         // 1) 비로그인 사용자 → 기본 재생목록
-        if (!userId || userId.trim() === '') {
+        if (!userPk || userPk.trim() === '') {
             window.playlist = window.defaultPlaylist.map(track => ({ ...track }));
             window.isDefaultPlaylist = true;
             window.currentIndex = restoreCurrentIndex(window.playlist.length); // playlist 확정 후 복원
@@ -283,7 +292,7 @@ window.addEventListener('pageshow', function (event) {
 // playTrack(0) 호출 금지 — initPlayer → onReady에서 자동 시작
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
-        loadPlaylist(window.loginUserId || "");
+        loadPlaylist(window.loginUserPk || "");
 
         // ✅ 이전/다음 버튼 연결
         const prevBtn = document.getElementById('bgm-prev');
@@ -294,7 +303,7 @@ if (document.readyState === 'loading') {
 
     });
 } else {
-    loadPlaylist(loginUserId);
+    loadPlaylist(loginUserPk || "");
 
     // ✅ 이전/다음 버튼 연결
     const prevBtn = document.getElementById('bgm-prev');

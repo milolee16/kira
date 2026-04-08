@@ -192,43 +192,47 @@ function loadPage(url) {
 
 // 파도타기 함수
 function goSearchMain(id, nick) {
-    // 1. 드롭다운 창 숨기기 및 검색어 비우기
     document.getElementById("search-dropdown").classList.add("hidden");
     document.getElementById("live-search-input").value = "";
 
-    // 2. 새로운 미니홈피 주인의 신분증(PK)을 브라우저에 메모
     sessionStorage.setItem("currentHostId", id);
     sessionStorage.setItem("currentHostNick", nick);
 
-    // 3. 서버에 새로운 주인의 정보 요청
     const searchUrl = `/search-main?host_id=${id}`;
     fetch(searchUrl)
         .then((response) => response.json())
         .then((searchData) => {
-            // --- 왼쪽 프로필 이름 및 상태메시지 변경 ---
-            document.querySelector(".profile-name").innerText = nick;
+            // [방어막 적용] searchData가 null일 경우를 완벽하게 대비한다.
+            const hostTitle = searchData && searchData.hompy_title ? searchData.hompy_title : `${nick}님의 미니홈피`;
+            const stMsg = searchData && searchData.st_message ? searchData.st_message : "반갑습니다!";
+            const stYear = (searchData && searchData.st_date) ? searchData.st_date.substring(0, 4) : "2026";
+
+            const profileName = document.querySelector(".profile-name");
+            if (profileName) profileName.innerText = nick;
 
             const titleElement = document.querySelector("#host-title");
-            if (titleElement) titleElement.innerText = `${searchData.hompy_title}`;
+            if (titleElement) titleElement.innerText = `📖 ${hostTitle}`;
 
             const stElement = document.querySelector("#status-text");
-            if (stElement) stElement.innerHTML = `${searchData.st_message}`;
+            if (stElement) stElement.innerHTML = stMsg;
 
             const stDate = document.querySelector(".status-since");
-            if (searchData.st_date) {
-                stDate.innerHTML = `${searchData.st_date.substring(0, 4)}`;
-            }
+            if (stDate) stDate.innerHTML = stYear;
 
-            // =================================================================
-            // 🚨 네가 질문했던 바로 그 부분! (방문자 위젯 갱신 및 발도장 트리거)
-            // =================================================================
+            // 방아쇠 (우측 방문자 위젯 갱신 및 자동 발도장)
             if (typeof loadRecentVisitors === "function") {
                 loadRecentVisitors();
             }
 
             // 홈 탭으로 화면 갱신
-            const homeUrl = document.querySelector('.menu-item').getAttribute('data-src');
-            loadPage(homeUrl);
+            const homeMenuItem = document.querySelector('.menu-item');
+            if (homeMenuItem) {
+                const homeUrl = homeMenuItem.getAttribute('data-src');
+                loadPage(homeUrl);
+            }
         })
-        .catch((error) => console.error("파도타기 데이터 로드 실패:", error));
+        .catch((error) => {
+            console.error("파도타기 데이터 로드 실패:", error);
+            loadPage("main.jsp"); // 에러 나도 화면은 넘겨줌
+        });
 }

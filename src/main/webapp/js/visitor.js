@@ -139,13 +139,14 @@ function loadRecentVisitors() {
         })
         .catch(err => console.error("최근 방문자 로딩 실패:", err));
 }
+
 // =========================================================================
 // 4. 방명록 삭제 로직
 // =========================================================================
 function deleteVisitor(vId) {
     if (!confirm('삭제하시겠습니까?')) return;
 
-    fetch(`visitorDel?vId=${vId}`, { method: "GET" })
+    fetch(`visitorDel?vId=${vId}`, {method: "GET"})
         .then(response => {
             if (response.ok) fetchVisitors(globalCurrentPage);
             else alert("삭제에 실패했습니다.");
@@ -198,6 +199,7 @@ function renderPosts(visitorList) {
     });
     container.innerHTML = html;
 }
+
 function renderPaging(visitorList, currentPage) {
     const container = document.getElementById("v-paging-container");
     let html = "";
@@ -226,4 +228,52 @@ function initVisitorLog() {
 
     // 2. 우측 최근 방문자 위젯 불러오기 (이때 백엔드에서 자동 발도장이 찍힘)
     loadRecentVisitors();
+}
+
+// 화면(수첩 속지) 갈아끼우기 함수
+function vloadPage(url) {
+    if (!url) return;
+
+    // 1. 현재 미니홈피 주인의 PK를 가져온다.
+    const savedOwnerPk = sessionStorage.getItem("currentHostId");
+    const targetOwnerPk = savedOwnerPk ? savedOwnerPk : loginUserPk;
+
+    // 2. URL에 꼬리표(ownerPk)를 붙인다.
+    let fetchUrl = url;
+    if (targetOwnerPk) {
+        fetchUrl += (fetchUrl.includes('?') ? '&' : '?') + 'ownerPk=' + targetOwnerPk;
+    }
+
+    // 3. 서버 통신 (★ fetch는 반드시 이거 하나만 있어야 한다 ★)
+    fetch(fetchUrl)
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`HTTP 오류: ${response.status}`);
+            }
+            return response.text();
+        })
+        .then((htmlData) => {
+            document.getElementById("notebook-content").innerHTML = htmlData;
+
+            const notebook = document.getElementById("notebook");
+            if (notebook) notebook.classList.remove("is-visitor");
+
+            // 라우터 실행 (여기가 실행되어야 리스트가 뜬다!)
+            for (const path in pageRoutes) {
+                if (url.includes(path)) {
+                    const route = pageRoutes[path];
+                    if (route.cssClass && notebook) notebook.classList.add(route.cssClass);
+                    if (route.initFunc) route.initFunc();
+                    break;
+                }
+            }
+        })
+        .catch(error => {
+            console.error("페이지 로드 실패:", error);
+            document.getElementById('notebook-content').innerHTML = `
+                <div class="nb-error">
+                    😢 페이지를 불러올 수 없어요<br>
+                    <button onclick="loadPage('${url}')">다시 시도</button>
+                </div>`;
+        });
 }

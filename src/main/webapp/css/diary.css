@@ -189,7 +189,7 @@ textarea.write-input {
 
 .diary-container {
     display: flex; flex-direction: column;
-    padding: 5px 20px 40px 75px; /* 위아래 여백 축소 */
+    padding: 5px 20px 40px 20px; /* 위아래 여백 축소 */
     gap: 10px; /* 달력과 게시판 사이 간격 축소 */
     box-sizing: border-box;
 }

@@ -72,10 +72,14 @@ public class DiaryDAO {
                 String fullDate = curYear + "-" + formattedMonth + "-" + formattedDay;
 
                 // ★ 로그인한 사람(d_id)이 쓴 글만 가져오도록 쿼리 수정!
-                String sql = "SELECT * FROM diary_test WHERE TO_CHAR(d_date, 'YYYY-MM-DD') = ? AND d_id = ? ORDER BY d_no DESC";
+                // ★ 공개 설정이 2(전체 공개)이거나, 내가 쓴 글인 것 가져오기!
+                String sql = "SELECT * FROM diary_test WHERE TO_CHAR(d_date, 'YYYY-MM-DD') = ? AND (d_visibility = 2 OR d_id = ?) ORDER BY d_no DESC";
                 pstmt = con.prepareStatement(sql);
                 pstmt.setString(1, fullDate);
-                pstmt.setString(2, loginId); // 👈 내 아이디만!
+
+// 혹시 로그인을 안 한 상태(null)라면 빈 칸으로 처리해서 에러 방지
+                if(loginId == null) loginId = "";
+                pstmt.setString(2, loginId);
 
                 rs = pstmt.executeQuery();
 
@@ -111,9 +115,12 @@ public class DiaryDAO {
             HttpSession session = req.getSession();
             String loginId = (String) session.getAttribute("loginUserId");
 
-            String sql = "SELECT * FROM diary_test WHERE d_id = ? ORDER BY d_date DESC";
+            // ★ 공개 설정이 2(전체 공개)이거나, 내가 쓴 글인 것 가져오기!
+            String sql = "SELECT * FROM diary_test WHERE (d_visibility = 2 OR d_id = ?) ORDER BY d_date DESC";
             pstmt = con.prepareStatement(sql);
-            pstmt.setString(1, loginId); // 👈 내 아이디만!
+
+            if(loginId == null) loginId = "";
+            pstmt.setString(1, loginId);
 
             rs = pstmt.executeQuery();
             ArrayList<DiaryDTO> diaries = new ArrayList<>();
@@ -211,7 +218,7 @@ public class DiaryDAO {
             if (rs.next()) {
                 DiaryDTO dto = new DiaryDTO();
                 dto.setNo(rs.getInt("d_no"));
-                dto.setId(rs.getString("d_id"));
+                dto.setId(rs.getString("d_id").trim());
                 dto.setTitle(rs.getString("d_title"));
                 dto.setTxt(rs.getString("d_txt"));
                 dto.setDate(rs.getDate("d_date"));
@@ -284,6 +291,88 @@ public class DiaryDAO {
 
         } catch (Exception e) {
             System.out.println("일기 수정 실패 ㅠㅠ");
+            e.printStackTrace();
+        } finally {
+            DBManager.close(con, pstmt, null);
+        }
+    }
+
+    // --- [댓글 기능 추가] ---
+
+    // 1. 댓글 등록 (Create)
+    public void insertReply(HttpServletRequest req) {
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        try {
+            con = DBManager.connect();
+            String sql = "INSERT INTO diary_reply VALUES (diary_reply_seq.nextval, ?, ?, ?, SYSDATE)";
+            pstmt = con.prepareStatement(sql);
+
+            // 어느 글에 다는 댓글인지(d_no), 누가 쓰는지(id), 내용(txt)
+            String d_no = req.getParameter("d_no");
+            String r_txt = req.getParameter("r_txt");
+
+            HttpSession session = req.getSession();
+            String r_id = (String) session.getAttribute("loginUserId");
+
+            pstmt.setInt(1, Integer.parseInt(d_no));
+            pstmt.setString(2, r_id);
+            pstmt.setString(3, r_txt);
+
+            pstmt.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBManager.close(con, pstmt, null);
+        }
+    }
+
+    // 2. 해당 일기의 댓글들 가져오기 (Read)
+    public void getReplies(HttpServletRequest req) {
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            con = DBManager.connect();
+            String d_no = req.getParameter("no"); // 상세 보기 중인 일기 번호
+
+            String sql = "SELECT * FROM diary_reply WHERE d_no = ? ORDER BY r_date ASC";
+            pstmt = con.prepareStatement(sql);
+            pstmt.setInt(1, Integer.parseInt(d_no));
+            rs = pstmt.executeQuery();
+
+            ArrayList<ReplyDTO> replies = new ArrayList<>();
+            while (rs.next()) {
+                replies.add(new ReplyDTO(
+                        rs.getInt("r_no"),
+                        rs.getInt("d_no"),
+                        rs.getString("r_id"),
+                        rs.getString("r_txt"),
+                        rs.getDate("r_date")
+                ));
+            }
+            req.setAttribute("replies", replies); // JSP에서 쓸 이름
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBManager.close(con, pstmt, rs);
+        }
+    }
+
+    // 댓글 삭제 기능
+    public void deleteReply(HttpServletRequest req) {
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        try {
+            con = DBManager.connect();
+            String r_no = req.getParameter("r_no");
+
+            String sql = "DELETE FROM diary_reply WHERE r_no = ?";
+            pstmt = con.prepareStatement(sql);
+            pstmt.setInt(1, Integer.parseInt(r_no));
+
+            pstmt.executeUpdate();
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
             DBManager.close(con, pstmt, null);

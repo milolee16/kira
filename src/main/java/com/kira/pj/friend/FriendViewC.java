@@ -1,6 +1,7 @@
 package com.kira.pj.friend;
 
 import com.google.gson.Gson;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -45,6 +46,13 @@ public class FriendViewC extends HttpServlet {
         } else if ("pendingList".equals(action)) {
             FriendDAO dao = new FriendDAO();
             List<Map<String, String>> list = dao.getPendingRequests(myPk);
+
+            response.setContentType("application/json; charset=UTF-8");
+            response.getWriter().print(new Gson().toJson(list));
+        } else if ("list".equals(action)) {
+            // [기능 3] 내 일촌 목록 반환
+            FriendDAO dao = new FriendDAO();
+            List<Map<String, String>> list = dao.getFriendList(myPk);
 
             response.setContentType("application/json; charset=UTF-8");
             response.getWriter().print(new Gson().toJson(list));

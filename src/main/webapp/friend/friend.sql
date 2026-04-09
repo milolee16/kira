@@ -7,7 +7,13 @@ CREATE TABLE friend_relation
     f_status    NUMBER DEFAULT 0,           -- 0: 수락 대기중, 1: 일촌 성립
     f_date      DATE   DEFAULT SYSDATE      -- 신청일 (수락 시 수락일로 업데이트 가능)
 );
-
+CREATE TABLE friend_alias
+(
+    owner_pk   VARCHAR2(15 CHAR),
+    target_pk  VARCHAR2(15 CHAR),
+    alias_name VARCHAR2(50 CHAR),
+    PRIMARY KEY (owner_pk, target_pk)
+);
 -- PK용 시퀀스
 CREATE SEQUENCE friend_seq;
 

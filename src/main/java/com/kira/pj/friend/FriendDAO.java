@@ -122,6 +122,7 @@ public class FriendDAO {
             DBManager.close(con, pstmt, null);
         }
     }
+
     // 나에게 일촌 신청을 보낸 사람들의 목록 조회 (u_nickname 포함)
     public List<Map<String, String>> getPendingRequests(String myPk) {
         Connection con = null;
@@ -146,8 +147,54 @@ public class FriendDAO {
                 map.put("nickname", rs.getString("u_nickname"));
                 list.add(map);
             }
-        } catch (Exception e) { e.printStackTrace(); }
-        finally { DBManager.close(con, pstmt, rs); }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBManager.close(con, pstmt, rs);
+        }
         return list;
     }
+
+    // =================================================================
+    // 5. 내 일촌 목록 불러오기 (별명 제외, 순정 버전)
+    // =================================================================
+    public List<Map<String, String>> getFriendList(String myPk) {
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        List<Map<String, String>> list = new ArrayList<>();
+
+        // 복잡한 조인 없이 심플하게 일촌의 u_id, u_nickname 만 가져온다.
+        String sql = "SELECT "
+                + "  CASE WHEN f.f_requester = ? THEN f.f_receiver ELSE f.f_requester END as friend_pk, "
+                + "  u.u_nickname, u.u_id, TO_CHAR(f.f_date, 'YYYY.MM.DD') as f_date "
+                + "FROM friend_relation f "
+                + "JOIN userReg u ON u.u_pk = (CASE WHEN f.f_requester = ? THEN f.f_receiver ELSE f.f_requester END) "
+                + "WHERE (f.f_requester = ? OR f.f_receiver = ?) AND f.f_status = 1";
+
+        try {
+            con = DBManager.connect();
+            pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, myPk);
+            pstmt.setString(2, myPk);
+            pstmt.setString(3, myPk);
+            pstmt.setString(4, myPk);
+            rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                Map<String, String> map = new HashMap<>();
+                map.put("friend_pk", rs.getString("friend_pk"));
+                map.put("u_id", rs.getString("u_id"));
+                map.put("u_nickname", rs.getString("u_nickname"));
+                map.put("f_date", rs.getString("f_date"));
+                list.add(map);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBManager.close(con, pstmt, rs);
+        }
+        return list;
+    }
+
 }

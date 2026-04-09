@@ -24,6 +24,7 @@
     <script src="js/guestboard.js"></script>
     <script src="js/diary.js"></script>
     <script src="js/visitor.js"></script>
+    <script src="js/friend.js"></script>
     <script defer src="js/ajax.js"></script>
     <script defer src="js/main.js"></script>
 
@@ -53,7 +54,8 @@
 
                     <%-- 🚨 [수정] 깔끔하게 클래스만 부여한 일촌 버튼 영역 --%>
                     <div class="friend-btn-wrapper">
-                        <button id="btn-friend-action" class="friend-action-btn" style="display:none;" onclick="handleFriendAction()"></button>
+                        <button id="btn-friend-action" class="friend-action-btn" style="display:none;"
+                                onclick="handleFriendAction()"></button>
                     </div>
 
                     <div class="profile-photo">🌬️</div>
@@ -89,6 +91,7 @@
                         >
                             방명록
                         </div>
+                        <div class="menu-item" data-src="${pageContext.request.contextPath}friend/friend.jsp">일촌목록</div>
                     </div>
                 </div>
 
@@ -151,6 +154,8 @@
                 >
                     방명록
                 </div>
+                <div class="nb-tab" data-src="${pageContext.request.contextPath}friend/friend.jsp">일촌목록</div>
+
             </div>
 
             <%-- ✅ iframe → AJAX 컨테이너로 교체 --%>
@@ -207,7 +212,7 @@
                         <img id="phone-thumb-blur" src="" alt="">
 
                         <img id="phone-thumb" src="https://img.youtube.com/vi//mqdefault.jpg"
-                             alt="현재 재생 중 썸네일" />
+                             alt="현재 재생 중 썸네일"/>
                     </div>
 
                     <a id="yt-link" href="#" target="_blank" class="phone-yt-link">▶ YouTube에서 보기</a>

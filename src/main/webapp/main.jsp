@@ -42,7 +42,7 @@ pageEncoding="UTF-8" %>
             </div>
             <div class="update-box">
                 <h4 class="update-title gb-title">🐾 최근 방명록</h4>
-                <p class="update-text">안녕하세요! 파도타고 왔어요~</p>
+                <p class="update-text">${searchMain.latest_gb_content}</p>
             </div>
         </div>
 

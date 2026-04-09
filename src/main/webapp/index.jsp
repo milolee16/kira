@@ -20,9 +20,9 @@
     <link rel="stylesheet" href="css/search.css"/>
     <link rel="stylesheet" href="css/user/loginbox.css"/>
     <%-- JS --%>
+    <script src="js/index.js"></script>
     <script src="js/guestboard.js"></script>
     <script src="js/diary.js"></script>
-    <script src="js/index.js"></script>
     <script src="js/visitor.js"></script>
     <script defer src="js/ajax.js"></script>
     <script defer src="js/main.js"></script>
@@ -35,7 +35,9 @@
 
         <!-- 로그인 박스 -->
         <div class="top-login-box">
-            <div class="top-login-name">${sessionScope.loginUserNickname}님</div>
+            <div class="top-login-name" id="goMyHome" style="cursor:pointer;">
+                ${sessionScope.loginUserNickname}님
+            </div>
             <div class="top-login-text">환영합니다 🌷</div>
 
             <div class="top-login-btns">
@@ -55,7 +57,7 @@
                     </div>
 
                     <div class="profile-photo">🌬️</div>
-                    <div class="profile-name">${sessionScope.loginUserNickname}</div>
+                    <div class="profile-name" id="profile-name" style="visibility:hidden;"></div>
                     <div class="profile-mood">
                         햇살 가득한 오후,<br/>기분 좋은 바람... 🍃<br/>
                         <span style="font-size: 11px; color: #c0b0a0">since 2005</span>
@@ -245,6 +247,8 @@
     const loginUserPk = "${sessionScope.loginUserPk}";
     // player.js나 다른 JS 파일들이 어떤 이름을 쓰더라도 호환되도록 별칭(Alias) 설정
     const loginUserId = "${sessionScope.loginUserId}";
+    // 새로고침 닉네임
+    const loginUserNickname = "${sessionScope.loginUserNickname}";
 </script>
 
 <div id="yt-player-hidden" style="display: none"></div>
@@ -252,5 +256,7 @@
 <script src="js/music/player.js"></script>
 <script src="js/music/router.js"></script>
 <script src="js/photo.js"></script>
+<script src="js/user/home.js"></script>
+<script src="js/user/logout.js"></script>
 </body>
 </html>

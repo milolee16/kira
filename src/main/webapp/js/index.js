@@ -1,29 +1,29 @@
 document.addEventListener("DOMContentLoaded", function () {
     const savedId = sessionStorage.getItem("currentHostId");
     const savedNick = sessionStorage.getItem("currentHostNick");
+    const profileName = document.getElementById("profile-name");
 
+    // 세션 정보가 있으면 해당 유저 홈으로, 없으면 내 홈으로
     if (savedId && savedNick) {
+        if (profileName) profileName.textContent = savedNick;
         goSearchMain(savedId, savedNick);
     } else {
+        if (profileName) profileName.textContent = typeof loginUserNickname !== 'undefined' ? loginUserNickname : "사용자";
         loadPage("/home?ajax=true");
     }
 
-    // 초기 진입 시 우측 위젯 불러오기
-    if (typeof loadRecentVisitors === "function") {
-        loadRecentVisitors();
-    }
+    if (profileName) profileName.style.visibility = "visible";
 
-    // 🚨 [여기에 추가!] 내 홈피 로드 시 내 PK를 던져서 일촌 버튼을 숨긴다.
+    // 초기 위젯 및 알림 로드
+    if (typeof loadRecentVisitors === "function") loadRecentVisitors();
+    if (typeof checkIncomingFriendRequests === "function") checkIncomingFriendRequests();
+
+    // 내 홈피라면 일촌 버튼 숨기기 (기본값)
     if (typeof checkFriendStatus === "function") {
-        checkFriendStatus(loginUserPk);
-    }
-    // 🚨 [여기에 추가!] 로그인 직후 나에게 온 일촌 신청이 있는지 확인해서 알림 띄우기
-    if (typeof checkIncomingFriendRequests === "function") {
-        checkIncomingFriendRequests();
+        checkFriendStatus(typeof loginUserPk !== 'undefined' ? loginUserPk : null);
     }
 
-
-    // 메뉴/탭 버튼 클릭 이벤트 등록
+    // 메뉴 및 탭 이벤트 등록
     document.querySelectorAll(".menu-item, .nb-tab").forEach((button) => {
         button.addEventListener("click", function () {
             const targetUrl = this.getAttribute("data-src");
@@ -50,49 +50,48 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         function renderDropdown(keyword) {
-            const targetUrl = `/search-users?keyword=${encodeURIComponent(keyword)}`;
-            fetch(targetUrl)
-                .then((response) => response.json())
-                .then((showSearchR) => {
+            fetch(`/search-users?keyword=${encodeURIComponent(keyword)}`)
+                .then((res) => res.json())
+                .then((data) => {
                     searchDropdown.innerHTML = "";
-                    if (showSearchR.length === 0) {
+                    if (!data || data.length === 0) {
                         searchDropdown.innerHTML = `<div style="padding:15px; text-align:center; color:#c0b0a0; font-family:'Gaegu', cursive; font-size:14px;">결과가 없어요! 😢</div>`;
                     } else {
-                        showSearchR.forEach((host) => {
-                            const searchHtmlTemp = `
+                        data.forEach((host) => {
+                            const html = `
                                 <div class="search-item" onclick="goSearchMain('${host.u_pk}','${host.u_nickname}')">
                                     <div class="search-item-title">${host.u_nickname} <span style="font-weight:normal; font-size:12px; color:#ff7675;">(${host.u_name})</span></div>
                                     <div class="search-item-desc">📧 ${host.u_email}</div>
                                 </div>`;
-                            searchDropdown.insertAdjacentHTML("beforeend", searchHtmlTemp);
+                            searchDropdown.insertAdjacentHTML("beforeend", html);
                         });
                     }
                     searchDropdown.classList.remove("hidden");
                 })
-                .catch((err) => console.error("검색 통신 에러:", err));
+                .catch((err) => console.error("검색 에러:", err));
         }
 
-        document.addEventListener("click", function (e) {
+        document.addEventListener("click", (e) => {
             if (!searchInput.contains(e.target) && !searchDropdown.contains(e.target)) {
                 searchDropdown.classList.add("hidden");
             }
         });
     }
-}); // <--- DOMContentLoaded 는 여기서 닫혀야 합니다.
+});
 
-// --- 여기서부터는 전역 함수들 ---
+// --- 전역 함수 ---
 
 const pageRoutes = {
-    "board.jsp": {initFunc: () => loadGuestBoard(), cssClass: ""},
-    "visitor": {initFunc: () => initVisitorLog(), cssClass: "is-visitor"},
-    "diary.jsp": {initFunc: () => loadDiary(), cssClass: ""},
-    "photo.jsp": {initFunc: () => loadPhoto(), cssClass: ""},
+    "board.jsp": {initFunc: () => typeof loadGuestBoard === "function" && loadGuestBoard(), cssClass: ""},
+    "visitor": {initFunc: () => typeof initVisitorLog === "function" && initVisitorLog(), cssClass: "is-visitor"},
+    "diary.jsp": {initFunc: () => typeof loadDiary === "function" && loadDiary(), cssClass: ""},
+    "photo.jsp": {initFunc: () => typeof loadPhoto === "function" && loadPhoto(), cssClass: ""},
 };
 
 function loadPage(url) {
     if (!url) return;
     const savedOwnerPk = sessionStorage.getItem("currentHostId");
-    const targetOwnerPk = savedOwnerPk ? savedOwnerPk : loginUserPk;
+    const targetOwnerPk = savedOwnerPk ? savedOwnerPk : (typeof loginUserPk !== 'undefined' ? loginUserPk : null);
 
     let fetchUrl = url;
     if (targetOwnerPk) {
@@ -100,98 +99,89 @@ function loadPage(url) {
     }
 
     fetch(fetchUrl)
-        .then((response) => {
-            if (!response.ok) throw new Error(`HTTP 오류: ${response.status}`);
-            return response.text();
+        .then((res) => {
+            if (!res.ok) throw new Error(`HTTP 오류: ${res.status}`);
+            return res.text();
         })
-        .then((htmlData) => {
-            document.getElementById("notebook-content").innerHTML = htmlData;
-            const notebook = document.getElementById("notebook");
-            notebook.classList.remove("is-visitor");
+        .then((html) => {
+            const content = document.getElementById("notebook-content");
+            if (content) content.innerHTML = html;
 
-            for (const path in pageRoutes) {
-                if (url.includes(path)) {
-                    const route = pageRoutes[path];
-                    if (route.cssClass) notebook.classList.add(route.cssClass);
-                    if (route.initFunc) route.initFunc();
-                    break;
+            const notebook = document.getElementById("notebook");
+            if (notebook) {
+                notebook.classList.remove("is-visitor");
+                for (const path in pageRoutes) {
+                    if (url.includes(path)) {
+                        const route = pageRoutes[path];
+                        if (route.cssClass) notebook.classList.add(route.cssClass);
+                        if (route.initFunc) route.initFunc();
+                        break;
+                    }
                 }
             }
         })
-        .catch(error => {
-            console.error("페이지 로드 실패:", error);
-            document.getElementById('notebook-content').innerHTML = `<div class="nb-error">😢 페이지를 불러올 수 없어요<br><button onclick="loadPage('${url}')">다시 시도</button></div>`;
-        });
+        .catch(err => console.error("페이지 로드 실패:", err));
 }
 
 function goSearchMain(id, nick) {
-    document.getElementById("search-dropdown").classList.add("hidden");
-    document.getElementById("live-search-input").value = "";
+    // 1. UI 정리
+    const dropdown = document.getElementById("search-dropdown");
+    const searchInput = document.getElementById("live-search-input");
+    if (dropdown) dropdown.classList.add("hidden");
+    if (searchInput) searchInput.value = "";
 
+    // 2. 세션 저장
     sessionStorage.setItem("currentHostId", id);
     sessionStorage.setItem("currentHostNick", nick);
 
-    const searchUrl = `/search-main?host_id=${id}`;
-    fetch(searchUrl)
-        .then((response) => response.json())
+    // 3. 데이터 로드 및 UI 업데이트
+    fetch(`/search-main?host_id=${id}`)
+        .then((res) => res.json())
         .then((searchData) => {
-            // UI 초기화 및 홈 탭 활성화
+            // 메뉴 불빛 처리
             document.querySelectorAll(".menu-item, .nb-tab").forEach((el) => el.classList.remove("active"));
             document.querySelectorAll(".menu-item, .nb-tab").forEach(el => {
                 const src = el.getAttribute("data-src");
                 if (src && src.includes("home")) el.classList.add("active");
             });
 
-            // 프로필 정보 업데이트
-            document.querySelector(".profile-name").innerText = nick;
+            // 프로필 텍스트 업데이트
+            const profileName = document.querySelector(".profile-name");
+            if (profileName) profileName.innerText = nick;
 
-            // 🚨 [방어막] searchData가 아예 null이어도 절대 터지지 않음
+            // 🚨 핵심 수정: 옵셔널 체이닝(?.)을 사용하여 데이터가 null이어도 코드가 죽지 않게 보호함
             const titleElement = document.querySelector("#host-title");
-            const safeTitle = (searchData && searchData.hompy_title) ? searchData.hompy_title : `${nick}님의 미니홈피`;
-            if (titleElement) titleElement.innerText = `📖 ${safeTitle}`;
+            if (titleElement) {
+                titleElement.innerText = searchData?.hompy_title || `📖 ${nick}님의 미니홈피`;
+            }
 
             const stElement = document.querySelector("#status-text");
-            const safeMsg = (searchData && searchData.st_message) ? searchData.st_message : "반갑습니다!";
-            if (stElement) stElement.innerHTML = safeMsg;
+            if (stElement) {
+                stElement.innerHTML = searchData?.st_message || "반갑습니다. 😊";
+            }
 
             const stDate = document.querySelector(".status-since");
-            if (stDate && searchData && searchData.st_date) {
+            if (stDate && searchData?.st_date) {
                 stDate.innerHTML = `Since ${searchData.st_date.substring(0, 4)}`;
             }
 
-            // ==========================================================
-            // 🚨 위에서 에러가 안 나야만 아래의 방아쇠들이 무사히 당겨진다!
-            // ==========================================================
+            // 🚨 위에서 에러가 안 나야만 아래 로직들이 정상 작동함!
             if (typeof loadRecentVisitors === "function") loadRecentVisitors();
 
-            // 일촌 버튼 띄우기 (드디어 실행됨!)
+            // 일촌 버튼 상태 확인 함수 호출
             if (typeof checkFriendStatus === "function") checkFriendStatus(id);
 
-            // 화면을 해당 유저의 홈으로 이동
+            // 마지막으로 페이지 내용 불러오기
             loadPage(`/home?ajax=true&host_id=${id}`);
         })
-        .catch((error) => {
-            console.error("파도타기 데이터 로드 실패:", error);
+        .catch((err) => {
+            console.error("데이터 로드 에러:", err);
+            // 에러 시에도 최소한 홈 화면은 띄워줌
+            loadPage(`/home?ajax=true&host_id=${id}`);
         });
 }
 
-function updateHitCount() {
-    const savedOwnerPk = sessionStorage.getItem("currentHostId");
-    const targetOwnerPk = savedOwnerPk ? savedOwnerPk : loginUserPk;
-    if (!targetOwnerPk) return;
-
-    const noCache = new Date().getTime();
-    fetch(`/visitor?reqType=hitCount&ownerPk=${targetOwnerPk}&t=${noCache}`)
-        .then(res => res.json())
-        .then(data => {
-            const todayEl = document.getElementById("v-today");
-            const totalEl = document.getElementById("v-total");
-            if (todayEl) todayEl.innerText = data.today;
-            if (totalEl) totalEl.innerText = data.total;
-        })
-        .catch(err => console.error("조회수 갱신 실패:", err));
-}
-
+// (이후 checkFriendStatus, handleFriendAction 등의 함수는 기존과 동일하게 유지)
 // ==========================================
 // 5. 일촌 상태 확인 (버튼 UI 자동 변경)
 // ==========================================

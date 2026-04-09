@@ -2,9 +2,10 @@
 function loadGuestBoard(date = "") {
 
     let currentHostId = sessionStorage.getItem("currentHostId") ;
-    if(currentHostId == null || currentHostId == "null") {
+    if(currentHostId == null || currentHostId === "null") {
         currentHostId = loginUserId;
     }
+
     const gbUrl = date ? `/board?date=${date}&host_id=${currentHostId}` : `/board?host_id=${currentHostId}`;
 
 
@@ -46,7 +47,7 @@ function loadGuestBoard(date = "") {
                 const htmlTemplate = `
           <div class="gb-content-row">
            <span class="gb-text-part">
-               <a href="javascript:void(0);" onclick="guestHome('${gb.guest_pk}')" class="gb-user-link" >${gb.guest_nick}</a> : <span id="guestHi_${gb.gboard_pk}"> ${gb.board_content}</span>
+               <a href="javascript:void(0);" onclick="goSearchMain('${gb.guest_pk}', '${gb.guest_nick}')" class="gb-user-link" >${gb.guest_nick}</a> : <span id="guestHi_${gb.gboard_pk}"> ${gb.board_content}</span>
            </span>
                ${editBtnHtml}
                ${delBtnHtml}
@@ -200,23 +201,4 @@ function gbDelete(pk, date) {
 
 }
 
-function guestHome(pk) {
-    fetch('/guestHome', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: new URLSearchParams({
-            pk: pk
-        })
-    })
-        .then(response => response.json())
-        .then(guestH => {
-            if (guestH.result == "success") {
-                loadGuestHome(pk);
-            } else {
-                alert("접속 실패!");
-            }
-        })
-        .catch(error => console.error("수정 통신 에러:", error));
-}
+

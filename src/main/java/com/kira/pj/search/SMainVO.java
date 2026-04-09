@@ -15,9 +15,7 @@ public class SMainVO {
     private String my_img;
     private String main_img;
     private String st_date;
+    private String latest_gb_content;
 
-    public String toJSON() {
-        Gson gson = new Gson();
-        return gson.toJson(this);
-    }
+
 }

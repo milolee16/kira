@@ -1,12 +1,17 @@
 document.addEventListener("DOMContentLoaded", function () {
     const savedId = sessionStorage.getItem("currentHostId");
     const savedNick = sessionStorage.getItem("currentHostNick");
+    const profileName = document.getElementById("profile-name");
 
     if (savedId && savedNick) {
+        profileName.textContent = savedNick;
         goSearchMain(savedId, savedNick);
     } else {
+        profileName.textContent = loginUserNickname;
         loadPage("/home?ajax=true");
     }
+
+    profileName.style.visibility = "visible";
 
     // 초기 진입 시 우측 위젯 불러오기
     if (typeof loadRecentVisitors === "function") {

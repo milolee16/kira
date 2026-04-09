@@ -507,3 +507,71 @@ body {
     border-radius: 20px;
     border: 1px solid #f2c0bd;
 }
+
+/* ── 순서 변경 버튼 컨테이너 ── */
+.bgm-track-order {
+    display: flex;
+    flex-direction: column;  /* ▲ 위, ▼ 아래 */
+    gap: 2px;
+    flex-shrink: 0;
+    opacity: 0;
+    transition: opacity 0.15s;
+}
+
+.bgm-track-item:hover .bgm-track-order {
+    opacity: 1;
+}
+
+.bgm-track-move {
+    width: 18px;
+    height: 18px;
+    border-radius: 3px;
+    border: 1px solid #eee0d0;
+    background: transparent;
+    color: #c0b0a0;
+    font-size: 9px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    line-height: 1;
+    transition: background 0.15s, color 0.15s;
+}
+
+.bgm-track-move:hover {
+    background: #f5f0eb;
+    color: #8a7a70;
+    border-color: #d0c0b0;
+}
+
+.bgm-track-move:disabled {
+    opacity: 0.2;
+    cursor: default;
+    pointer-events: none;
+}
+
+/* ── 셔플 버튼 ── */
+.bgm-shuffle-btn {
+    font-family: "Gaegu", cursive;
+    font-size: 13px;
+    color: #4a90a8;
+    background: linear-gradient(135deg, #d4eaf5, #a8d8ea);
+    border: 1px solid #a8d8ea;
+    border-radius: 20px;
+    padding: 4px 14px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+}
+
+.bgm-shuffle-btn:hover {
+    background: linear-gradient(135deg, #a8d8ea, #6bb5d633);
+    transform: scale(1.04);
+}
+
+/* 추가/셔플 버튼 묶음 */
+.bgm-queue-actions {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}

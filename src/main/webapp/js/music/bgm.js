@@ -44,18 +44,24 @@ function renderQueueHeader() {
     } else {
         wrap.classList.remove('theme-default');
         wrap.classList.add('theme-personal');
+        // 기존 추가 버튼 옆에 셔플 버튼 추가
         header.innerHTML = `
-            <div class="bgm-queue-status personal">
-                <span class="bgm-queue-status-label">🎶 내 재생목록</span>
-                <span class="bgm-queue-count">${window.playlist.length}곡</span>
-            </div>
-        `;
+    <div class="bgm-queue-header-top">
+        <div class="bgm-queue-status personal">
+            <span class="bgm-queue-status-label">✨ 내 플레이리스트</span>
+            <span class="bgm-queue-count">${window.playlist.length}곡</span>
+        </div>
+        <div class="bgm-queue-actions">
+            <button class="bgm-shuffle-btn" id="bgm-shuffle-btn">🔀 셔플</button>
+        </div>
+    </div>
+`;
+        document.getElementById('bgm-shuffle-btn').addEventListener('click', shufflePlaylist);
+        document.getElementById('bgm-add-btn').addEventListener('click', openBgmModal);
     }
 }
 
 function renderQueue() {
-    // ✅ 같은 window이므로 직접 접근
-    // playlist 준비 안 됐으면 재시도
     if (!window.playlist || window.playlist.length === 0) {
         setTimeout(renderQueue, 300);
         return;
@@ -66,38 +72,61 @@ function renderQueue() {
 
     container.innerHTML = '';
     renderQueueHeader();
+
     window.playlist.forEach((track, i) => {
+        if (!track.youtubeId) return; // ✅ 빈 youtubeId 방어
+
         const item = document.createElement('div');
         item.className = 'bgm-track-item' + (i === window.currentIndex ? ' active' : '');
-        item.innerHTML = `
-    <div class="bgm-track-num">${i + 1}</div>
-    <div class="bgm-playing-icon">
-        <span></span><span></span><span></span>
+
+        // ✅ orderBtns을 여기서만 만들고 아래 innerHTML에 ${orderBtns}으로 삽입
+        const orderBtns = window.isDefaultPlaylist ? '' : `
+    <div class="bgm-track-order">
+        <button class="bgm-track-move bgm-track-move-up" ${i === 0 ? 'disabled' : ''}>▲</button>
+        <button class="bgm-track-move bgm-track-move-down" ${i === playlist.length - 1 ? 'disabled' : ''}>▼</button>
     </div>
-    <div class="bgm-track-thumb">
-    <img src="https://img.youtube.com/vi/${track.youtubeId}/mqdefault.jpg" alt="${track.title}">
-</div>
-    <div class="bgm-track-info">
-        <div class="bgm-track-title">${track.title}</div>
-        <div class="bgm-track-duration">${formatTime(track.duration)}</div>
-    </div>
-    ${window.isDefaultPlaylist ? '' : '<button class="bgm-track-delete" title="삭제">✕</button>'}
 `;
-        // 🎵 트랙 클릭 → 재생
-        // ✅ 변경: 삭제 버튼 클릭 시 재생 이벤트 막기
+
+        // ✅ deleteBtn도 조건부로만
+        const deleteBtn = window.isDefaultPlaylist ? '' : '<button class="bgm-track-delete" title="삭제">✕</button>';
+
+        item.innerHTML = `
+            <div class="bgm-track-num">${i + 1}</div>
+            <div class="bgm-playing-icon">
+                <span></span><span></span><span></span>
+            </div>
+            <div class="bgm-track-thumb">
+                <img src="https://img.youtube.com/vi/${track.youtubeId}/mqdefault.jpg" alt="${track.title}">
+            </div>
+            <div class="bgm-track-info">
+                <div class="bgm-track-title">${track.title}</div>
+                <div class="bgm-track-duration">${formatTime(track.duration)}</div>
+            </div>
+            ${orderBtns}
+            ${deleteBtn}
+        `;
+
+        // ✅ 트랙 클릭 → 재생 (버튼 클릭은 무시)
         item.addEventListener('click', (e) => {
-            if (e.target.closest('.bgm-track-delete')) return; // 삭제 버튼이면 무시
+            if (e.target.closest('.bgm-track-delete')) return;
+            if (e.target.closest('.bgm-track-move')) return;
             if (typeof window.playTrack === 'function') window.playTrack(i);
         });
 
-        // ❗ 안전하게 삭제 버튼 이벤트 연결
-        const deleteBtn = item.querySelector('.bgm-track-delete');
-        if (deleteBtn) {
-            deleteBtn.addEventListener('click', (e) => {
+        // ✅ 삭제 버튼 이벤트
+        const delBtn = item.querySelector('.bgm-track-delete');
+        if (delBtn) {
+            delBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 deleteTrack(track.youtubeId, item, i);
             });
         }
+
+        // ✅ 순서변경 버튼 이벤트 (onclick 문자열 대신 addEventListener로)
+        const upBtn = item.querySelector('.bgm-track-move-up');
+        const downBtn = item.querySelector('.bgm-track-move-down');
+        if (upBtn) upBtn.addEventListener('click', (e) => { e.stopPropagation(); moveTrack(i, 'up'); });
+        if (downBtn) downBtn.addEventListener('click', (e) => { e.stopPropagation(); moveTrack(i, 'down'); });
 
         container.appendChild(item);
     });
@@ -297,4 +326,64 @@ function showAddMsg(text, type) {
     el.textContent = text;
     el.className = 'bgm-add-msg ' + type;
     el.style.display = 'block';
+}
+
+function moveTrack(index, direction) {
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= playlist.length) return;
+
+    const idA = playlist[index].youtubeId;
+    const idB = playlist[targetIndex].youtubeId;
+
+    fetch(`/api/bgm?action=swap&idA=${encodeURIComponent(idA)}&idB=${encodeURIComponent(idB)}`, {
+        method: 'PUT'
+    })
+        .then(r => r.json())
+        .then(data => {
+            if (data.result !== 'ok') return;
+
+            // 프론트 배열도 swap
+            const tmp = playlist[index];
+            playlist[index] = playlist[targetIndex];
+            playlist[targetIndex] = tmp;
+
+            // currentIndex 보정
+            if (window.currentIndex === index) window.currentIndex = targetIndex;
+            else if (window.currentIndex === targetIndex) window.currentIndex = index;
+
+            renderQueue();
+        })
+        .catch(err => console.error('순서 변경 실패:', err));
+}
+
+function shufflePlaylist() {
+    if (window.isDefaultPlaylist) return;
+
+    // Fisher-Yates 셔플
+    const shuffled = [...window.playlist];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+
+    const orderedIds = shuffled.map(t => t.youtubeId);
+
+    fetch('/api/bgm?action=shuffle', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderedIds)
+    })
+        .then(r => r.json())
+        .then(data => {
+            if (data.result !== 'ok') return;
+
+            // 현재 재생 중인 트랙 찾아서 currentIndex 보정
+            const currentId = window.playlist[window.currentIndex]?.youtubeId;
+            window.playlist = shuffled;
+            window.currentIndex = shuffled.findIndex(t => t.youtubeId === currentId);
+            if (window.currentIndex < 0) window.currentIndex = 0;
+
+            renderQueue();
+        })
+        .catch(err => console.error('셔플 실패:', err));
 }

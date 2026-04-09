@@ -136,9 +136,53 @@ public class BgmAPiController extends HttpServlet {
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         req.setCharacterEncoding("UTF-8");
         resp.setContentType("application/json;charset=UTF-8");
+        PrintWriter out = resp.getWriter();
 
-        // URL 파라미터로 명시적으로 받기
-        String uPk = (String) req.getSession().getAttribute("loginUserPk");
+        HttpSession session = req.getSession(false);
+        if (session == null || session.getAttribute("loginUserPk") == null) {
+            resp.setStatus(401);
+            out.print("{\"result\":\"fail\",\"msg\":\"로그인 필요\"}");
+            return;
+        }
+
+        String uPk = (String) session.getAttribute("loginUserPk");
+        String action = req.getParameter("action");
+
+        // ── swap 분기 ──────────────────────────────────────────
+        if ("swap".equals(action)) {
+            String idA = req.getParameter("idA");
+            String idB = req.getParameter("idB");
+            if (idA == null || idB == null) {
+                resp.setStatus(400);
+                out.print("{\"result\":\"fail\",\"msg\":\"idA/idB 누락\"}");
+                return;
+            }
+            boolean ok = BgmDAO.MDAO.swapTrackOrder(uPk, idA, idB);
+            out.print(ok ? "{\"result\":\"ok\"}" : "{\"result\":\"fail\",\"msg\":\"swap 실패\"}");
+            return;
+        }
+
+        // ── shuffle 분기 ───────────────────────────────────────────
+        if ("shuffle".equals(action)) {
+            // Body에서 JSON 배열로 받음: ["id1","id2","id3",...]
+            StringBuilder sb = new StringBuilder();
+            String line;
+            try (java.io.BufferedReader br = req.getReader()) {
+                while ((line = br.readLine()) != null) sb.append(line);
+            }
+            // 간단 파싱 (Gson 있으면 Gson 써도 됨)
+            String body = sb.toString().trim();
+            // ["abc","def","ghi"] → abc,def,ghi
+            body = body.replaceAll("[\\[\\]\"\\s]", "");
+            String[] ids = body.split(",");
+
+            List<String> orderedIds = java.util.Arrays.asList(ids);
+            boolean ok = BgmDAO.MDAO.updateAllTrackOrder(uPk, orderedIds);
+            out.print(ok ? "{\"result\":\"ok\"}" : "{\"result\":\"fail\",\"msg\":\"shuffle 실패\"}");
+            return;
+        }
+
+        // ── 기존 duration 업데이트 ────────────────────────────
         String youtubeId = req.getParameter("youtubeId");
         String durationStr = req.getParameter("duration");
 

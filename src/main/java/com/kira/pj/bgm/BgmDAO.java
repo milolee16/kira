@@ -38,8 +38,6 @@ public class BgmDAO {
 
     // ── 유저 기준 재생목록 조회 ───────────────────────────────
     public List<BgmTrackVO> getTracksByUser(String uPk) {
-        System.out.println("🔍 조회 uPk: " + uPk);  // 콘솔 출력
-
         List<BgmTrackVO> list = new ArrayList<>();
         String sql = "SELECT b.u_pk, b.youtube_id, b.title, b.duration, b.track_order, " +
                 "       u.u_nickname " +
@@ -63,8 +61,6 @@ public class BgmDAO {
         } finally {
             DBManager.close(con, ps, rs);
         }
-        System.out.println("📊 조회 결과: " + list.size() + "개");
-
         return list;
     }
 
@@ -167,5 +163,84 @@ public class BgmDAO {
         t.setTrackOrder(rs.getInt("track_order"));
         t.setUserNickname(rs.getString("u_nickname"));
         return t;
+    }
+
+    // ── 트랙 순서 swap ────────────────────────────────────────
+    public boolean swapTrackOrder(String uPk, String youtubeIdA, String youtubeIdB) {
+        String getSql = "SELECT youtube_id, track_order FROM bgm_track WHERE u_pk = ? AND youtube_id IN (?, ?)";
+        String updateSql = "UPDATE bgm_track SET track_order = ? WHERE u_pk = ? AND youtube_id = ?";
+
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            con = DBManager.connect();
+            con.setAutoCommit(false);
+
+            ps = con.prepareStatement(getSql);
+            ps.setString(1, uPk);
+            ps.setString(2, youtubeIdA);
+            ps.setString(3, youtubeIdB);
+            rs = ps.executeQuery();
+
+            int orderA = -1, orderB = -1;
+            while (rs.next()) {
+                String id = rs.getString("youtube_id");
+                int order = rs.getInt("track_order");
+                if (id.equals(youtubeIdA)) orderA = order;
+                else orderB = order;
+            }
+            if (orderA == -1 || orderB == -1) return false;
+
+            rs.close(); ps.close();
+
+            ps = con.prepareStatement(updateSql);
+            ps.setInt(1, orderB); ps.setString(2, uPk); ps.setString(3, youtubeIdA);
+            ps.executeUpdate();
+
+            ps.setInt(1, orderA); ps.setString(2, uPk); ps.setString(3, youtubeIdB);
+            ps.executeUpdate();
+
+            con.commit();
+            return true;
+
+        } catch (SQLException e) {
+            try { if (con != null) con.rollback(); } catch (SQLException ignored) {}
+            e.printStackTrace();
+            return false;
+        } finally {
+            DBManager.close(con, ps, rs);
+        }
+    }
+
+    // ── 전체 순서 일괄 업데이트 (셔플용) ─────────────────────
+    public boolean updateAllTrackOrder(String uPk, List<String> orderedIds) {
+        String sql = "UPDATE bgm_track SET track_order = ? WHERE u_pk = ? AND youtube_id = ?";
+        Connection con = null;
+        PreparedStatement ps = null;
+
+        try {
+            con = DBManager.connect();
+            con.setAutoCommit(false);
+            ps = con.prepareStatement(sql);
+
+            for (int i = 0; i < orderedIds.size(); i++) {
+                ps.setInt(1, i + 1);
+                ps.setString(2, uPk);
+                ps.setString(3, orderedIds.get(i));
+                ps.addBatch();
+            }
+            ps.executeBatch();
+            con.commit();
+            return true;
+
+        } catch (SQLException e) {
+            try { if (con != null) con.rollback(); } catch (SQLException ignored) {}
+            e.printStackTrace();
+            return false;
+        } finally {
+            DBManager.close(con, ps, null);
+        }
     }
 }

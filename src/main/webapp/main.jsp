@@ -11,7 +11,6 @@ pageEncoding="UTF-8" %>
 
     <div class="home-status-board">
         <div class="status-left">
-            <span class="d-day">✈️ 도쿄 출국 D-100</span>
             <div class="home-status-msg">
                 <span id="status-text">${searchMain.st_message}</span>
                 <button onclick="editStatus('${sessionScope.loginUserId}')" class="status-edit-btn">[수정]</button>

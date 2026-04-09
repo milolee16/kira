@@ -1,5 +1,8 @@
 package com.kira.pj.main;
 
+import com.google.gson.Gson;
+import com.kira.pj.search.SearchDAO;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -11,8 +14,11 @@ import java.io.IOException;
 public class Home extends HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-       HomeDAO.mainCheck(request, response);
-       request.getRequestDispatcher("main.jsp").forward(request, response);
+     response.setContentType("application/json; charset=UTF-8");
+     Gson gson = new Gson();
+     String jsonRes = gson.toJson(SearchDAO.searchMain(request));
+     response.getWriter().println(jsonRes);
+
 
     }
 

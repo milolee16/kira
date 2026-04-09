@@ -11,7 +11,7 @@ import java.util.Date;
 @NoArgsConstructor
 public class GuestBoardVO {
     public String gboard_pk;
-    public String guest_pk;
+    public String guest_id;
     public String host_id;
     public String guest_nick;
     public String board_content;

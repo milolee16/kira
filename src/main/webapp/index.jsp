@@ -129,25 +129,25 @@
             <div class="nb-tabs">
                 <div
                         class="nb-tab ${content eq 'main.jsp' ? 'active' : ''}"
-                        data-src="/home?ajax=true"
+                        data-src="${pageContext.request.contextPath}/home?ajax=true"
                 >
                     홈
                 </div>
                 <div
                         class="nb-tab ${content eq 'diary/diary.jsp' ? 'active' : ''}"
-                        data-src="/diary?ajax=true"
+                        data-src="${pageContext.request.contextPath}/diary?ajax=true"
                 >
                     다이어리
                 </div>
                 <div
                         class="nb-tab ${content eq 'photo/photo.jsp' ? 'active' : ''}"
-                        data-src="photo/photo.jsp"
+                        data-src="${pageContext.request.contextPath}/photo/photo.jsp"
                 >
                     사진첩
                 </div>
                 <div
                         class="nb-tab ${content eq 'board/board.jsp' ? 'active' : ''}"
-                        data-src="board/board.jsp"
+                        data-src="${pageContext.request.contextPath}/board/board.jsp"
                 >
                     방명록
                 </div>

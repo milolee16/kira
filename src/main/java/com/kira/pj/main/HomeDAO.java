@@ -10,21 +10,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 public class HomeDAO {
-    public static void mainCheck(HttpServletRequest request, HttpServletResponse response) {
+    public static String RandomQ(HttpServletRequest request, HttpServletResponse response) {
 
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
 
-        // ⭐ 1. 세션과 파라미터 확인 (추가된 핵심 코드)
-        HttpSession hs = request.getSession();
-        String host_id = request.getParameter("host_id");
-
-        // ⭐ 2. 철벽 방어: 넘어온 아이디가 없으면 '내 홈피'이므로 내 아이디로 덮어쓰기!
-        if (host_id == null || host_id.isEmpty() || host_id.equals("null")) {
-            host_id = (String) hs.getAttribute("loginUserId");
-        }
-        request.setAttribute("host_id", host_id);
 
         int random_qna = (int)(Math.random() * 20) + 1;
         try{
@@ -32,16 +23,17 @@ public class HomeDAO {
             ps = con.prepareStatement("select question from qna_list where q_id = ?");
             ps.setInt(1,random_qna);
             rs = ps.executeQuery();
+            String question = null;
             if(rs.next()) {
-                request.setAttribute("question",rs.getString("question"));
+                question = rs.getString(2);
+                return question;
             }
-            request.setAttribute("searchMain",SearchDAO.searchMain(request));
         } catch (Exception e) {
             e.printStackTrace();
         }finally {
             DBManager.close(con,ps,rs);
         }
-
+        return null;
 
     }
 

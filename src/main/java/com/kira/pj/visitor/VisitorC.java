@@ -26,7 +26,7 @@ public class VisitorC extends HttpServlet {
         int p = (pStr == null) ? 1 : Integer.parseInt(pStr);
 
         // 프론트엔드(JS)에서 &ownerPk=XXX 형태로 홈피 주인의 PK를 반드시 보내야 한다.
-        String ownerPk = request.getParameter("ownerPk");
+        String ownerPk = request.getParameter("visitor_id");
         if (ownerPk == null || ownerPk.trim().isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // <-- 여기가 정확히 400 에러를 뱉는 곳이다.
             return;
@@ -51,7 +51,7 @@ public class VisitorC extends HttpServlet {
             // 메인 화면 로드 시 위젯 데이터를 요청하므로, 이때 방문 기록을 몰래 생성한다.
             // =================================================================
             HttpSession session = request.getSession();
-            String visitorPk = (String) session.getAttribute("loginUserPk");
+            String visitorPk = (String) session.getAttribute("loginUserId");
 
             // 방문자가 로그인한 상태이고, 내 홈피를 들어온 것이 아닐 때만 발도장을 찍는다.
             if (visitorPk != null && !visitorPk.equals(ownerPk)) {
@@ -101,7 +101,7 @@ public class VisitorC extends HttpServlet {
 
         // 1. 세션에서 로그인한 사용자의 PK 추출 (글 작성 권한 확인)
         HttpSession session = request.getSession();
-        String writerPk = (String) session.getAttribute("loginUserPk");
+        String writerPk = (String) session.getAttribute("loginUserId");
 
         if (writerPk == null || writerPk.trim().isEmpty()) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -110,7 +110,7 @@ public class VisitorC extends HttpServlet {
         }
 
         // 2. 방명록 등록 처리를 위한 파라미터 수신
-        String ownerPk = request.getParameter("ownerPk");
+        String ownerPk = request.getParameter("visitor_id");
         String visitorEmojiStr = request.getParameter("visitorEmoji");
 
         if (ownerPk != null && !ownerPk.trim().isEmpty() && visitorEmojiStr != null) {

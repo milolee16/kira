@@ -1,16 +1,20 @@
 document.addEventListener("DOMContentLoaded", function () {
+    //여기서 세션스토리지에 저장된 아이디와 닉네임이 있는지 조회함
     const savedId = sessionStorage.getItem("currentHostId");
     const savedNick = sessionStorage.getItem("currentHostNick");
     const profileName = document.getElementById("profile-name");
-
+    //세션 스토리지에 저장된 아이디와 닉네임이 있다면, 다른 사람의 페이지를 보고있었던 것이므로 새로고침할 때
+    //그 페이지를 다시 불러와줌
     if (savedId && savedNick) {
         profileName.textContent = savedNick;
         goSearchMain(savedId, savedNick);
     } else {
+        //자기 페이지였다면 host_id에 로그인 아이디를 넘겨주어 자기 페이지를 다시 불러와줌
         profileName.textContent = loginUserNickname;
-        loadPage("/home?ajax=true");
+        const userUrl ="/home?ajax=true&host_id="+loginUserId;
+        loadPage(userUrl);
     }
-
+    //이름 다시 띄우기
     profileName.style.visibility = "visible";
 
     // 초기 진입 시 우측 위젯 불러오기
@@ -65,7 +69,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     } else {
                         showSearchR.forEach((host) => {
                             const searchHtmlTemp = `
-                                <div class="search-item" onclick="goSearchMain('${host.u_pk}','${host.u_nickname}')">
+                                <div class="search-item" onclick="goSearchMain('${host.u_id}','${host.u_nickname}')">
                                     <div class="search-item-title">${host.u_nickname} <span style="font-weight:normal; font-size:12px; color:#ff7675;">(${host.u_name})</span></div>
                                     <div class="search-item-desc">📧 ${host.u_email}</div>
                                 </div>`;
@@ -96,24 +100,52 @@ const pageRoutes = {
 
 function loadPage(url) {
     if (!url) return;
-    const savedOwnerPk = sessionStorage.getItem("currentHostId");
-    const targetOwnerPk = savedOwnerPk ? savedOwnerPk : loginUserPk;
+    const savedOwnerId = sessionStorage.getItem("currentHostId");
+    const targetOwnerId = savedOwnerId ? savedOwnerId : loginUserId;
 
     let fetchUrl = url;
-    if (targetOwnerPk) {
-        fetchUrl += (fetchUrl.includes('?') ? '&' : '?') + 'ownerPk=' + targetOwnerPk;
+    if (targetOwnerId) {
+        fetchUrl += (fetchUrl.includes('?') ? '&' : '?') + 'host_id=' + targetOwnerId;
     }
 
-    fetch(fetchUrl)
+    // 캐시 방지 (항상 최신 데이터 가져오기)
+    fetchUrl += (fetchUrl.includes('?') ? '&' : '?') + 't=' + new Date().getTime();
+
+    return fetch(fetchUrl)
         .then((response) => {
             if (!response.ok) throw new Error(`HTTP 오류: ${response.status}`);
-            return response.text();
+            return response.text(); // ⭐ 딱지(Header) 안 믿음! 일단 무조건 텍스트로 다 받음!
         })
-        .then((htmlData) => {
-            document.getElementById("notebook-content").innerHTML = htmlData;
+        .then((textData) => {
+            // ⭐ [무적의 검사기] 텍스트가 JSON인지 HTML인지 직접 파싱 시도해보기!
+            try {
+                // JSON으로 변환이 성공하면? 아하, 벽돌(JSON 데이터)이구나!
+                const jsonData = JSON.parse(textData);
+                return { type: 'json', payload: jsonData };
+            } catch (e) {
+                // JSON 변환 중 에러가 나면? 아하, 이건 다이어리 같은 완성된 햄버거(HTML)구나!
+                return { type: 'html', payload: textData };
+            }
+        })
+        .then((result) => {
+            const notebookContent = document.getElementById("notebook-content");
             const notebook = document.getElementById("notebook");
             notebook.classList.remove("is-visitor");
 
+            // ⭐ 내용물에 따라 정확하게 분기 처리!
+            if (result.type === 'html') {
+                // HTML이면 예전처럼 화면에 통째로 붓기 (다이어리, 방명록 등)
+                notebookContent.innerHTML = result.payload;
+            } else if (result.type === 'json') {
+                // JSON이면 우리가 만든 요리사 함수를 호출해서 예쁘게 HTML로 조립하기!
+                if (typeof renderHomeTemplate === "function") {
+                    renderHomeTemplate(result.payload, notebookContent);
+                } else {
+                    console.error("renderHomeTemplate 함수가 없습니다!");
+                }
+            }
+
+            // 라우팅 처리
             for (const path in pageRoutes) {
                 if (url.includes(path)) {
                     const route = pageRoutes[path];
@@ -125,10 +157,66 @@ function loadPage(url) {
         })
         .catch(error => {
             console.error("페이지 로드 실패:", error);
-            document.getElementById('notebook-content').innerHTML = `<div class="nb-error">😢 페이지를 불러올 수 없어요<br><button onclick="loadPage('${url}')">다시 시도</button></div>`;
+            document.getElementById('notebook-content').innerHTML = `<div class="nb-error">😢 페이지를 불러올 수 없어요</div>`;
         });
 }
 
+function renderHomeTemplate(data, container) {
+    if (!data) {
+        container.innerHTML = `<div class="nb-error">데이터를 불러올 수 없습니다.</div>`;
+        return;
+    }
+
+    // 기존 main.jsp에 있던 HTML 구조를 자바스크립트로 그대로 옮겨옵니다.
+    // JSP의 ${searchMain.st_message} 였던 부분을 자바스크립트의 ${data.st_message} 로 바꿉니다.
+    const html = `
+    <div class="nb-body home-wrapper">
+        <div class="home-status-board">
+            <div class="status-left">
+                <span class="d-day">✈️ 도쿄 출국 D-100</span>
+                <div class="home-status-msg">
+                    <span id="status-text">${data.st_message || "반갑습니다. 😊"}</span>
+                    <button onclick="editStatus('${loginUserId}')" class="status-edit-btn">[수정]</button>
+                </div>
+            </div>
+            <span class="status-since">Since ${data.st_date ? data.st_date.substring(0, 4) : '2026'}</span>
+        </div>
+
+        <div class="home-visual">
+            <span class="visual-placeholder">${data.main_img || '기본 미니미'}</span>
+            <div onclick="toggleLike()" class="like-btn">
+                <span id="like-icon">🤍</span>
+                <span id="like-count">12</span>
+            </div>
+        </div>
+
+        <div class="home-bottom-row">
+            <div class="home-updates">
+                <div class="update-box">
+                    <h4 class="update-title diary-title">📝 최근 다이어리</h4>
+                    <p class="update-text">오늘 자바스크립트 버그 드디어 잡았다...</p>
+                </div>
+                <div class="update-box">
+                    <h4 class="update-title gb-title">🐾 최근 방명록</h4>
+                    <p class="update-text">${data.latest_gb_content || "작성된 방명록이 없습니다."}</p>
+                </div>
+            </div>
+
+            <div class="home-qna">
+                <h3 class="qna-title">🎲 오늘의 문답</h3>
+                <p class="qna-question">Q. 최근 가장 몰입했던 일은?</p>
+                <div class="qna-input-area">
+                    <textarea id="qna-answer" placeholder="다이어리에 기록해 보세요! ✏️"></textarea>
+                    <button onclick="submitQnA()" class="qna-submit-btn">다이어리 추가 ✍️</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    `;
+
+    // 완성된 HTML 문자열을 화면에 꽂아 넣습니다!
+    container.innerHTML = html;
+}
 function goSearchMain(id, nick) {
     // 1. UI 즉시 반응 (검색창 닫기)
     const dropdown = document.getElementById("search-dropdown");
@@ -141,7 +229,7 @@ function goSearchMain(id, nick) {
     sessionStorage.setItem("currentHostNick", nick);
 
     // ⭐ 3. 무조건 그 사람의 '홈' 화면으로 강제 이동! (방명록 유지 안 함)
-    loadPage(`/home?ajax=true&host_id=${id}`);
+    loadPage(`/home?ajax=true`);
 
     // 4. 프로필 및 제목 데이터 동기화
     const searchUrl = `/search-main?host_id=${id}`;
@@ -177,9 +265,15 @@ function goSearchMain(id, nick) {
 
 
             const stDate = document.querySelector(".status-since");
-            if (stDate && searchData && searchData.st_date) {
+            if (searchData.st_date) {
                 stDate.innerHTML = `Since ${searchData.st_date.substring(0, 4)}`;
             }
+
+            const latestGbElement = document.querySelector(".gb-title + .update-text");
+            if (searchData.latest_gb_content) {
+                latestGbElement.innerText = searchData.latest_gb_content;
+            }
+
 
 
             // ==========================================================
@@ -190,8 +284,6 @@ function goSearchMain(id, nick) {
             // 일촌 버튼 띄우기 (드디어 실행됨!)
             if (typeof checkFriendStatus === "function") checkFriendStatus(id);
 
-            // 화면을 해당 유저의 홈으로 이동
-            loadPage(`/home?ajax=true&host_id=${id}`);
 
         })
         .catch((error) => {
@@ -216,9 +308,6 @@ function updateHitCount() {
         .catch(err => console.error("조회수 갱신 실패:", err));
 }
 
-// ==========================================
-// 5. 일촌 상태 확인 (버튼 UI 자동 변경)
-// ==========================================
 function checkFriendStatus(targetPk) {
     const btn = document.getElementById("btn-friend-action");
     if (!btn) return;
@@ -275,7 +364,6 @@ function checkFriendStatus(targetPk) {
         .catch(err => console.error("[일촌 확인 에러]:", err));
 }
 
-// 6. 일촌 버튼 클릭 액션 처리
 
 function handleFriendAction() {
     const btn = document.getElementById("btn-friend-action");
@@ -316,8 +404,6 @@ function handleFriendAction() {
         .catch(err => console.error("일촌 액션 에러:", err));
 }
 
-// 나에게 온 일촌 신청 확인
-// 나에게 온 일촌 신청 확인
 function checkIncomingFriendRequests() {
     console.log("[알림 확인] 서버에 일촌 신청 목록 요청..."); // 🔍 추적기 1
 
@@ -362,19 +448,16 @@ function checkIncomingFriendRequests() {
         .catch(err => console.error("[알림 확인 에러]:", err));
 }
 
-// 수락 버튼 함수
 function handleAccept(requesterPk) {
     if (!confirm("일촌 신청을 수락할까요?")) return;
     executeFriendAction("accept", requesterPk);
 }
 
-// 거절 버튼 함수
 function handleReject(requesterPk) {
     if (!confirm("신청을 거절하시겠습니까?")) return;
     executeFriendAction("delete", requesterPk);
 }
 
-// 공통 액션 실행기
 function executeFriendAction(action, targetPk) {
     const params = new URLSearchParams({action: action, targetPk: targetPk});
     fetch('/friendaction', {

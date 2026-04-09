@@ -24,41 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-// 화면 갈아끼우기 함수
-function loadPage(url) {
-  if (!url) return;
 
-  fetch(url)
-    .then((response) => response.text())
-    .then((htmlData) => {
-      // 1. 도화지에 껍데기 넣기
-      document.getElementById("notebook-content").innerHTML = htmlData;
-
-      // 2. 수첩 CSS 초기화 (이전 페이지에서 붙은 특수 클래스 떼어내기)
-      const notebook = document.getElementById("notebook");
-      notebook.classList.remove("is-visitor"); // 나중에 특수 클래스가 늘어나면 배열로 관리해도 됩니다.
-
-      // ⭐ 3. 라우터 맵을 뒤져서 URL에 맞는 세팅을 자동으로 실행! (if문 실종사건!)
-      for (const path in pageRoutes) {
-        if (url.includes(path)) {
-          const route = pageRoutes[path]; // 일치하는 설정 꺼내기
-
-          // 특수 CSS 클래스가 정의되어 있다면 수첩에 붙여줌
-          if (route.cssClass) {
-            notebook.classList.add(route.cssClass);
-          }
-
-          // 실행할 초기화 함수가 있다면 실행
-          if (route.initFunc) {
-            route.initFunc();
-          }
-
-          break; // 찾았으니 반복문 종료
-        }
-      }
-    })
-    .catch((error) => console.error("페이지 로드 실패:", error));
-}
 
 // 다이어리 내용을 비동기(fetch)로 불러와서 화면을 갈아끼우는 함수
 function loadDiary(url = "/diary?ajax=true") {

@@ -14,10 +14,9 @@ import java.io.IOException;
 public class Home extends HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-     response.setContentType("application/json; charset=UTF-8");
-     Gson gson = new Gson();
-     String jsonRes = gson.toJson(SearchDAO.searchMain(request));
-     response.getWriter().println(jsonRes);
+        request.setAttribute("question",HomeDAO.RandomQ(request,response));
+        request.setAttribute("searchMain",SearchDAO.searchMain(request));
+        request.getRequestDispatcher("/main.jsp").forward(request, response);
 
 
     }

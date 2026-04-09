@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class SearchDAO {
 
 
-    public static ArrayList<String> searchUsers(HttpServletRequest request) {
+    public static ArrayList<SearchVO> searchUsers(HttpServletRequest request) {
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -25,7 +25,7 @@ public class SearchDAO {
             ps.setString(3, keyword);
             rs = ps.executeQuery();
             SearchVO user = null;
-            ArrayList<String> searchResult = new ArrayList<>();
+            ArrayList<SearchVO> searchResult = new ArrayList<>();
             while (rs.next()) {
                 user = new SearchVO();
                 user.setU_id(rs.getString("u_id"));
@@ -35,7 +35,7 @@ public class SearchDAO {
                 user.setU_pk(rs.getString("u_pk"));
 
 
-                searchResult.add(user.toJSON());
+                searchResult.add(user);
             }
             return searchResult;
 

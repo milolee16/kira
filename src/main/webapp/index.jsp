@@ -3,6 +3,14 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <script>
+        // 로그인 시 u_id, 비로그인 시 null
+        const loginUserPk = "${sessionScope.loginUserPk}";
+        // player.js나 다른 JS 파일들이 어떤 이름을 쓰더라도 호환되도록 별칭(Alias) 설정
+        const loginUserId = "${sessionScope.loginUserId}";
+        // 새로고침 닉네임
+        const loginUserNickname = "${sessionScope.loginUserNickname}";
+    </script>
     <%-- 라이브러리 --%>
     <link
             rel="stylesheet"
@@ -165,7 +173,8 @@
                 </div>
             </div>
         </div>
-        <%-- ══ /가운데 ══ --%> <%-- ══ 오른쪽: MP3 + 스마트폰 + 포스트잇 ══
+        <%-- ══ /가운데 ══ --%>
+        <%-- ══ 오른쪽: MP3 + 스마트폰 + 포스트잇 ══
         --%>
         <div class="right-col">
             <div class="mp3">
@@ -242,14 +251,7 @@
 <div class="desk-front"></div>
 
 
-<script>
-    // 로그인 시 u_id, 비로그인 시 null
-    const loginUserPk = "${sessionScope.loginUserPk}";
-    // player.js나 다른 JS 파일들이 어떤 이름을 쓰더라도 호환되도록 별칭(Alias) 설정
-    const loginUserId = "${sessionScope.loginUserId}";
-    // 새로고침 닉네임
-    const loginUserNickname = "${sessionScope.loginUserNickname}";
-</script>
+
 
 <div id="yt-player-hidden" style="display: none"></div>
 <script src="https://www.youtube.com/iframe_api"></script>

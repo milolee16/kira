@@ -20,7 +20,7 @@ pageEncoding="UTF-8" %>
             </div>
           </div>
         </div>
-        <span class="status-since">Since 2026.03.31</span>
+        <span class="status-since">${searchMain.st_date}</span>
     </div>
 
     <div class="home-visual">

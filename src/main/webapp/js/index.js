@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", function () {
         goMyHomeBtn.addEventListener("click", function() {
             sessionStorage.removeItem("currentHostId");
             sessionStorage.removeItem("currentHostNick");
-            window.location.href = "/main"; // 메인 페이지 주소로 강제 이동 (새로고침 효과)
+           loadPage("/home?ajax=true"); // 메인 페이지 주소로 강제 이동 (새로고침 효과)
         });
     }
 

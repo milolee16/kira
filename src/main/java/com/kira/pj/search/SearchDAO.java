@@ -53,6 +53,9 @@ public class SearchDAO {
         PreparedStatement ps = null;
         ResultSet rs = null;
         String host_id = request.getParameter("host_id");
+        if (host_id == null || host_id.trim().isEmpty() || "undefined".equals(host_id) || "null".equals(host_id)) {
+            host_id = (String) request.getSession().getAttribute("loginUserId");
+        }
 
         String sql = "SELECT m.*, " +
                 "(SELECT MAX(board_content) KEEP (DENSE_RANK FIRST ORDER BY created_at DESC) " +

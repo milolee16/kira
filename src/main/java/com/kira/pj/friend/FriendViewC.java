@@ -21,9 +21,9 @@ public class FriendViewC extends HttpServlet {
 
         String action = request.getParameter("action");
         HttpSession session = request.getSession();
-        String myPk = (String) session.getAttribute("loginUserPk");
+        String myId = (String) session.getAttribute("loginUserId");
 
-        if (myPk == null || myPk.trim().isEmpty()) {
+        if (myId == null || myId.trim().isEmpty()) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
@@ -34,7 +34,7 @@ public class FriendViewC extends HttpServlet {
 
             if (targetPk != null && !targetPk.isEmpty()) {
                 FriendDAO dao = new FriendDAO();
-                FriendDTO dto = dao.checkRelation(myPk, targetPk);
+                FriendDTO dto = dao.checkRelation(myId, targetPk);
 
                 response.setContentType("application/json; charset=UTF-8");
                 response.getWriter().print(new Gson().toJson(dto));
@@ -45,19 +45,19 @@ public class FriendViewC extends HttpServlet {
             // 🚨 [기능 2] 나에게 온 신청 목록 반환 (괄호를 완전히 밖으로 뺐음!)
         } else if ("pendingList".equals(action)) {
             FriendDAO dao = new FriendDAO();
-            List<Map<String, String>> list = dao.getPendingRequests(myPk);
+            List<Map<String, String>> list = dao.getPendingRequests(myId);
 
             response.setContentType("application/json; charset=UTF-8");
             response.getWriter().print(new Gson().toJson(list));
         } else if ("list".equals(action)) {
             // [기능 3] 내 일촌 목록 반환
             FriendDAO dao = new FriendDAO();
-            List<Map<String, String>> list = dao.getFriendList(myPk);
+            List<Map<String, String>> list = dao.getFriendList(myId);
 
             response.setContentType("application/json; charset=UTF-8");
             response.getWriter().print(new Gson().toJson(list));
+            System.out.println(new Gson().toJson(list));
         }
 
-        // (나중에 여기에 "list".equals(action) 을 추가해서 내 일촌 목록을 불러오는 기능도 넣으면 완벽하다.)
     }
 }

@@ -240,7 +240,7 @@ function vloadPage(url) {
 
     // 1. 현재 미니홈피 주인의 PK를 가져온다.
     const savedOwnerPk = sessionStorage.getItem("currentHostId");
-    const targetOwnerPk = savedOwnerPk ? savedOwnerPk : loginUserPk;
+    const targetOwnerPk = savedOwnerPk ? savedOwnerPk : loginUserId;
 
     // 2. URL에 꼬리표(ownerPk)를 붙인다.
     let fetchUrl = url;

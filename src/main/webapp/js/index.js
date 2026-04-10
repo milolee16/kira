@@ -158,6 +158,7 @@ function goSearchMain(id, nick) {
         .then((response) => response.json())
         .then((searchData) => {
 
+
             // 5. 메뉴와 탭의 활성화 불빛(active)을 강제로 '홈'으로 옮기기
             document.querySelectorAll(".menu-item, .nb-tab").forEach((el) => el.classList.remove("active"));
             document.querySelectorAll(".menu-item, .nb-tab").forEach(el => {
@@ -182,14 +183,22 @@ function goSearchMain(id, nick) {
             }
 
             const stDate = document.querySelector(".status-since");
-            if (searchData.st_date) {
+            if (stDate && searchData.st_date) {
                 stDate.innerHTML = `Since ${searchData.st_date.substring(0, 4)}`;
             }
 
             const latestGbElement = document.querySelector(".gb-title + .update-text");
-            if (searchData.latest_gb_content) {
+            if (latestGbElement && searchData.latest_gb_content) {
                 latestGbElement.innerText = searchData.latest_gb_content;
             }
+
+            //프로필사진 업데이트  tk 수정 *********
+            const profilePhoto = document.getElementById("profile-photo");
+            profilePhoto.innerHTML = searchData.profileImgUrl
+                ? `<img src="${searchData.profileImgUrl}" alt="프로필 사진" style="width:100%; height:100%; object-fit:cover; border-radius:5px;">`
+                : `🌬️`;
+            //프로필사진 업데이트 tk 수정***********
+
 
             // 부가 기능 로드
             if (typeof loadRecentVisitors === "function") loadRecentVisitors();

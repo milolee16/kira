@@ -103,31 +103,6 @@ public class PhotoDAO {
 
     }
 
-//    public int updateProfile(HttpServletRequest request) {
-//        String imgUrl = request.getParameter("imgUrl");
-//        System.out.println("받은 이미지 URL: " + imgUrl);
-//        Connection conn = null;
-//        PreparedStatement ps = null;
-//        String sql = "insert into profile values(? , ?)";
-//        try {
-//            conn = DBManager.connect();
-//            ps = conn.prepareStatement(sql);
-//            HttpSession session = request.getSession();
-//            ps.setString(1, session.getAttribute("loginUserId").toString());
-//            ps.setString(2, imgUrl);
-//            session.setAttribute("loginUserProfileImg", imgUrl);
-//            return ps.executeUpdate();
-//
-//
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//
-//        } finally {
-//            DBManager.close(conn, ps, null);
-//        }
-//        return 0;
-//    }
 
     public int updateProfile(HttpServletRequest request) {
         String imgUrl = request.getParameter("imgUrl");

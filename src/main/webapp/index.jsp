@@ -8,8 +8,8 @@
         const loginUserPk = "${sessionScope.loginUserPk}";
         // player.js나 다른 JS 파일들이 어떤 이름을 쓰더라도 호환되도록 별칭(Alias) 설정
         const loginUserId = "${sessionScope.loginUserId}";
-      window.loginUserPk = "${sessionScope.loginUserPk}";
-    window.loginUserId = "${sessionScope.loginUserId}";
+        window.loginUserPk = "${sessionScope.loginUserPk}";
+        window.loginUserId = "${sessionScope.loginUserId}";
         // 새로고침 닉네임
         const loginUserNickname = "${sessionScope.loginUserNickname}";
     </script>
@@ -248,7 +248,8 @@
                     <a id="yt-link" href="#" target="_blank" class="phone-yt-link">▶ YouTube에서 보기</a>
                     <div class="text" id="bgm-title-phone"
                          data-src="/bgm?ajax=true"
-                    >🎶 내 재생목록</div>
+                    >🎶 내 재생목록
+                    </div>
                 </div>
                 <div class="phone-home"
                      data-src="/bgm?ajax=true"
@@ -277,9 +278,6 @@
     </div>
 </div>
 <div class="desk-front"></div>
-
-
-
 
 <div id="yt-player-hidden" style="display: none"></div>
 <script src="https://www.youtube.com/iframe_api"></script>

@@ -22,6 +22,7 @@ function updateNowPlaying(track, index) {
 function renderQueueHeader() {
     const header = document.getElementById('bgm-queue-header');
     const wrap = document.querySelector('.bgm-wrap');
+    const btnWrap = document.getElementById('bgm-add-btn-wrap');
     if (!header || !wrap) return;
 
     // ✅ loadPlaylist()에서 확정한 권한값 사용
@@ -31,6 +32,13 @@ function renderQueueHeader() {
     const displayName = isVisitor
         ? (window.currentHostNickname || sessionStorage.getItem("currentHostNick") || "주인")
         : (window.loginUserNickname || "내");
+
+    // ✅ 추가 버튼은 항상 여기서 한 번만 처리
+    if (btnWrap) {
+        btnWrap.innerHTML = isMyPlaylist
+            ? `<button class="bgm-add-btn" onclick="openBgmModal()">+ 추가</button>`
+            : '';
+    }
 
     if (window.isDefaultPlaylist) {
         wrap.classList.remove('theme-personal');
@@ -44,7 +52,6 @@ function renderQueueHeader() {
                 <span class="bgm-queue-hint">
                     ${isVisitor ? '등록된 곡이 없어 기본 곡을 재생합니다.' : '나만의 재생목록을 만들어봐요'}
                 </span>
-                ${isMyPlaylist ? '<button class="bgm-add-btn" id="bgm-add-btn">+ 추가</button>' : ''}
             </div>
         `;
 
@@ -63,20 +70,18 @@ function renderQueueHeader() {
             <div class="bgm-queue-status personal">
                 <span class="bgm-queue-status-label">✨ ${displayName}${isVisitor ? '님의' : ''} 플레이리스트</span>
                 <span class="bgm-queue-count">${window.playlist.length}곡</span>
+                &nbsp&nbsp;
             </div>
             <div class="bgm-queue-actions">
                 ${isMyPlaylist ? '<button class="bgm-shuffle-btn" id="bgm-shuffle-btn">🔀 셔플</button>' : ''}
-                ${isMyPlaylist ? '<button class="bgm-add-btn" id="bgm-add-btn">+ 추가</button>' : ''}
             </div>
         </div>
     `;
 
     if (isMyPlaylist) {
         const shuffleBtn = document.getElementById('bgm-shuffle-btn');
-        const addBtn = document.getElementById('bgm-add-btn');
 
         if (shuffleBtn) shuffleBtn.onclick = shufflePlaylist;
-        if (addBtn) addBtn.onclick = openBgmModal;
     }
 }
 

@@ -33,10 +33,7 @@
     <div class="bgm-add-row">
         <div id="bgm-queue-header" class="bgm-queue-header"></div>
 <%--        <span class="bgm-queue-label">재생목록</span>--%>
-        <br>
-        <button class="bgm-add-btn" id="bgm-add-btn" title="곡 추가">
-            ＋ 곡 추가
-        </button>
+        <div id="bgm-add-btn-wrap"></div>  <!-- ← 버튼 들어올 자리 -->
     </div>
 
     <%-- ── 재생목록 ── --%>

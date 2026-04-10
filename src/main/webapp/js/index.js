@@ -15,13 +15,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (profileName) profileName.style.visibility = "visible";
 
-    // 🌟 [추가됨] '내 이름' 클릭 시 파도타기 세션 지우고 내 홈피로 복귀!
+    // '내 이름' 클릭 시 파도타기 세션 지우고 내 홈피로 복귀!
     const goMyHomeBtn = document.getElementById("goMyHome");
     if (goMyHomeBtn) {
         goMyHomeBtn.addEventListener("click", function() {
             sessionStorage.removeItem("currentHostId");
             sessionStorage.removeItem("currentHostNick");
-           loadPage("/home?ajax=true"); // 메인 페이지 주소로 강제 이동 (새로고침 효과)
+           loadPage("/home?ajax=true");
         });
     }
 
@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // 내 홈피라면 일촌 버튼 숨기기 (기본값)
     if (typeof checkFriendStatus === "function") {
-        checkFriendStatus(typeof loginUserPk !== 'undefined' ? loginUserPk : null);
+        checkFriendStatus(typeof loginUserId !== 'undefined' ? loginUserId : null);
     }
 
     // 메뉴 및 탭 이벤트 등록

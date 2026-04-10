@@ -6,7 +6,7 @@ function checkFriendStatus(targetPk) {
     const btn = document.getElementById("btn-friend-action");
     if (!btn) return;
     // 🚨 [강력한 방어막] targetPk가 내 PK와 같거나, 아예 없으면 무조건 숨김
-    if (!targetPk || targetPk === loginUserPk || targetPk === "" || targetPk === "null") {
+    if (!targetPk || targetPk === loginUserId || targetPk === "" || targetPk === "null") {
         btn.style.display = "none";
         return;
     }
@@ -99,8 +99,7 @@ function handleFriendAction() {
         .catch(err => console.error("일촌 액션 에러:", err));
 }
 
-// 나에게 온 일촌 신청 확인
-// 나에게 온 일촌 신청 확인
+
 function checkIncomingFriendRequests() {
     console.log("[알림 확인] 서버에 일촌 신청 목록 요청..."); // 🔍 추적기 1
 
@@ -183,7 +182,7 @@ function loadFriendList() {
 
     // 🚨 [판별 로직]
     // savedOwnerPk가 아예 없거나(null), 로그인한 나(loginUserPk)와 같으면 -> 내 집!
-    const isMyHomePage = (savedOwnerPk === null || String(savedOwnerPk) === String(loginUserPk));
+    const isMyHomePage = (savedOwnerPk === null || String(savedOwnerPk) === String(loginUserId));
 
     const container = document.getElementById("friend-list-container");
     if (!container) return;
@@ -216,7 +215,7 @@ function loadFriendList() {
                 const html = `
                     <div style="display:flex; justify-content:space-between; align-items:center; background:#fff; padding:15px; border-radius:10px; border:1px solid #f2c0bd; margin-bottom:10px;">
                         <div>
-                            <span style="font-size:18px; cursor:pointer;" onclick="goSearchMain('${f.friend_pk}', '${f.u_nickname}')">
+                            <span style="font-size:18px; cursor:pointer;" onclick="goSearchMain('${f.u_id}', '${f.u_nickname}')">
                                 🌱 <b>${f.u_nickname}</b>
                             </span>
                             <div style="font-size:11px; color:#c0b0a0;">일촌 맺은 날: ${f.f_date}</div>

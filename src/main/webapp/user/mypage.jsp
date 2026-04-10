@@ -84,7 +84,7 @@
     </div>
 
     <div class="mypage-back">
-        <a href="${pageContext.request.contextPath}/main">← 메인으로 돌아가기</a>
+        <a href="javascript:void(0);" onclick="history.back()">← 메인으로 돌아가기</a>
     </div>
 </div>
 

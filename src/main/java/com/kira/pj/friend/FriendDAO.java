@@ -132,7 +132,7 @@ public class FriendDAO {
 
         String sql = "SELECT f.f_requester, u.u_nickname " +
                 "FROM friend_relation f " +
-                "JOIN userReg u ON f.f_requester = u.u_pk " +
+                "JOIN userReg u ON f.f_requester = u.u_id " +
                 "WHERE f.f_receiver = ? AND f.f_status = 0";
 
         try {
@@ -169,7 +169,7 @@ public class FriendDAO {
                 + "  CASE WHEN f.f_requester = ? THEN f.f_receiver ELSE f.f_requester END as friend_pk, "
                 + "  u.u_nickname, u.u_id, TO_CHAR(f.f_date, 'YYYY.MM.DD') as f_date "
                 + "FROM friend_relation f "
-                + "JOIN userReg u ON u.u_pk = (CASE WHEN f.f_requester = ? THEN f.f_receiver ELSE f.f_requester END) "
+                + "JOIN userReg u ON u.u_id = (CASE WHEN f.f_requester = ? THEN f.f_receiver ELSE f.f_requester END) "
                 + "WHERE (f.f_requester = ? OR f.f_receiver = ?) AND f.f_status = 1";
 
         try {

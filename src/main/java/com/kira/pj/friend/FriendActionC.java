@@ -20,7 +20,7 @@ public class FriendActionC extends HttpServlet {
         String targetPk = request.getParameter("targetPk"); // 상대방 PK
 
         HttpSession session = request.getSession();
-        String myPk = (String) session.getAttribute("loginUserPk"); // 내 PK
+        String myPk = (String) session.getAttribute("loginUserId"); // 내 PK
 
         // 방어막: 로그인이 풀렸거나 파라미터가 없으면 컷
         if (myPk == null || targetPk == null || action == null) {

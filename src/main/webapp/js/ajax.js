@@ -92,16 +92,26 @@ document.addEventListener('click', e => {
         // 2. phone-home (방문한 "페이지 주인"의 플레이리스트)
         if (target.classList.contains('phone-home')) {
             e.preventDefault();
-            // Photo가 성공적으로 쓰고 있는 그 세션값(u_id)을 그대로 가져옴
-            const currentHostId = sessionStorage.getItem('currentHostId');
+
+            const currentHostId = sessionStorage.getItem('currentHostId'); // null일 수 있음
+            const myId = window.loginUserId;
 
             switchTab(target.dataset.src);
+
             if (typeof loadPlaylist === 'function') {
-                // 이제 서버가 ID를 PK로 바꿔주므로, 그냥 이 값을 던지면 끝!
-                loadPlaylist(currentHostId);
+                // 🚩 [수정] 가려는 곳이 없거나(null), 내 아이디와 같다면 주인 모드!
+                if (!currentHostId || currentHostId === myId) {
+                    console.log("✅ [주인 모드] 초기 상태 또는 본인 확인");
+                    loadPlaylist(null);
+                } else {
+                    console.log("❌ [방문자 모드] 타인 확인:", currentHostId);
+                    loadPlaylist(currentHostId);
+                }
             }
             return;
         }
+
+        // 기타 일반 탭 이동 로직...
         switchTab(target.dataset.src);
     }
 });

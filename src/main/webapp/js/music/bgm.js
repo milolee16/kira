@@ -170,39 +170,38 @@ function renderQueue() {
 }
 
 // ✅ 추가: 삭제 요청 함수
-// 기존의 deleteTrack 함수를 아래 내용으로 덮어씌우세요.
 async function deleteTrack(youtubeId) {
     if (!confirm('정말 삭제할까요?')) return;
 
     try {
-        const res = await fetch(`/api/bgm?youtubeId=${youtubeId}`, {
+        const currentPlayingId = window.playlist[window.currentIndex]?.youtubeId;
+        const isDeletingCurrent = currentPlayingId === youtubeId;
+
+        const res = await fetch(`/api/bgm?youtubeId=${encodeURIComponent(youtubeId)}`, {
             method: 'DELETE'
         });
         const json = await res.json();
+        if (json.result !== 'ok') return;
 
-        if (json.result === 'ok') {
-            // 1. 현재 재생 중인 곡이 삭제 대상인지 확인
-            const currentTrack = window.playlist[window.currentIndex];
-            const isPlayingDeleted = (currentTrack && currentTrack.youtubeId === youtubeId);
+        if (isDeletingCurrent) {
+            alert('재생 중이던 곡이 삭제되었으므로 다음 곡으로 넘어갑니다.');
 
-            // 2. 서버에서 최신 목록(재정렬된 목록) 다시 가져오기
-            await reloadPlaylist();
+            await reloadPlaylist(null, { keepPlaying: false });
 
-            // 3. 만약 재생 중인 곡을 지웠다면?
-            if (isPlayingDeleted) {
-                alert('재생 중인 곡이 삭제되어 다음 곡을 재생합니다.');
-                if (window.playlist.length > 0) {
-                    // 현재 인덱스가 리스트 범위를 벗어나지 않게 조정 후 재생
-                    window.currentIndex = window.currentIndex % window.playlist.length;
-                    playTrack(window.currentIndex);
-                } else {
-                    // 남은 곡이 없으면 플레이어 중지
-                    if (window.ytPlayer) window.ytPlayer.stopVideo();
-                }
+            if (window.playlist.length > 0) {
+                window.currentIndex = Math.min(window.currentIndex, window.playlist.length - 1);
+                playTrack(window.currentIndex);
+            } else if (window.ytPlayer) {
+                window.ytPlayer.stopVideo();
             }
+        } else {
+            await reloadPlaylist(null, {
+                keepPlaying: true,
+                currentPlayingId
+            });
         }
     } catch (e) {
-        console.error("삭제 중 오류:", e);
+        console.error('삭제 실패:', e);
     }
 }
 // ✅ player.js가 곡을 바꿀 때 호출하는 콜백
@@ -320,10 +319,20 @@ async function bgmConfirmAdd() {
             body: params.toString() // 자동으로 인코딩되어 전송됨
         });
         const json = await res.json();
+
         if (json.result === 'ok') {
             closeBgmModal();
             // ✅ 추가 후 목록을 다시 불러와서 새 곡을 포함한 정렬된 리스트 표시
-            await reloadPlaylist();
+            // 🚩 [핵심 수정] 현재 재생 중인 노래 ID를 가져옴
+            const currentPlayingId = window.playlist[window.currentIndex]?.youtubeId;
+
+            // ✅ 옵션을 넣어서 리로드 (소리는 유지, 리스트만 갱신)
+            await reloadPlaylist(null, {
+                keepPlaying: true,
+                currentPlayingId: currentPlayingId
+            });
+
+            console.log("새 곡 추가 완료: 재생 중인 곡을 유지하며 리스트를 갱신했습니다.");
         } else {
             showAddMsg(json.msg || '추가에 실패했어요.', 'error');
         }
@@ -333,13 +342,14 @@ async function bgmConfirmAdd() {
     }
 }
 // ── 재생목록 리로드 부분 수정 (wasDefault 정의) ─────────────
-function reloadPlaylist(targetPk) {
-    const url = targetPk ? `/api/visitor/bgm?ownerPk=${targetPk}` : "/api/bgm";
+function reloadPlaylist(targetPk, options = {}) {
+    const { keepPlaying = false, currentPlayingId = null } = options;
+    const url = targetPk ? `/api/visitor/bgm?ownerPk=${targetPk}` : '/api/bgm';
 
-    fetch(url)
-        .then((r) => r.json())
-        .then((tracks) => {
-            // 1. 데이터 할당 (없으면 더미)
+    return fetch(url)
+        .then(r => r.json())
+        .then(tracks => {
+            // 1. 데이터 할당
             if (!tracks || tracks.length === 0) {
                 window.playlist = dummyPlaylist;
                 window.isDefaultPlaylist = true;
@@ -347,35 +357,36 @@ function reloadPlaylist(targetPk) {
             } else {
                 window.playlist = tracks;
                 window.isDefaultPlaylist = false;
-                // 첫 번째 곡의 VO에서 닉네임 추출
                 window.currentHostNickname = tracks[0].userNickname;
             }
 
-            // 2. 인덱스 초기화 및 상태 플래그 설정
-            // 타인 홈피 방문 시 무조건 0번부터 시작하도록 고정
-            window.currentIndex = 0;
-            window.fetchDone = true;
-
-            // 3. UI 렌더링 (헤더 닉네임 등)
-            if (typeof renderQueue === "function") renderQueue();
-
-            // 4. 🚨 재생 실행 로직 (핵심)
-            if (window.ytPlayer && typeof window.ytPlayer.loadVideoById === 'function') {
-                // 이미 플레이어가 있으면 첫 곡을 로드하고 재생
-                const firstTrack = window.playlist[0];
-                window.ytPlayer.loadVideoById(firstTrack.youtubeId);
-                if (typeof updateIndexNowPlaying === 'function') updateIndexNowPlaying(0);
-            } else if (window.apiReady) {
-                // 플레이어가 없으면 새로 생성
-                initPlayer();
+            // 2. 인덱스 보정 (여기가 중요)
+            if (currentPlayingId) {
+                const newIndex = window.playlist.findIndex(t => t.youtubeId === currentPlayingId);
+                window.currentIndex = (newIndex >= 0) ? newIndex : 0;
+            } else {
+                // 저장된 마지막 인덱스를 가져와서 안전하게 적용
+                const savedIndex = parseInt(localStorage.getItem("bgmCurrentIndex") || "0", 10);
+                window.currentIndex = (savedIndex < window.playlist.length) ? savedIndex : 0;
             }
-        })
-        .catch((err) => {
-            console.error("BGM 로드 에러:", err);
-            window.playlist = dummyPlaylist;
-            window.isDefaultPlaylist = true;
+
+            // 확정된 인덱스를 다시 저장
+            localStorage.setItem("bgmCurrentIndex", window.currentIndex);
+
             window.fetchDone = true;
-            if (window.apiReady) initPlayer();
+
+            // 3. UI 갱신 (순서: 데이터 확정 -> UI 렌더링 -> 하이라이트)
+            if (typeof renderQueue === 'function') {
+                renderQueue(); // 이 내부에서 renderQueueHeader와 updateNowPlaying을 호출함
+            }
+
+            // 4. 실제 재생 명령 (주인이 바뀌었거나, 새로 재생해야 할 때만)
+            if (!keepPlaying && window.ytPlayer && window.playerReady && window.playlist.length > 0) {
+                const targetTrack = window.playlist[window.currentIndex];
+                if (targetTrack) {
+                    window.ytPlayer.loadVideoById(targetTrack.youtubeId);
+                }
+            }
         });
 }
 
@@ -391,6 +402,7 @@ function moveTrack(index, direction) {
     const targetIndex = direction === 'up' ? index - 1 : index + 1;
     if (targetIndex < 0 || targetIndex >= playlist.length) return;
 
+    const currentPlayingId = window.playlist[window.currentIndex]?.youtubeId;
     const idA = playlist[index].youtubeId;
     const idB = playlist[targetIndex].youtubeId;
 
@@ -401,16 +413,16 @@ function moveTrack(index, direction) {
         .then(data => {
             if (data.result !== 'ok') return;
 
-            // 프론트 배열도 swap
             const tmp = playlist[index];
             playlist[index] = playlist[targetIndex];
             playlist[targetIndex] = tmp;
 
-            // currentIndex 보정
-            if (window.currentIndex === index) window.currentIndex = targetIndex;
-            else if (window.currentIndex === targetIndex) window.currentIndex = index;
+            window.currentIndex = playlist.findIndex(t => t.youtubeId === currentPlayingId);
+            if (window.currentIndex < 0) window.currentIndex = 0;
 
             renderQueue();
+            updateNowPlaying(window.playlist[window.currentIndex], window.currentIndex);
+            if (typeof updateIndexNowPlaying === 'function') updateIndexNowPlaying();
         })
         .catch(err => console.error('순서 변경 실패:', err));
 }

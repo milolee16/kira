@@ -3,6 +3,16 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <script>
+        // 로그인 시 u_id, 비로그인 시 null
+        const loginUserPk = "${sessionScope.loginUserPk}";
+        // player.js나 다른 JS 파일들이 어떤 이름을 쓰더라도 호환되도록 별칭(Alias) 설정
+        const loginUserId = "${sessionScope.loginUserId}";
+      window.loginUserPk = "${sessionScope.loginUserPk}";
+    window.loginUserId = "${sessionScope.loginUserId}";
+        // 새로고침 닉네임
+        const loginUserNickname = "${sessionScope.loginUserNickname}";
+    </script>
     <%-- 라이브러리 --%>
     <link
             rel="stylesheet"
@@ -19,6 +29,8 @@
     <link rel="stylesheet" href="css/main.css"/>
     <link rel="stylesheet" href="css/search.css"/>
     <link rel="stylesheet" href="css/user/loginbox.css"/>
+    <link rel="stylesheet" href="css/qna.css"/>
+
     <%-- JS --%>
     <script src="js/index.js"></script>
     <script src="js/guestboard.js"></script>
@@ -28,6 +40,7 @@
     <script src="js/message.js"></script>
     <script defer src="js/ajax.js"></script>
     <script defer src="js/main.js"></script>
+    <script defer src="js/qna.js"></script>
 
     <title>Team Kira - Minihompy</title>
 </head>
@@ -147,25 +160,25 @@
             <div class="nb-tabs">
                 <div
                         class="nb-tab ${content eq 'main.jsp' ? 'active' : ''}"
-                        data-src="/home?ajax=true"
+                        data-src="${pageContext.request.contextPath}/home?ajax=true"
                 >
                     홈
                 </div>
                 <div
                         class="nb-tab ${content eq 'diary/diary.jsp' ? 'active' : ''}"
-                        data-src="/diary?ajax=true"
+                        data-src="${pageContext.request.contextPath}/diary?ajax=true"
                 >
                     다이어리
                 </div>
                 <div
                         class="nb-tab ${content eq 'photo/photo.jsp' ? 'active' : ''}"
-                        data-src="photo/photo.jsp"
+                        data-src="${pageContext.request.contextPath}/photo/photo.jsp"
                 >
                     사진첩
                 </div>
                 <div
                         class="nb-tab ${content eq 'board/board.jsp' ? 'active' : ''}"
-                        data-src="board/board.jsp"
+                        data-src="${pageContext.request.contextPath}/board/board.jsp"
                 >
                     방명록
                 </div>
@@ -186,7 +199,8 @@
                 </div>
             </div>
         </div>
-        <%-- ══ /가운데 ══ --%> <%-- ══ 오른쪽: MP3 + 스마트폰 + 포스트잇 ══
+        <%-- ══ /가운데 ══ --%>
+        <%-- ══ 오른쪽: MP3 + 스마트폰 + 포스트잇 ══
         --%>
         <div class="right-col">
             <div class="mp3">
@@ -265,16 +279,7 @@
 <div class="desk-front"></div>
 
 
-<script>
-    // 로그인 시 u_id, 비로그인 시 null
-    const loginUserPk = "${sessionScope.loginUserPk}";
-    const loginUserId = "${sessionScope.loginUserId}";
-    window.loginUserPk = "${sessionScope.loginUserPk}";
-    window.loginUserId = "${sessionScope.loginUserId}";
 
-    // 새로고침 닉네임
-    const loginUserNickname = "${sessionScope.loginUserNickname}";
-</script>
 
 <div id="yt-player-hidden" style="display: none"></div>
 <script src="https://www.youtube.com/iframe_api"></script>

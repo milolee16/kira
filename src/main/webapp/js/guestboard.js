@@ -24,7 +24,7 @@ function loadGuestBoard(date = "") {
                 // 1. 권한 체크 (내 아이디 vs 글쓴이 아이디 / 내 아이디 vs 홈피 주인 아이디)
                 // loginUserId는 index.jsp 맨 아래에 선언해둔 전역 변수를 그대로 씁니다.sessionScope.loginUserId
 
-                const isMyPost = (loginUserId === gb.guest_pk); // 이 글을 내가 썼는가?
+                const isMyPost = (loginUserId === gb.guest_id); // 이 글을 내가 썼는가?
                 const isMyHompy = (loginUserId === gb.host_id); // 이 홈피가 내 홈피인가?
 
                 // 2. 버튼 HTML을 담을 빈 바구니 준비
@@ -47,7 +47,7 @@ function loadGuestBoard(date = "") {
                 const htmlTemplate = `
           <div class="gb-content-row">
            <span class="gb-text-part">
-               <a href="javascript:void(0);" onclick="goSearchMain('${gb.guest_pk}', '${gb.guest_nick}')" class="gb-user-link" >${gb.guest_nick}</a> : <span id="guestHi_${gb.gboard_pk}"> ${gb.board_content}</span>
+               <a href="javascript:void(0);" onclick="goSearchMain('${gb.guest_id}', '${gb.guest_nick}')" class="gb-user-link" >${gb.guest_nick}</a> : <span id="guestHi_${gb.gboard_pk}"> ${gb.board_content}</span>
            </span>
                ${editBtnHtml}
                ${delBtnHtml}

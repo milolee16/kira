@@ -70,7 +70,7 @@
             </div>
         </c:when>
 
-        <%-- [3] 상세 보기 화면 (권한 강화) --%>
+        <%-- [3] 상세 보기 화면 (권한 강화 및 댓글 UI 추가) --%>
         <c:when test="${showMode == 'detail'}">
             <div class="diary-board">
                 <div class="board-header">
@@ -80,8 +80,8 @@
 
                 <div style="background:#fff; padding:20px; border-radius:10px; border:1px solid #f7cfcd;">
                     <div style="font-size:24px; font-weight:bold; color:#333; margin-bottom:10px; border-bottom:2px solid #f7cfcd; padding-bottom:10px;">
-                        <c:if test="${diary.visibility == 0}">🔒 </c:if>
-                        <c:if test="${diary.visibility == 1}">👥 </c:if>
+                        <c:if test="${diary.visibility == 0}">&#128273; </c:if>
+                        <c:if test="${diary.visibility == 1}">&#129309;</c:if>
                             ${diary.title}
                     </div>
                     <div style="font-size:14px; color:#999; margin-bottom:20px; text-align:right;">작성자: ${diary.id}</div>
@@ -89,14 +89,45 @@
                     <div style="font-size:18px; color:#555; line-height:1.8; min-height:200px; white-space: pre-wrap;">${diary.txt}</div>
 
                     <div style="text-align:right; margin-top:20px;">
-                            <%-- 본인만 수정/삭제 가능 --%>
                         <c:if test="${diary.id eq sessionScope.loginUserId}">
                             <button onclick="loadDiary('diary-update?no=${diary.no}&y=${curYear}&m=${curMonth}&d=${selectedDay}')" class="write-btn" style="background:#ddd; color:#333;">수정</button>
                             <button onclick="if(confirm('정말 이 일기를 삭제할까요? 🗑️')) loadDiary('diary-delete?no=${diary.no}&y=${curYear}&m=${curMonth}')" class="write-btn" style="background:#ff9999;">삭제</button>
                         </c:if>
                     </div>
 
-                        <%-- (중략: 댓글 영역은 이전과 동일하게 유지) --%>
+                    <hr style="border: 1px dashed #f7cfcd; margin: 30px 0;">
+
+                        <%-- ★ 댓글 영역 시작 ★ --%>
+                    <div class="reply-section">
+                        <h4 style="font-family:'Gaegu'; color:#ff8e8b;">💬 댓글 목록</h4>
+
+                            <%-- 댓글 입력창 --%>
+                        <form id="replyWriteForm" style="display:flex; gap:10px; margin-bottom:20px;">
+                            <input type="hidden" name="d_no" value="${diary.no}">
+                            <input name="r_txt" placeholder="따뜻한 댓글을 남겨주세요" style="flex:1; padding:10px; border:1px solid #f7cfcd; border-radius:5px; outline:none;">
+                                <%-- JS의 submitReply 함수를 여기서 부릅니다! --%>
+                            <button type="button" class="write-btn" onclick="submitReply(${diary.no}, ${curYear}, ${curMonth}, ${selectedDay})">등록</button>
+                        </form>
+
+                            <%-- 댓글 리스트 --%>
+                        <div class="reply-list">
+                            <c:forEach var="r" items="${replies}">
+                                <div style="padding:10px; border-bottom:1px solid #fff3f3; display:flex; justify-content:space-between; align-items:center;">
+                                    <div style="font-family:'Gaegu'; font-size:18px;">
+                                        <b style="color:#ff8e8b;">${r.r_id}:</b> ${r.r_txt}
+                                    </div>
+                                    <c:if test="${r.r_id eq sessionScope.loginUserId}">
+                                        <%-- JS의 deleteReply 함수를 여기서 부릅니다! --%>
+                                        <button type="button" style="border:none; background:none; cursor:pointer;" onclick="deleteReply(${r.r_no}, ${diary.no}, ${curYear}, ${curMonth}, ${selectedDay})">❌</button>
+                                    </c:if>
+                                </div>
+                            </c:forEach>
+                            <c:if test="${empty replies}">
+                                <p style="text-align:center; color:#ccc; font-size:14px;">아직 댓글이 없어요. 🍃</p>
+                            </c:if>
+                        </div>
+                    </div>
+                        <%-- 댓글 영역 끝 --%>
                 </div>
             </div>
         </c:when>
@@ -144,7 +175,6 @@
                             <div class="post-item" onclick="loadDiary('diary-detail?no=${p.no}&y=${curYear}&m=${curMonth}&d=${selectedDay}')" style="cursor: pointer;">
                                 <div style="display:flex; justify-content:space-between; border-bottom:1px dashed #eee; padding-bottom:10px; margin-bottom:10px;">
                                     <span>
-                                        <%-- 공개 범위 아이콘 표시 --%>
                                         <c:choose>
                                             <c:when test="${p.visibility == 0}">&#128273;</c:when> <%-- 🔑 --%>
                                             <c:when test="${p.visibility == 1}">&#129309;</c:when> <%-- 🤝 --%>

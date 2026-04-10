@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class SearchDAO {
 
 
-    public static ArrayList<String> searchUsers(HttpServletRequest request) {
+    public static ArrayList<SearchVO> searchUsers(HttpServletRequest request) {
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -25,7 +25,7 @@ public class SearchDAO {
             ps.setString(3, keyword);
             rs = ps.executeQuery();
             SearchVO user = null;
-            ArrayList<String> searchResult = new ArrayList<>();
+            ArrayList<SearchVO> searchResult = new ArrayList<>();
             while (rs.next()) {
                 user = new SearchVO();
                 user.setU_id(rs.getString("u_id"));
@@ -35,7 +35,7 @@ public class SearchDAO {
                 user.setU_pk(rs.getString("u_pk"));
 
 
-                searchResult.add(user.toJSON());
+                searchResult.add(user);
             }
             return searchResult;
 
@@ -47,20 +47,17 @@ public class SearchDAO {
         return null;
     }
 
-    public static SMainVO searchMain(HttpServletRequest request) {
+    public static SMainVO  searchMain(HttpServletRequest request) {
 
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
         String host_id = request.getParameter("host_id");
-        if (host_id == null || host_id.isEmpty()) {
-            host_id = (String) request.getAttribute("host_id");
-        }
+
         String sql = "SELECT m.*, " +
                 "(SELECT MAX(board_content) KEEP (DENSE_RANK FIRST ORDER BY created_at DESC) " +
                 " FROM guestboard_test WHERE host_id = ?) as latest_gb " +
                 "FROM main_test m WHERE m.host_id = ?";
-//        String sql = "SELECT m.*, (SELECT board_content FROM (SELECT board_content FROM guestboard_test WHERE host_id = ? ORDER BY created_at DESC) WHERE ROWNUM = 1) as latest_gb FROM main_test m WHERE m.host_id = ?";
         try {
             con = DBManager.connect();
             ps = con.prepareStatement(sql);

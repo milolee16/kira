@@ -59,7 +59,7 @@ public class GuestBoardDAO {
             while (rs.next()) {
                 GuestBoardVO guestboard = new GuestBoardVO();
                 guestboard.setGboard_pk(rs.getString("gboard_pk"));
-                guestboard.setGuest_pk(rs.getString("guest_pk"));
+                guestboard.setGuest_id(rs.getString("guest_id"));
                 guestboard.setHost_id(rs.getString("host_id"));
                 guestboard.setBoard_content(rs.getString("board_content"));
                 guestboard.setGuest_nick(rs.getString("guest_nick"));
@@ -97,10 +97,10 @@ public class GuestBoardDAO {
 
 
             String pk = NanoIdUtils.randomNanoId(NanoIdUtils.DEFAULT_NUMBER_GENERATOR, NanoIdUtils.DEFAULT_ALPHABET, 15);
-            String guest_pk = (String) hs.getAttribute("loginUserId");
+            String guest_id = (String) hs.getAttribute("loginUserId");
             String host_id =  request.getParameter("host_id");
             if(host_id == null || host_id.isEmpty() || host_id.equals("null")) {
-                host_id = guest_pk; // 주인이 없으면 내 홈피니까 내 아이디로 덮어쓰기!
+                host_id = guest_id; // 주인이 없으면 내 홈피니까 내 아이디로 덮어쓰기!
             }
             String guest_nick = (String) hs.getAttribute("loginUserNickname");
             String board_content = request.getParameter("content");
@@ -110,7 +110,7 @@ public class GuestBoardDAO {
 
             ps = con.prepareStatement(sql);
             ps.setString(1, pk);
-            ps.setString(2, guest_pk);
+            ps.setString(2, guest_id);
             ps.setString(3, host_id);
             ps.setString(4, guest_nick);
             ps.setString(5, board_content);

@@ -1,10 +1,11 @@
 document.addEventListener("DOMContentLoaded", function () {
+    // 1. 파도타기 세션 정보 확인
     const savedId = sessionStorage.getItem("currentHostId");
     const savedNick = sessionStorage.getItem("currentHostNick");
     const profileName = document.getElementById("profile-name");
 
-    // 세션 정보가 있으면 해당 유저 홈으로, 없으면 내 홈으로
-    if (savedId && savedNick) {
+    // 2. 세션 정보가 있으면(파도타기 중) 해당 유저 홈으로, 없으면 내 홈으로
+    if (savedId != null && savedNick != null) {
         if (profileName) profileName.textContent = savedNick;
         goSearchMain(savedId, savedNick);
     } else {
@@ -13,6 +14,16 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     if (profileName) profileName.style.visibility = "visible";
+
+    // 🌟 [추가됨] '내 이름' 클릭 시 파도타기 세션 지우고 내 홈피로 복귀!
+    const goMyHomeBtn = document.getElementById("goMyHome");
+    if (goMyHomeBtn) {
+        goMyHomeBtn.addEventListener("click", function() {
+            sessionStorage.removeItem("currentHostId");
+            sessionStorage.removeItem("currentHostNick");
+            window.location.href = "/main"; // 메인 페이지 주소로 강제 이동 (새로고침 효과)
+        });
+    }
 
     // 초기 위젯 및 알림 로드
     if (typeof loadRecentVisitors === "function") loadRecentVisitors();
@@ -59,7 +70,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     } else {
                         data.forEach((host) => {
                             const html = `
-                                <div class="search-item" onclick="goSearchMain('${host.u_pk}','${host.u_nickname}')">
+                                <div class="search-item" onclick="goSearchMain('${host.u_id}','${host.u_nickname}')">
                                     <div class="search-item-title">${host.u_nickname} <span style="font-weight:normal; font-size:12px; color:#ff7675;">(${host.u_name})</span></div>
                                     <div class="search-item-desc">📧 ${host.u_email}</div>
                                 </div>`;
@@ -79,25 +90,25 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
-// --- 전역 함수 ---
+// ==========================================
+// --- 전역 함수 영역 ---
+// ==========================================
 
 const pageRoutes = {
     "board.jsp": {initFunc: () => typeof loadGuestBoard === "function" && loadGuestBoard(), cssClass: ""},
     "visitor": {initFunc: () => typeof initVisitorLog === "function" && initVisitorLog(), cssClass: "is-visitor"},
     "diary.jsp": {initFunc: () => typeof loadDiary === "function" && loadDiary(), cssClass: ""},
     "photo.jsp": {initFunc: () => typeof loadPhoto === "function" && loadPhoto(), cssClass: ""},
-    "friend.jsp": {initFunc: () => loadFriendList(), cssClass: ""} // 🚨 추가됨
+    "friend.jsp": {initFunc: () => loadFriendList(), cssClass: ""}
 };
 
 function loadPage(url) {
     if (!url) return;
-    const savedOwnerPk = sessionStorage.getItem("currentHostId");
-    const targetOwnerPk = savedOwnerPk ? savedOwnerPk : (typeof loginUserPk !== 'undefined' ? loginUserPk : null);
 
-    let fetchUrl = url;
-    if (targetOwnerPk) {
-        fetchUrl += (fetchUrl.includes('?') ? '&' : '?') + 'ownerPk=' + targetOwnerPk;
-    }
+    const savedOwnerId = sessionStorage.getItem("currentHostId");
+    const targetOwnerId = savedOwnerId ? savedOwnerId : loginUserId;
+
+    let fetchUrl = url + (url.includes('?') ? '&' : '?') + 'host_id=' + targetOwnerId;
 
     fetch(fetchUrl)
         .then((res) => {
@@ -127,74 +138,69 @@ function loadPage(url) {
 }
 
 function goSearchMain(id, nick) {
-    // 1. UI 정리
+    // 1. UI 즉시 반응 (검색창 닫기)
     const dropdown = document.getElementById("search-dropdown");
     const searchInput = document.getElementById("live-search-input");
     if (dropdown) dropdown.classList.add("hidden");
     if (searchInput) searchInput.value = "";
 
-    // 2. 세션 저장
+    // 2. 세션에 새 주인 정보 저장 (가장 중요)
     sessionStorage.setItem("currentHostId", id);
     sessionStorage.setItem("currentHostNick", nick);
 
-    // 3. 데이터 로드 및 UI 업데이트
-    fetch(`/search-main?host_id=${id}`)
-        .then((res) => res.json())
+    // 3. 무조건 그 사람의 '홈' 화면으로 강제 이동
+    loadPage(`/home?ajax=true`);
+
+    // 4. 프로필 및 제목 데이터 동기화
+    const searchUrl = `/search-main?host_id=${id}`;
+    fetch(searchUrl)
+        .then((response) => response.json())
         .then((searchData) => {
-            // 메뉴 불빛 처리
+
+            // 5. 메뉴와 탭의 활성화 불빛(active)을 강제로 '홈'으로 옮기기
             document.querySelectorAll(".menu-item, .nb-tab").forEach((el) => el.classList.remove("active"));
             document.querySelectorAll(".menu-item, .nb-tab").forEach(el => {
                 const src = el.getAttribute("data-src");
-                if (src && src.includes("home")) el.classList.add("active");
+                if (src && src.includes("home")) {
+                    el.classList.add("active");
+                }
             });
 
-            // 프로필 텍스트 업데이트
+            // [텍스트 업데이트]
             const profileName = document.querySelector(".profile-name");
             if (profileName) profileName.innerText = nick;
 
-            // 🚨 핵심 수정: 옵셔널 체이닝(?.)을 사용하여 데이터가 null이어도 코드가 죽지 않게 보호함
             const titleElement = document.querySelector("#host-title");
             if (titleElement) {
-                titleElement.innerText = searchData?.hompy_title || `📖 ${nick}님의 미니홈피`;
+                titleElement.innerText = searchData.hompy_title || `📖 ${nick}님의 미니홈피`;
             }
 
             const stElement = document.querySelector("#status-text");
             if (stElement) {
-                stElement.innerHTML = searchData?.st_message || "반갑습니다. 😊";
+                stElement.innerHTML = searchData.st_message || "반갑습니다. 😊";
             }
 
             const stDate = document.querySelector(".status-since");
-            if (stDate && searchData?.st_date) {
+            if (searchData.st_date) {
                 stDate.innerHTML = `Since ${searchData.st_date.substring(0, 4)}`;
             }
 
-            // 🚨 위에서 에러가 안 나야만 아래 로직들이 정상 작동함!
-            if (typeof loadRecentVisitors === "function") loadRecentVisitors();
+            const latestGbElement = document.querySelector(".gb-title + .update-text");
+            if (searchData.latest_gb_content) {
+                latestGbElement.innerText = searchData.latest_gb_content;
+            }
 
-            // 일촌 버튼 상태 확인 함수 호출
+            // 부가 기능 로드
+            if (typeof loadRecentVisitors === "function") loadRecentVisitors();
             if (typeof checkFriendStatus === "function") checkFriendStatus(id);
 
-            // 마지막으로 페이지 내용 불러오기
-            loadPage(`/home?ajax=true&host_id=${id}`);
-
-            // ✅ BGM 플레이리스트도 그 사람 것으로 갱신
-            if (typeof loadPlaylist === 'function') {
-                loadPlaylist(hostId);
-            }
         })
-        .catch((err) => {
-            console.error("데이터 로드 에러:", err);
-            // 에러 시에도 최소한 홈 화면은 띄워줌
-            loadPage(`/home?ajax=true&host_id=${id}`);
-        });
+        .catch((error) => console.error("파도타기 데이터 로드 실패:", error));
 }
 
-// ==========================================
-// 조회수(Today/Total) 갱신 함수 (절대 지우면 안 됨!)
-// ==========================================
 function updateHitCount() {
     const savedOwnerPk = sessionStorage.getItem("currentHostId");
-    const targetOwnerPk = savedOwnerPk ? savedOwnerPk : loginUserPk; // 로그인 변수 확인
+    const targetOwnerPk = savedOwnerPk ? savedOwnerPk : loginUserPk;
     if (!targetOwnerPk) return;
 
     const noCache = new Date().getTime();
@@ -210,4 +216,54 @@ function updateHitCount() {
             if (totalEl) totalEl.innerText = data.total;
         })
         .catch(err => console.error("조회수 갱신 실패:", err));
+}
+
+// ==========================================
+// --- 🎲 오늘의 문답 (QnA) 기능 영역 ---
+// ==========================================
+
+// 보기 모드 <-> 수정 모드 전환
+function toggleEditQnA() {
+    const viewMode = document.getElementById("qna-view-mode");
+    const editMode = document.getElementById("qna-edit-mode");
+
+    if (viewMode.classList.contains("qna-hidden")) {
+        viewMode.classList.remove("qna-hidden");
+        editMode.classList.add("qna-hidden");
+    } else {
+        viewMode.classList.add("qna-hidden");
+        editMode.classList.remove("qna-hidden");
+    }
+}
+
+// 답변 저장 (신규 작성 & 수정 공통 사용)
+function saveQnA(mode) {
+    const textareaId = mode === 'edit' ? "qna-edit-answer" : "qna-answer";
+    const answerText = document.getElementById(textareaId).value.trim();
+
+    if (!answerText) {
+        alert("답변을 입력해 주세요! ✏️");
+        return;
+    }
+
+    fetch('/update-qna', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `answer=${encodeURIComponent(answerText)}`
+    })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                alert("문답이 저장되었습니다! 🍀");
+                loadPage("/home?ajax=true"); // 텍스트 변경 확인을 위해 홈 리로드
+            } else {
+                alert("저장에 실패했어요 😢");
+            }
+        })
+        .catch(err => console.error("QnA 저장 에러:", err));
+}
+
+// 다이어리에 추가 버튼 (기능 추가 시 구현)
+function addQnAToDiary() {
+    alert("다이어리 연동 기능은 준비 중입니다! 🛠️");
 }

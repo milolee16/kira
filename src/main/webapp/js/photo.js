@@ -37,7 +37,7 @@ function renderFeedView(hostId) {
             background:#fff; border-bottom:1px solid #eee;
             padding:12px 16px; display:flex; justify-content:space-between; align-items:center;
             box-shadow:0 2px 6px rgba(0,0,0,0.06);">
-            <h2 style="margin:0; font-size:18px; color:#333; font-family:'Gaegu', cursive;">🖼️ My Photo Album</h2>
+            <h2 style=" display:${isOwner ? 'inline' : 'none'}; margin:0; font-size:18px; color:#333; font-family:'Gaegu', cursive;">🖼️ My Photo Album</h2>
             <button onclick="openAddModal()" style="
                 width:34px; height:34px; border-radius:50%;
                 border:2px solid #bbb; background:#fff;

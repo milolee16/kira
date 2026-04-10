@@ -16,6 +16,7 @@ public class SMainVO {
     private String main_img;
     private String st_date;
     private String latest_gb_content;
+    private String profileImgUrl;
 
 
 }

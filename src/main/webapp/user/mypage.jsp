@@ -219,6 +219,11 @@
             if(row > 0){
             alert('프로필 사진이 성공적으로 변경되었습니다! ✨');
             // 메인으로 이동하여 세션에 저장된 사진 확인
+                sessionStorage.removeItem("currentHostId");
+                sessionStorage.removeItem("currentHostNick");
+                sessionStorage.removeItem("currentHostImg");
+
+                location.href = '/main';
             location.href = '/main';
             }
 

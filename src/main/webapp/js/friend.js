@@ -176,21 +176,22 @@ function executeFriendAction(action, targetPk) {
 function loadFriendList() {
     let savedOwnerPk = sessionStorage.getItem("currentHostId");
 
-    // 문자열 "null", "undefined" 가 들어오면 진짜 null로 바꿈
+    // "null", "undefined" 등 쓰레기 문자열 처리
     if (savedOwnerPk === "null" || savedOwnerPk === "undefined" || !savedOwnerPk) {
         savedOwnerPk = null;
     }
 
-    // 🚨 [판별 로직]
-    // savedOwnerPk가 아예 없거나(null), 로그인한 나(loginUserPk)와 같으면 -> 내 집!
+    // 🚨 판별 로직: savedOwnerPk가 없거나, 로그인한 내 PK와 일치하면 내 홈피!
+    // String()으로 감싸서 비교하는 게 가장 확실해.
     const isMyHomePage = (savedOwnerPk === null || String(savedOwnerPk) === String(loginUserPk));
+
+    console.log("[검문소] 현재 집주인 PK:", savedOwnerPk, "| 내 PK:", loginUserPk, "| 결과:", isMyHomePage);
 
     const container = document.getElementById("friend-list-container");
     if (!container) return;
 
     if (!isMyHomePage) {
-        // 남의 집이면 경고창 띄우고 중단
-        alert("본인의 일촌만 확인할 수 있습니다. 🔒");
+        // 남의 집이면 목록 대신 잠금 화면 표시
         container.innerHTML = `
             <div style="text-align:center; color:#c0b0a0; padding:60px 20px; font-size:18px;">
                 <span style="font-size:30px; display:block; margin-bottom:10px;">🔒</span>
@@ -199,14 +200,13 @@ function loadFriendList() {
         return;
     }
 
-    // --- 여기서부터 검문을 통과한 '나'만 볼 수 있는 로직 ---
+    // --- 이하 내 목록을 불러오는 로직 (함수 안으로 완전히 들어와야 함) ---
     container.innerHTML = `<div style="text-align:center; padding:20px;">일촌 목록을 불러오는 중...</div>`;
 
     fetch(`/friendview?action=list`)
         .then(res => res.json())
         .then(list => {
-            container.innerHTML = ""; // 로딩 문구 지우기
-
+            container.innerHTML = "";
             if (!list || list.length === 0) {
                 container.innerHTML = `<div style="text-align:center; color:#c0b0a0; padding:30px;">아직 일촌이 없어요. 😢</div>`;
                 return;
@@ -222,18 +222,19 @@ function loadFriendList() {
                             <div style="font-size:11px; color:#c0b0a0;">일촌 맺은 날: ${f.f_date}</div>
                         </div>
                         <div style="display:flex; gap:5px;">
-                            <button onclick="goToWriteMessage('${f.friend_pk}')" style="background:#a29bfe; color:white; border:none; padding:5px 12px; border-radius:15px; cursor:pointer;">쪽지</button>
-                            <button onclick="deleteFriendFromList('${f.friend_pk}')" style="background:#ff7675; color:white; border:none; padding:5px 12px; border-radius:15px; cursor:pointer;">끊기</button>
+                            <button onclick="goToWriteMessage('${f.friend_pk}')" style="background:#a29bfe; color:white; border:none; padding:5px 12px; border-radius:15px; cursor:pointer; font-family:'Gaegu', cursive;">쪽지</button>
+                            <button onclick="deleteFriendFromList('${f.friend_pk}')" style="background:#ff7675; color:white; border:none; padding:5px 12px; border-radius:15px; cursor:pointer; font-family:'Gaegu', cursive;">끊기</button>
                         </div>
                     </div>`;
                 container.insertAdjacentHTML('beforeend', html);
             });
         })
         .catch(err => {
-            console.error("일촌 목록 로드 에러:", err);
-            container.innerHTML = "데이터를 불러오지 못했습니다.";
+            console.error("일촌 로딩 실패:", err);
+            container.innerHTML = "데이터 로딩 에러";
         });
 }
+
 // 9. 리스트에서 일촌 끊기 (기존과 동일)
 function deleteFriendFromList(targetPk) {
     if (!confirm("정말 이 유저와 일촌을 끊으시겠습니까? 😢")) return;

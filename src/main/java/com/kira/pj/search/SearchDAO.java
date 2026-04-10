@@ -56,13 +56,16 @@ public class SearchDAO {
 
         String sql = "SELECT m.*, " +
                 "(SELECT MAX(board_content) KEEP (DENSE_RANK FIRST ORDER BY created_at DESC) " +
-                " FROM guestboard_test WHERE host_id = ?) as latest_gb " +
-                "FROM main_test m WHERE m.host_id = ?";
+                " FROM guestboard_test WHERE host_id = ?) as latest_gb, " +
+                "(SELECT profile_img_url FROM profile WHERE userid = ?) as profile_img_url " +
+                "FROM main_test m " +
+                "WHERE m.host_id = ?";
         try {
             con = DBManager.connect();
             ps = con.prepareStatement(sql);
-            ps.setString(1, host_id);
-            ps.setString(2, host_id);
+            ps.setString(1, host_id); // guestboard
+            ps.setString(2, host_id); // profile사진
+            ps.setString(3, host_id); // main_test
             rs = ps.executeQuery();
             SMainVO main = null;
 
@@ -74,6 +77,8 @@ public class SearchDAO {
                 main.setMy_img(rs.getString("my_img"));
                 main.setMain_img(rs.getString("main_img"));
                 main.setSt_date(rs.getString("st_date"));
+                main.setProfileImgUrl(rs.getString("profile_img_url"));
+
 
                 String latestGb = rs.getString("latest_gb");
                 if (latestGb == null) latestGb = "작성된 방명록이 없습니다. 🐾";

@@ -79,28 +79,29 @@ document.addEventListener('click', e => {
     ) {
         e.preventDefault();
 
-        // ✅ bgm-title-phone: 내 재생목록 — sessionStorage는 유지
+        // 1. bgm-title-phone (언제나 "내" 플레이리스트)
         if (target.id === 'bgm-title-phone') {
+            e.preventDefault();
             switchTab(target.dataset.src);
             if (typeof loadPlaylist === 'function') {
-                loadPlaylist(window.loginUserPk || '');  // 내 PK 직접 지정
+                loadPlaylist(null); // 인자를 비워서 내 서블릿(/api/bgm) 호출
             }
             return;
         }
 
-// ✅ phone-home: 페이지 주인 재생목록
+        // 2. phone-home (방문한 "페이지 주인"의 플레이리스트)
         if (target.classList.contains('phone-home')) {
+            e.preventDefault();
+            // Photo가 성공적으로 쓰고 있는 그 세션값(u_id)을 그대로 가져옴
             const currentHostId = sessionStorage.getItem('currentHostId');
-            const targetPk = (currentHostId && currentHostId !== String(window.loginUserPk))
-                ? currentHostId
-                : (window.loginUserPk || '');
+
             switchTab(target.dataset.src);
             if (typeof loadPlaylist === 'function') {
-                loadPlaylist(targetPk);
+                // 이제 서버가 ID를 PK로 바꿔주므로, 그냥 이 값을 던지면 끝!
+                loadPlaylist(currentHostId);
             }
             return;
         }
-
         switchTab(target.dataset.src);
     }
 });

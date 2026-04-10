@@ -790,4 +790,30 @@ public class UserDAO {
         }
     }
 
+    // UserDAO.java에 추가
+    public String getPkById(String uId) {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        String uPk = null;
+
+        try {
+            conn = DBManager.connect();
+            // userReg 테이블에서 id로 pk를 찾는 쿼리
+            String sql = "SELECT u_pk FROM userReg WHERE u_id = ?";
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, uId);
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                uPk = rs.getString("u_pk");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBManager.close(conn, pstmt, rs);
+        }
+        return uPk; // 못 찾으면 null 반환
+    }
+
 }

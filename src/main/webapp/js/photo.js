@@ -8,12 +8,14 @@ function loadPhoto() {
     container.style.overflowY = 'auto';
     container.style.height = '100%';
     container.innerHTML = '<div style="text-align:center; padding:20px;">사진첩을 열고 있어요... 📸</div>';
+    const hostId = sessionStorage.getItem("currentHostId") || loginUserId; // 없으면 내 id
 
-    fetch('photo-data')
+
+    fetch(`/photo-data?host_id=${encodeURIComponent(hostId)}`)
         .then(res => res.json())
         .then(data => {
             photoData = data;
-            renderFeedView();
+            renderFeedView(hostId);
         })
         .catch(err => {
             container.innerHTML = '<div style="text-align:center; padding:20px; color:red;">사진첩 로딩 실패 ㅠㅠ</div>';
@@ -24,8 +26,10 @@ function loadPhoto() {
 // =============================================
 // 피드 뷰
 // =============================================
-function renderFeedView() {
+function renderFeedView(hostId) {
     const container = document.getElementById('notebook-content');
+    const loginId = loginUserId;
+    const isOwner = (hostId === loginId); // 내 홈피인지 여부
 
     let html = `
         <div style="
@@ -38,7 +42,7 @@ function renderFeedView() {
                 width:34px; height:34px; border-radius:50%;
                 border:2px solid #bbb; background:#fff;
                 font-size:20px; cursor:pointer; color:#666;
-                display:flex; align-items:center; justify-content:center;
+                display:${isOwner ? 'flex' : 'none'}; align-items:center; justify-content:center;
                 box-shadow:2px 2px 6px rgba(0,0,0,0.1);"
                 onmouseover="this.style.background='#f0f0f0'"
                 onmouseout="this.style.background='#fff'">+</button>
@@ -53,7 +57,7 @@ function renderFeedView() {
     }
 
     photoData.forEach((item, index) => {
-        html += buildFeedCard(item, index);
+        html += buildFeedCard(item, index,isOwner);
     });
 
     html += `</div></div>`;
@@ -65,7 +69,7 @@ function renderFeedView() {
 // =============================================
 // 피드 카드 1장 빌더
 // =============================================
-function buildFeedCard(item, index) {
+function buildFeedCard(item, index,isOwner) {
     return `
     <div id="detail-card-${index}" style="
         background:#fff; border-radius:12px;
@@ -93,6 +97,7 @@ function buildFeedCard(item, index) {
                 <div style="display:flex; align-items:center; gap:8px;">
                     <span style="font-size:11px; color:#bbb; font-weight:bold;">👤 ${item.userId}</span>
                     <button onclick="deletePhoto(${index})" style="
+                        display:${isOwner ? 'inline' : 'none'};
                         background:none; border:none; font-size:16px;
                         color:#ccc; cursor:pointer; line-height:1; padding:0;"
                         onmouseover="this.style.color='#e55'"

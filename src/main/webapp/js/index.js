@@ -247,7 +247,7 @@ function goSearchMain(id, nick) {
 
 function updateHitCount() {
   const savedOwnerPk = sessionStorage.getItem("currentHostId");
-  const targetOwnerPk = savedOwnerPk ? savedOwnerPk : loginUserPk;
+  const targetOwnerPk = savedOwnerPk ? savedOwnerPk : loginUserId;
   if (!targetOwnerPk) return;
 
   const noCache = new Date().getTime();

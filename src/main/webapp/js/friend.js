@@ -47,7 +47,7 @@ function checkFriendStatus(targetPk) {
         btn.style.background = "#fdcb6e";
         btn.style.color = "#555";
       } else if (data.f_status === 0) {
-        if (data.f_requester === loginUserPk) {
+        if (data.f_requester === loginUserId) {
           btn.innerText = "수락 대기중";
           btn.dataset.action = "pending";
           btn.style.background = "#a29bfe";
@@ -198,7 +198,7 @@ function loadFriendList() {
     "[검문소] 현재 집주인 PK:",
     savedOwnerPk,
     "| 내 PK:",
-    loginUserPk,
+    loginUserId,
     "| 결과:",
     isMyHomePage,
   );

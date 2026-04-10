@@ -50,43 +50,64 @@ pageEncoding="UTF-8" %>
             <h3 class="qna-title">🎲 오늘의 문답</h3>
             <p class="qna-question">Q. ${dailyQna.question}</p>
 
+            <%-- 🌟 핵심: 현재 페이지 주인이 '나'인지 확인하는 변수 만들기 --%>
+            <c:set var="isMyHome" value="${pageOwnerId == sessionScope.loginUserId}" />
+
             <c:choose>
                 <%-- 1. 아직 답변을 안 적은 상태 --%>
                 <c:when test="${empty dailyQna.answer}">
-                    <div class="qna-input-area" id="qna-form">
-                        <input type="hidden" id="qna-id" value="${dailyQna.q_id}">
-                        <textarea id="qna-answer" class="qna-textarea" placeholder="오늘의 답변을 남겨보세요! ✏️"></textarea>
+                    <c:choose>
+                        <%-- 1-1. 내 홈피일 때: 입력창 띄우기 --%>
+                        <c:when test="${isMyHome}">
+                            <div class="qna-input-area" id="qna-form">
+                                <input type="hidden" id="qna-id" value="${dailyQna.q_id}">
+                                <textarea id="qna-answer" class="qna-textarea" placeholder="오늘의 답변을 남겨보세요! ✏️"></textarea>
 
-                        <div class="qna-btn-group">
-                            <button onclick="saveQnA()" class="qna-submit-btn">확인</button>
-                        </div>
-                    </div>
+                                <div class="qna-btn-group">
+                                    <button onclick="saveQnA()" class="qna-submit-btn">확인</button>
+                                </div>
+                            </div>
+                        </c:when>
+                        <%-- 1-2. 남의 홈피일 때: 안 적었다는 메시지만 띄우기 --%>
+                        <c:otherwise>
+                            <div class="qna-answered-area">
+                                <div class="qna-answered-box" style="text-align: center; color: #999; padding: 20px 0;">
+                                    주인장이 아직 오늘의 문답을 작성하지 않았어요. 🐾
+                                </div>
+                            </div>
+                        </c:otherwise>
+                    </c:choose>
                 </c:when>
 
                 <%-- 2. 이미 답변을 적은 상태 --%>
                 <c:otherwise>
-                    <%-- 보기 모드 --%>
+                    <%-- 보기 모드 (공통으로 다 보여줌) --%>
                     <div id="qna-view-mode" class="qna-answered-area">
                         <div class="qna-answered-box">
                             <span id="qna-answer-text" class="qna-answer-text">A. ${dailyQna.answer}</span>
                         </div>
 
-                        <div class="qna-btn-group">
-                            <button onclick="toggleEditQnA()" class="qna-cancel-btn">수정</button>
-                            <button onclick="addQnAToDiary()" class="qna-submit-btn">다이어리에 추가 ✍️</button>
-                        </div>
+                            <%-- 🌟 내 홈피일 때만 [수정 / 다이어리 추가] 버튼이 보임! --%>
+                        <c:if test="${isMyHome}">
+                            <div class="qna-btn-group">
+                                <button onclick="toggleEditQnA()" class="qna-cancel-btn">수정</button>
+                                <button onclick="addQnAToDiary()" class="qna-submit-btn">다이어리에 추가 ✍️</button>
+                            </div>
+                        </c:if>
                     </div>
 
-                    <%-- 수정 모드 (초기엔 숨김) --%>
-                    <div id="qna-edit-mode" class="qna-input-area qna-hidden">
-                        <input type="hidden" id="qna-id" value="${dailyQna.q_id}">
-                        <textarea id="qna-edit-answer" class="qna-textarea">${dailyQna.answer}</textarea>
+                    <%-- 수정 모드 (애초에 내 홈피일 때만 이 영역을 그려줌) --%>
+                    <c:if test="${isMyHome}">
+                        <div id="qna-edit-mode" class="qna-input-area qna-hidden">
+                            <input type="hidden" id="qna-id" value="${dailyQna.q_id}">
+                            <textarea id="qna-edit-answer" class="qna-textarea">${dailyQna.answer}</textarea>
 
-                        <div class="qna-btn-group">
-                            <button onclick="toggleEditQnA()" class="qna-cancel-btn">취소</button>
-                            <button onclick="saveQnA('edit')" class="qna-submit-btn">확인</button>
+                            <div class="qna-btn-group">
+                                <button onclick="toggleEditQnA()" class="qna-cancel-btn">취소</button>
+                                <button onclick="saveQnA('edit')" class="qna-submit-btn">확인</button>
+                            </div>
                         </div>
-                    </div>
+                    </c:if>
                 </c:otherwise>
             </c:choose>
         </div>

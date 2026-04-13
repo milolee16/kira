@@ -240,6 +240,8 @@ body::after {
     position: relative;
     overflow: hidden;
     top: 30px;
+    left: -33px;
+
 }
 
 .jar::after {
@@ -290,17 +292,20 @@ body::after {
     background: #ee99aa;
     height: 75px;
     transform: translateY(-5px);
+    left: -33px;
 }
 
 .pencil2 {
     background: #77ddbb;
     height: 65px;
     transform: translateY(5px);
+    left: -33px;
 }
 
 .pencil3 {
     background: #a099ee;
     height: 70px;
+    left: -33px;
 }
 
 .jar-label {
@@ -647,8 +652,8 @@ body::after {
     line-height: 1.5;
     border-radius: 2px;
     position: absolute;
-    right: 30px;
-    bottom: -7px;
+    left: 134px;
+    bottom: 1%;
 }
 
 .postit::after {

@@ -71,8 +71,7 @@ document.addEventListener('click', e => {
     // MP3·스마트폰·BGM 클릭은 별도 처리이므로 노트북 탭만 가로챔
     if (
         target &&
-        (target.classList.contains('nb-tab') ||
-            target.classList.contains('menu-item') ||
+        (
             target.classList.contains('phone-screen') ||
             target.classList.contains('phone-home') ||
             target.id === 'bgm-title-phone')
@@ -119,18 +118,18 @@ document.addEventListener('click', e => {
 // ──────────────────────────────────────────────
 //  초기 로드: 서버에서 내려준 content 값 또는 홈
 // ──────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
-    // EL 표현식으로 서버가 주입한 초기 경로를 JS 변수로 전달
-    const initialSrc = '${not empty content ? "/home?ajax=true" : "/home?ajax=true"}';
-    // content 값에 따라 올바른 ajax URL로 매핑
-    const contentToUrl = {
-        'main.jsp': '/home?ajax=true',
-        'diary/diary.jsp': '/diary?ajax=true',
-        'photo/photo.jsp': '/photo?ajax=true',
-        'board/board.jsp': '/board?ajax=true',
-        'bgm/bgm.jsp': '/bgm?ajax=true',
-    };
-    const startUrl = contentToUrl['${content}'] || '/home?ajax=true';
-    switchTab(startUrl);
-
-});
+// document.addEventListener('DOMContentLoaded', () => {
+//     // EL 표현식으로 서버가 주입한 초기 경로를 JS 변수로 전달
+//     const initialSrc = '${not empty content ? "/home?ajax=true" : "/home?ajax=true"}';
+//     // content 값에 따라 올바른 ajax URL로 매핑
+//     const contentToUrl = {
+//         'main.jsp': '/home?ajax=true',
+//         'diary/diary.jsp': '/diary?ajax=true',
+//         'photo/photo.jsp': '/photo?ajax=true',
+//         'board/board.jsp': '/board?ajax=true',
+//         'bgm/bgm.jsp': '/bgm?ajax=true',
+//     };
+//     const startUrl = contentToUrl['${content}'] || '/home?ajax=true';
+//     switchTab(startUrl);
+//
+// });

@@ -53,7 +53,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // 메뉴 및 탭 이벤트 등록
   document.querySelectorAll(".menu-item, .nb-tab").forEach((button) => {
-    button.addEventListener("click", function () {
+    button.addEventListener("click", function (e) {
+      e.stopPropagation();
       const targetUrl = this.getAttribute("data-src");
       document
         .querySelectorAll(".menu-item, .nb-tab")

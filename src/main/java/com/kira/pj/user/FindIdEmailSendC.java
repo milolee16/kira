@@ -10,6 +10,6 @@ public class FindIdEmailSendC extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("application/json; charset=UTF-8");
-//        response.getWriter().print(UserDAO.DAO.sendFindIdEmailAuth(request));
+        response.getWriter().print(UserDAO.DAO.sendFindIdEmailAuth(request));
     }
 }

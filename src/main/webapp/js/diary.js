@@ -9,7 +9,7 @@ function loadDiary(url = "diary") {
     // 2. 비동기 필수 파라미터 추가
     queryParams.set("ajax", "true");
 
-    // ★ [핵심] 팀원분 index.js가 저장한 '방문 중인 홈피 주인 ID'를 가져옵니다.
+    // ★ index.js가 저장한 '방문 중인 홈피 주인 ID'를 가져옵니다.
     const currentHostId = sessionStorage.getItem("currentHostId");
 
     if (currentHostId) {
@@ -17,6 +17,7 @@ function loadDiary(url = "diary") {
         queryParams.set("memberId", currentHostId);
     }
 
+    // 아이디랑 날짜 다 정리했으니 서버가 데이터 가져오게 요청
     const finalUrl = baseUrl + "?" + queryParams.toString();
     console.log("📬 다이어리 서버 요청 주소:", finalUrl);
 
@@ -96,7 +97,7 @@ function deleteReply(r_no, d_no, y, m, d) {
 let currentPickerYear = new Date().getFullYear();
 
 function openQuickPicker(e) {
-    e.stopPropagation();
+    e.stopPropagation(); //버튼을 눌렀을 때 클릭 이벤트가 부모 요소로 퍼지는 걸 막아서, 피커를 열자마자 닫히는 불상사를 방지.
     document.getElementById('quickDatePicker').style.display = 'block';
 }
 
@@ -113,3 +114,36 @@ window.addEventListener('click', function (e) {
     const picker = document.getElementById('quickDatePicker');
     if (picker && !picker.contains(e.target)) picker.style.display = 'none';
 });
+
+// =====================================
+// [최종] 다이어리 전용 좋아요 토글 기능 (이름 충돌 방지)
+// =====================================
+function toggleDiaryLike(dNo) {
+    const params = new URLSearchParams();
+    params.append('d_no', dNo);
+
+    fetch('diary-like', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+        body: params
+    })
+        .then(response => {
+            if (!response.ok) {
+                alert("로그인이 필요한 기능입니다!");
+                throw new Error("로그인 필요");
+            }
+            return response.json();
+        })
+        .then(data => {
+            const heartIcon = document.getElementById(`heart-icon-${dNo}`);
+            const likeCountSpan = document.getElementById(`like-count-${dNo}`);
+
+            if (heartIcon && likeCountSpan) {
+                // HTML 엔티티를 사용하여 하트 상태 업데이트
+                heartIcon.innerHTML = data.isLiked === 1 ? '&#10084;&#65039;' : '&#129293;';
+                // 총 좋아요 개수 업데이트
+                likeCountSpan.innerText = data.likeCount;
+            }
+        })
+        .catch(error => console.error("좋아요 처리 실패:", error));
+}

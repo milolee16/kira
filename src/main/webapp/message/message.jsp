@@ -3,10 +3,10 @@
     <h3 style="color:#a29bfe; border-bottom:2px solid #a29bfe; padding-bottom:10px; margin-top:0;">📫 나의 쪽지함</h3>
 
     <div class="msg-tabs" style="display:flex; gap:10px; margin-bottom:15px;">
-        <button onclick="loadMessages('received')" class="msg-tab-btn active" style="padding:5px 10px; border-radius:5px; border:1px solid #ccc; cursor:pointer;">받은 쪽지</button>
-        <button onclick="loadMessages('sent')" class="msg-tab-btn" style="padding:5px 10px; border-radius:5px; border:1px solid #ccc; cursor:pointer;">보낸 쪽지</button>
+        <button id="tab-received" onclick="loadMessages('received')" class="msg-tab-btn active" style="padding:5px 10px; border-radius:5px; border:1px solid #ccc; cursor:pointer;">받은 쪽지</button>
+        <button id="tab-sent" onclick="loadMessages('sent')" class="msg-tab-btn" style="padding:5px 10px; border-radius:5px; border:1px solid #ccc; cursor:pointer;">보낸 쪽지</button>
 
-        <button onclick="openWriteMessage()" class="msg-tab-btn" style="padding:5px 15px; border-radius:5px; border:none; background:#ff7675; color:white; font-weight:bold; cursor:pointer; margin-left:auto;">쪽지 쓰기 ✍️</button>
+        <button id="tab-write" onclick="openWriteMessage()" class="msg-tab-btn" style="padding:5px 15px; border-radius:5px; border:none; background:#ff7675; color:white; font-weight:bold; cursor:pointer; margin-left:auto;">쪽지 쓰기 ✍️</button>
     </div>
 
     <div id="message-list-area" style="background:white; border-radius:10px; padding:15px; min-height:300px; border:1px solid #f2c0bd; box-shadow: 2px 2px 5px rgba(0,0,0,0.02);">

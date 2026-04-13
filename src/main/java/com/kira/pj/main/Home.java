@@ -26,8 +26,11 @@ public class Home extends HttpServlet {
         request.setAttribute("dailyQna", HomeDAO.getDailyQnA(request));
 
         request.setAttribute("searchMain", SearchDAO.searchMain(request));
-        request.getRequestDispatcher("/main.jsp").forward(request, response);
 
+        // ★ [여기에 딱 한 줄 추가했습니다!] DB에서 최근 다이어리 제목 가져와서 세팅하기
+        HomeDAO.getRecentDiary(request, host_id);
+
+        request.getRequestDispatcher("/main.jsp").forward(request, response);
 
     }
 

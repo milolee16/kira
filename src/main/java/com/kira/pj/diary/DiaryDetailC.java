@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.Calendar;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpSession;
 @WebServlet("/diary-detail")
 public class DiaryDetailC extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // 1. 다이어리 상세 데이터 가져오기
         DiaryDAO.DDAO.getDiaryDetail(request);
         DiaryDTO diary = (DiaryDTO) request.getAttribute("diary");
 
@@ -23,10 +25,29 @@ public class DiaryDetailC extends HttpServlet {
             return;
         }
 
+        // ★ [날짜 복구 핵심 로직]
+        // URL 파라미터(y, m, d)가 비어있을 경우를 대비해 기본값(오늘) 세팅 방어막을 칩니다.
+        String y = request.getParameter("y");
+        String m = request.getParameter("m");
+        String d = request.getParameter("d");
+
+        if (y == null || y.isEmpty() || m == null || m.isEmpty() || d == null || d.isEmpty()) {
+            Calendar cal = Calendar.getInstance();
+            y = String.valueOf(cal.get(Calendar.YEAR));
+            m = String.valueOf(cal.get(Calendar.MONTH) + 1);
+            d = String.valueOf(cal.get(Calendar.DATE));
+        }
+
+        // JSP에서 ${curYear}.${curMonth}.${selectedDay} 로 정확히 매칭되게 세팅
+        request.setAttribute("curYear", y);
+        request.setAttribute("curMonth", m);
+        request.setAttribute("selectedDay", d);
+
         HttpSession session = request.getSession();
         String myId = (String) session.getAttribute("loginUserId");
         String writerId = diary.getId();
 
+        // 2. 일촌 관계 확인 로직 (기존 유지)
         int relation = 0;
         if (myId != null && writerId != null) {
             if (myId.trim().equalsIgnoreCase(writerId.trim())) {
@@ -56,25 +77,16 @@ public class DiaryDetailC extends HttpServlet {
             }
         }
 
-        System.out.println(">>> [상세 로그] 나: " + myId + " | 글쓴이: " + writerId + " | 관계: " + relation);
-
+        // 3. 권한 및 추가 데이터 세팅
         int vis = diary.getVisibility();
-        boolean canRead = false;
-        if (vis == 2) canRead = true;
-        else if (vis == 1 && relation >= 1) canRead = true;
-        else if (vis == 0 && relation == 2) canRead = true;
+        boolean canRead = (vis == 2) || (vis == 1 && relation >= 1) || (vis == 0 && relation == 2);
 
         if (canRead) {
-            // 1. 댓글 목록 가져오기
             DiaryDAO.DDAO.getReplies(request);
-
-            // ★ [추가] 2. 좋아요 개수 및 나의 좋아요 상태 가져오기
             int likeCount = DiaryDAO.DDAO.getLikeCount(diary.getNo());
             int isLiked = DiaryDAO.DDAO.checkIsLiked(diary.getNo(), myId);
-
             request.setAttribute("likeCount", likeCount);
             request.setAttribute("isLiked", isLiked);
-
             request.setAttribute("showMode", "detail");
         } else {
             request.setAttribute("showMode", "list");

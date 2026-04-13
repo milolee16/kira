@@ -38,10 +38,17 @@
     <div class="home-updates">
         <div class="update-box">
             <h4 class="update-title diary-title">📝 최근 다이어리</h4>
-            <%-- ★ [수정됨] 하드코딩 지우고 DB에서 가져온 최근 일기 제목 띄우기 ★ --%>
             <c:choose>
                 <c:when test="${not empty recentDiaryTitle}">
-                    <p class="update-text">${recentDiaryTitle}</p>
+                    <%-- ★ [핵심] p태그를 지우고 a태그로 덮어쓰기! (클릭 시 이동 기능) ★ --%>
+                    <a href="javascript:void(0);"
+                       onclick="loadDiary('diary-detail?no=${recentDiaryNo}&y=${recentDiaryY}&m=${recentDiaryM}&d=${recentDiaryD}&memberId=${pageOwnerId}')"
+                       class="update-text"
+                       style="text-decoration: none; color: inherit; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color 0.2s;"
+                       onmouseover="this.style.color='#ff8e8b'"
+                       onmouseout="this.style.color='inherit'">
+                            ${recentDiaryTitle}
+                    </a>
                 </c:when>
                 <c:otherwise>
                     <p class="update-text" style="color: #bbb;">아직 작성된 일기가 없어요. 🍃</p>

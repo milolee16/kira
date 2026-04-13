@@ -136,7 +136,7 @@ public class HomeDAO {
     }
 
     // =======================================================
-    // [추가] 홈 화면에 띄울 최근 다이어리 제목 가져오기
+    //  홈 화면에 띄울 최근 다이어리 정보 싹 다 가져오기
     // =======================================================
     public static void getRecentDiary(HttpServletRequest req, String hostId) {
         Connection con = null;
@@ -144,9 +144,12 @@ public class HomeDAO {
         ResultSet rs = null;
         try {
             con = DBManager.connect();
-            // 해당 미니홈피 주인(hostId)이 쓴 글 중 가장 최근 글 1개만 조회
+            // ★ [수정] 제목뿐만 아니라 번호(d_no)와 날짜(y,m,d)까지 전부 가져옵니다!
             String sql = "SELECT * FROM (" +
-                    "  SELECT d_title " +
+                    "  SELECT d_no, d_title, " +
+                    "         TO_CHAR(d_date, 'YYYY') as d_year, " +
+                    "         TO_CHAR(d_date, 'MM') as d_month, " +
+                    "         TO_CHAR(d_date, 'DD') as d_day " +
                     "  FROM diary_test " +
                     "  WHERE TRIM(d_id) = ? " +
                     "  ORDER BY d_no DESC" +
@@ -157,8 +160,12 @@ public class HomeDAO {
             rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                // 가져온 제목을 JSP에서 쓸 수 있게 세팅
+                // JSP에 번호, 제목, 년, 월, 일 모두 전달
+                req.setAttribute("recentDiaryNo", rs.getInt("d_no"));
                 req.setAttribute("recentDiaryTitle", rs.getString("d_title"));
+                req.setAttribute("recentDiaryY", rs.getString("d_year"));
+                req.setAttribute("recentDiaryM", rs.getString("d_month"));
+                req.setAttribute("recentDiaryD", rs.getString("d_day"));
             }
         } catch (Exception e) {
             e.printStackTrace();

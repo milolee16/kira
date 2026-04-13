@@ -269,10 +269,7 @@
             </div>
 
         </div>
-        <div class="postit">
-            오늘도<br/>몽글몽글한<br/>하루 보내장🌤<br/>
-            <span style="font-size: 12px; color: #8a8030">— 2026.03.31</span>
-        </div>
+
     </div>
 </div>
 <div class="desk-front"></div>

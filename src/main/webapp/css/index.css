@@ -635,41 +635,6 @@ body::after {
     border-color: #ee99aa;
     font-size: 16px;
 }
-
-.postit {
-    margin-top: auto;
-    margin-bottom: 10px;
-    align-self: flex-end;
-    width: 140px;
-    background: #fffdbd;
-    padding: 15px;
-    box-shadow: 3px 5px 10px rgba(100, 90, 50, 0.1);
-    transform: rotate(4deg);
-    z-index: 20;
-    font-family: "Nanum Pen Script", cursive;
-    font-size: 16px;
-    color: #6a5a3a;
-    line-height: 1.5;
-    border-radius: 2px;
-    position: absolute;
-    left: 134px;
-    bottom: 1%;
-}
-
-.postit::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    width: 20px;
-    height: 20px;
-    background: linear-gradient(
-            135deg,
-            transparent 50%,
-            rgba(0, 0, 0, 0.05) 50%
-    );
-}
-
 .smartphone {
     width: 200px;
     background: linear-gradient(160deg, #2a2a2a, #1a1a1a);

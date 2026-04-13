@@ -234,6 +234,22 @@ public class DiaryDAO {
         } catch (Exception e) { e.printStackTrace(); }
         finally { DBManager.close(con, pstmt, rs); }
     }
+    public void updateReply(HttpServletRequest req) {
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        try {
+            con = DBManager.connect();
+            String sql = "UPDATE diary_reply SET r_txt = ? WHERE r_no = ?";
+            pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, req.getParameter("r_txt"));
+            pstmt.setInt(2, Integer.parseInt(req.getParameter("r_no")));
+            pstmt.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBManager.close(con, pstmt, null);
+        }
+    }
 
     public void deleteReply(HttpServletRequest req) {
         Connection con = null;

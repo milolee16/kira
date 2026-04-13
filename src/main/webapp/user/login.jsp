@@ -27,6 +27,7 @@
             </div>
 
             <button type="button" id="loginBtn">로그인</button>
+            <a href="${pageContext.request.contextPath}/oauth/naver/start">네이버로 로그인</a>
         </form>
 
         <div class="login-links">

@@ -294,6 +294,10 @@ public class UserDAO {
 
             if (rs.next()) {
                 HttpSession session = request.getSession();
+
+                // 30분 동안 요청 없으면 세션 만료
+                session.setMaxInactiveInterval(30 * 60);
+
                 session.setAttribute("loginUserPk", rs.getString("u_pk"));
                 session.setAttribute("loginUserName", rs.getString("u_name"));
                 session.setAttribute("loginUserId", rs.getString("u_id"));

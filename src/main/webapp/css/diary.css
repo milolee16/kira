@@ -204,3 +204,22 @@
     padding: 10px;
     border-bottom: 1px dashed #f7cfcd;
 }
+
+/* 다이어리 내용이 나오는 영역을 '스크롤 상자'로 만듭니다 */
+#notebook-content {
+    height: 580px;      /* ★ 성현님 미니홈피 배경 이미지의 종이 높이에 맞게 조절하세요 ★ */
+    overflow-y: auto;   /* 내용이 넘치면 이 안에서만 스크롤이 생김 */
+    overflow-x: hidden; /* 가로 스크롤 방지 */
+    position: relative;
+    scroll-behavior: smooth; /* 부드러운 스크롤 효과 */
+}
+
+/* 스크롤바를 얇고 예쁘게 디자인 (선택사항) */
+#notebook-content::-webkit-scrollbar {
+    width: 6px;
+}
+#notebook-content::-webkit-scrollbar-thumb {
+    background-color: #f7cfcd; /* 미니홈피 톤앤매너 핑크 */
+    border-radius: 10px;
+}
+

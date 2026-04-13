@@ -87,3 +87,9 @@
 .top-login-btn.logout:hover {
     background: linear-gradient(145deg, #e9e2d8, #ded4c9);
 }
+
+.top-login-time {
+    font-size: 13px;
+    color: #888;
+    margin-top: 5px;
+}

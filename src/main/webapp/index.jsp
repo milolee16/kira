@@ -41,6 +41,7 @@
     <script defer src="js/ajax.js"></script>
     <script defer src="js/main.js"></script>
     <script defer src="js/qna.js"></script>
+    <script src="js/user/session-timer.js"></script>
 
     <title>Team Kira - Minihompy</title>
 </head>
@@ -54,6 +55,10 @@
                 ${sessionScope.loginUserNickname}님
             </div>
             <div class="top-login-text">환영합니다 🌷</div>
+
+            <div class="top-login-time" id="sessionTimer">
+                남은 시간: 30:00
+            </div>
 
             <div class="top-login-btns">
                 <a href="${pageContext.request.contextPath}/mypage" class="top-login-btn">마이페이지</a>
@@ -264,10 +269,7 @@
             </div>
 
         </div>
-        <div class="postit">
-            오늘도<br/>몽글몽글한<br/>하루 보내장🌤<br/>
-            <span style="font-size: 12px; color: #8a8030">— 2026.03.31</span>
-        </div>
+
     </div>
 </div>
 <div class="desk-front"></div>

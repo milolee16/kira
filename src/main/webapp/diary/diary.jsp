@@ -75,7 +75,7 @@
             </div>
         </c:when>
 
-        <%-- [3] 상세 보기 화면 (좋아요 적용 구간) --%>
+        <%-- [3] 상세 보기 화면 --%>
         <c:when test="${showMode == 'detail'}">
             <div class="diary-board">
                 <div class="board-header">
@@ -98,8 +98,8 @@
                         <div class="like-container" style="cursor: pointer; background:#fffdfd; padding:8px 18px; border-radius:20px; border:1px solid #f7cfcd; box-shadow: 0 2px 4px rgba(247,207,205,0.3); display:inline-flex; align-items:center; transition:0.2s;" onclick="toggleDiaryLike('${diary.no}')">
                             <span id="heart-icon-${diary.no}" style="font-size:20px; margin-right:8px;">
                                 <c:choose>
-                                    <c:when test="${isLiked == 1}">&#10084;&#65039;</c:when> <%-- 빨간 하트 --%>
-                                    <c:otherwise>&#129293;</c:otherwise> <%-- 하얀 하트 --%>
+                                    <c:when test="${isLiked == 1}">&#10084;&#65039;</c:when>
+                                    <c:otherwise>&#129293;</c:otherwise>
                                 </c:choose>
                             </span>
                             <span id="like-count-${diary.no}" style="font-size:18px; font-weight:bold; color:#ff8e8b; font-family:'Gaegu';">
@@ -128,9 +128,15 @@
                         <div class="reply-list">
                             <c:forEach var="r" items="${replies}">
                                 <div style="padding:10px; border-bottom:1px solid #fff3f3; display:flex; justify-content:space-between; align-items:center;">
-                                    <div><b style="color:#ff8e8b;">${r.r_id}:</b> ${r.r_txt}</div>
+                                    <div>
+                                        <b style="color:#ff8e8b;">${r.r_id}:</b>
+                                        <span id="reply-text-${r.r_no}">${r.r_txt}</span>
+                                    </div>
                                     <c:if test="${r.r_id eq sessionScope.loginUserId}">
-                                        <button type="button" style="border:none; background:none; cursor:pointer;" onclick="deleteReply('${r.r_no}', '${diary.no}', '${curYear}', '${curMonth}', '${selectedDay}')">&#10060;</button>
+                                        <div style="display: flex; gap: 5px;">
+                                            <button type="button" style="border:none; background:none; cursor:pointer;" onclick="updateReply('${r.r_no}', '${diary.no}')">✏️</button>
+                                            <button type="button" style="border:none; background:none; cursor:pointer;" onclick="deleteReply('${r.r_no}', '${diary.no}', '${curYear}', '${curMonth}', '${selectedDay}')">&#10060;</button>
+                                        </div>
                                     </c:if>
                                 </div>
                             </c:forEach>
@@ -225,3 +231,4 @@
         </c:otherwise>
     </c:choose>
 </div>
+

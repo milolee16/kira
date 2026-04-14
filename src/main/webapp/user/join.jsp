@@ -15,7 +15,7 @@
     <h1 class="join-title">Join</h1>
     <div class="join-subtitle">회원가입 정보를 입력해주세요</div>
 
-    <form id="joinForm">
+    <form id="joinForm" autocomplete="off">
       <div class="form-row">
         <label for="name">이름</label>
         <input id="name" name="name" required placeholder="이름 입력">

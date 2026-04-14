@@ -185,26 +185,31 @@ function deleteVisitor(vId) {
         .catch(error => console.error("Error:", error)); }
 // =========================================================================
 // 5. UI 렌더링 함수들
+// fetchVisitors 통신 성공 시 서버로부터 전달받은 방명록 데이터 배열 visitorList을 인자로 받는다
+// 방명록 게시글들이 그려질 부모 요소 v-posts-container를 DOM에서 찾는다
 function renderPosts(visitorList) {
     const container = document.getElementById("v-posts-container");
+    //해당 컨테이너 내부의 기존 HTML노드들을 전부 날려버린다, 이전 게시글들 밑에 새 게시글이 중복으로 쌓이는 것을 막기위한 필수 조건
     container.innerHTML = "";
-
+    // 전달받은 배열이 유효하지 않거나 .length === 0, 아예 비어있을 경우 화면에 표시할 '안내 문구'를 렌더링한다.
+    // 데이터를 그려넣은 직후 return을 호출하여 아래의 반복문 로직이 실행되지 않도록 함수를 조기종료한다.
     if (!visitorList || visitorList.length === 0) {
         container.innerHTML = `
             <div class="v-post-item" style="text-align:center; color:#aaa; padding:100px 0; font-size:20px;">
                 아직 다녀간 사람이 없어요. 첫 발도장을 찍어주세요! 😊
             </div>`;
-        return;
-    }
-
+        return; }
+    // 빈 문자열을 담은 변수를 선언 후, 반복문을 돌면서 생성될 각각의 방명록 게시글HTML 마크업을 이 변수에 하나씩 이어 붙일 목적
     let html = "";
+    // 배열에 담긴 게시글 객체를 하나씩 꺼내어 순회한다. 앞서 분석했던 loadRecentVisitors 함수와 완전히 동일한 논리
+    // 데이터베이스의 숫자형 이모지 코드를 시각적인 이모지 문자로 변환(Mapping)한다
     visitorList.forEach(v => {
         let emoji = '✨';
         if (v.v_emoji == 1) emoji = '🐾';
         else if (v.v_emoji == 2) emoji = '👣';
         else if (v.v_emoji == 3) emoji = '🐱';
         else if (v.v_emoji == 4) emoji = '🐶';
-
+        // 템플릿 리터러를 사용하여 HTML 구조 안에 자바스크립트 변수 ${emoji},${v.v_writer_nickname}, ${v.v_date})를 직접 삽입(바인딩)한다
         html += `
             <div class="v-post-item" style="display:flex; justify-content:space-between; align-items:center; padding:12px 20px; background:#fff; border-radius:10px; border:1px solid #f0eee5; box-shadow: 2px 2px 5px rgba(0,0,0,0.02);">
                 <div style="display:flex; align-items:center; gap:15px;">
@@ -226,19 +231,22 @@ function renderPosts(visitorList) {
     });
     container.innerHTML = html;
 }
-
+// 서버에서 가져온 방명록 데이터 뭉치(visitorList)와 현재 우리가 보고있는 페이지 번호를 함수의 재료로 받는다.
 function renderPaging(visitorList, currentPage) {
+    // document.getElementById 화면에서 페이지 버튼들이 들어갈 네모난 구역(컨테이너)를 찾는다
     const container = document.getElementById("v-paging-container");
+    // 버튼들을 빈 문자열 준비
     let html = "";
-
+    // 현재 페이지가 1보다 큰지(즉,2페이지 이상인지) 묻는 조건문.
     if (currentPage > 1) {
+        // 버튼을 누르면 앞서 분석했던 fetchVisitors 함수를 다시 부르는데, 이때 현재 페이지에서 1을뺀 숫자를 넘겨줌
         html += `<button class="v-page-btn" onclick="fetchVisitors(${currentPage - 1})" style="background:#fff; border:1px solid #f2c0bd; border-radius:15px; padding:5px 15px; cursor:pointer; font-family:'Gaegu'; color:#8a7a78;">◀ 이전</button>`;
     } else {
-        html += `<div style="width:70px;"></div>`;
-    }
-
+        // 만약 현재 1페이지라면 갈곳이 없으니 버튼 생성을 안하고 대신 투명 빈박스를 만듬
+        html += `<div style="width:70px;"></div>`; }
+    // 앞서 만든 '이전버튼(또는 빈 박스)'바로 옆에 현재 페이지 버호 (page1,2등)를 글자로 적어 붙인다.
     html += `<span style="font-family:'Nanum Pen Script'; color:#8a7a78; font-size:22px;">Page ${currentPage}</span>`;
-
+    
     if (visitorList && visitorList.length === 7) {
         html += `<button class="v-page-btn" onclick="fetchVisitors(${currentPage + 1})" style="background:#fff; border:1px solid #f2c0bd; border-radius:15px; padding:5px 15px; cursor:pointer; font-family:'Gaegu'; color:#8a7a78;">다음 ▶</button>`;
     } else {

@@ -246,15 +246,14 @@ function renderPaging(visitorList, currentPage) {
         html += `<div style="width:70px;"></div>`; }
     // 앞서 만든 '이전버튼(또는 빈 박스)'바로 옆에 현재 페이지 버호 (page1,2등)를 글자로 적어 붙인다.
     html += `<span style="font-family:'Nanum Pen Script'; color:#8a7a78; font-size:22px;">Page ${currentPage}</span>`;
-    
+    // 서버에서 가져온 방명록 데이터 개수(visitorList.length)가 정확히7개일 때만 '다음'버튼을 만든다.
+    // 버튼을 누르면 현재 페이지에1을 더한값을 서버에 요청한다. 7개가 아니라면 투명한 빈박스를 채워넣는다.
     if (visitorList && visitorList.length === 7) {
         html += `<button class="v-page-btn" onclick="fetchVisitors(${currentPage + 1})" style="background:#fff; border:1px solid #f2c0bd; border-radius:15px; padding:5px 15px; cursor:pointer; font-family:'Gaegu'; color:#8a7a78;">다음 ▶</button>`;
     } else {
-        html += `<div style="width:70px;"></div>`;
-    }
+        html += `<div style="width:70px;"></div>`; }
 
-    container.innerHTML = html;
-}
+    container.innerHTML = html; }
 
 // =========================================================================
 // 6. 방문자(발도장) 초기 로딩 함수
@@ -267,37 +266,40 @@ function initVisitorLog() {
 // 화면(수첩 속지) 갈아끼우기 함수
 function vloadPage(url) {
     if (!url) return;
-
+    // 현재 방문중인 미니홈피 주인의 ID를 브라우저 임시 저장소에서 찾고 없으면 로그인한 내ID를 기본값으로 사용한다.
     const savedOwnerPk = sessionStorage.getItem("currentHostId");
     const targetOwnerPk = savedOwnerPk ? savedOwnerPk : loginUserId;
 
     let fetchUrl = url;
+    // url.includes ('?') 을 통해 기존 주소에 이미 다른 파라미터가 포함되어 있는지 검사
+    // 파라미터가 이미 있다면 새로운 파라미터를 추가하기 위해 & 을 붙인다 visitor?page=1&ownerPK=...
+    // 파라미터가 없다면 파라미터의 시작을 알리는 ? 을 붙인다 visitor?ownerPk=...
     if (targetOwnerPk) {
-        fetchUrl += (fetchUrl.includes('?') ? '&' : '?') + 'ownerPk=' + targetOwnerPk;
-    }
-
+        fetchUrl += (fetchUrl.includes('?') ? '&' : '?') + 'ownerPk=' + targetOwnerPk; }
+    // 조립된 주소로 서버에 GET요청을 보낸다
     fetch(fetchUrl)
         .then((response) => {
             if (!response.ok) {
-                throw new Error(`HTTP 오류: ${response.status}`);
-            }
-            return response.text();
-        })
+                throw new Error(`HTTP 오류: ${response.status}`); }
+            // 여기서는 서버에서 렌더링된 HTML마크업 전체를 가져오기 위해 response.text를 사용
+            // 문자열 형태의 HTML 태그 덩어리를 다음체인(.then)으로 넘긴다
+            return response.text(); })
+        // 서버에서 받아온 HTML 문자열을 화면의 특정 구역
         .then((htmlData) => {
+            // notebook-content 내부에 통째로 덮어 씌운다. 이 순간 브라우저는 텍스트를 실제 DOM 요소로 변환하여 화면에 그린다
             document.getElementById("notebook-content").innerHTML = htmlData;
-
+            // 새로운 페이지가 로드되었으니 is-visitor 클래스를 제거하여 초기화 한다
             const notebook = document.getElementById("notebook");
             if (notebook) notebook.classList.remove("is-visitor");
-
+            // for...in반복문을 사용해 외부에 정의된 pageRoutes객체의 키(path)들을 순회한다
             for (const path in pageRoutes) {
                 if (url.includes(path)) {
+                    //요청한 url안에 특정경로가 포함되어 있다면 해당 페이지 전용 css클래스(route.cssClass)를 부여하고
                     const route = pageRoutes[path];
                     if (route.cssClass && notebook) notebook.classList.add(route.cssClass);
+                    // 초기화가 필요한 함수 route.initFunc를 실행한다 ,매칭되는 경로를 찾았다면 break로 반복문을 탈출
                     if (route.initFunc) route.initFunc();
-                    break;
-                }
-            }
-        })
+                    break; } } })
         .catch(error => {
             console.error("페이지 로드 실패:", error);
             document.getElementById('notebook-content').innerHTML = `

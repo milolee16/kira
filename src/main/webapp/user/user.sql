@@ -11,6 +11,7 @@ select * from USERREG;
 
 
 
+
 insert into USERREG values('test1test1test1','DongMin','2001-01-01','test123','test123','DongMin','2026-03-31','test@email.com');
 
 insert into USERREG values('user01', '김철수', '1995-05-12', 'pass01', 'pass01', '철수쓰', '2026-04-01', 'chulsoo@email.com');

@@ -13,7 +13,8 @@ function showToast(message, type = "success") {
     }, 2000);
 }
 
-loginBtn.addEventListener("click", async () => {
+loginForm.addEventListener("submit", async (e   ) => {
+    e.preventDefault();
     try {
         const res = await fetch(ctx + "/login", {
             method: "POST",

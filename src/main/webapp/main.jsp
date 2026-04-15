@@ -51,10 +51,7 @@
         </div>
     </div>
 
-<div class="home-visual">
-    <span class="visual-placeholder">${searchMain.main_img}</span>
 
-</div>
 
 <div class="home-bottom-row">
 
@@ -98,7 +95,7 @@
                     <%-- 1-1. 내 홈피일 때: 입력창 띄우기 --%>
                     <c:when test="${isMyHome}">
                         <div class="qna-input-area" id="qna-form">
-                            <input type="hidden" id="qna-id" value="${dailyQna.q_id}">
+                            <input type="hidden"  autocomplete="off" id="qna-id" value="${dailyQna.q_id}">
                             <textarea id="qna-answer" class="qna-textarea" placeholder="오늘의 답변을 남겨보세요! ✏️"></textarea>
 
                             <div class="qna-btn-group">

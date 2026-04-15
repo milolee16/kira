@@ -15,7 +15,7 @@
         <h1 class="login-title">Login</h1>
         <div class="login-subtitle">아이디와 비밀번호를 입력해주세요</div>
 
-        <form id="loginForm">
+        <form id="loginForm" autocomplete="off">
             <div class="input-group">
                 <label for="id">아이디</label>
                 <input id="id" name="id" placeholder="아이디 입력">
@@ -26,7 +26,7 @@
                 <input id="pw" type="password" name="pw" placeholder="비밀번호 입력">
             </div>
 
-            <button type="button" id="loginBtn">로그인</button>
+            <button type="submit" id="loginBtn">로그인</button>
         </form>
 
         <div class="login-links">

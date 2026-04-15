@@ -127,14 +127,19 @@ public class BgmDAO {
         String sql = "UPDATE bgm_track a SET track_order = " +
                 "(SELECT new_order FROM (SELECT rowid as rid, ROW_NUMBER() OVER(ORDER BY track_order) as new_order " +
                 "FROM bgm_track WHERE u_pk = ?) b WHERE a.rowid = b.rid) WHERE u_pk = ?";
+        Connection con = null;
+        PreparedStatement ps = null;
 
-        try (Connection con = DBManager.connect();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try {
+            con = DBManager.connect();
+            ps = con.prepareStatement(sql);
             ps.setString(1, uPk);
             ps.setString(2, uPk);
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            DBManager.close(con, ps, null);
         }
     }
 

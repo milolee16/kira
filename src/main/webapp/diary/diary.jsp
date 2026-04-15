@@ -20,7 +20,7 @@
                     <input type="hidden" name="d_date" value="${selectedDay}">
                     <input type="hidden" name="memberId" value="${ownerId}">
 
-                    <input name="d_title" placeholder="제목을 입력하세요" style="width:100%; padding:15px; border:none; border-bottom:2px solid #f7cfcd; font-family:'Gaegu'; font-size:22px; outline:none; box-sizing: border-box;">
+                    <input name="d_title" autocomplete="off" placeholder="제목을 입력하세요" style="width:100%; padding:15px; border:none; border-bottom:2px solid #f7cfcd; font-family:'Gaegu'; font-size:22px; outline:none; box-sizing: border-box;">
 
                     <div style="padding: 0 15px;">
                         <span style="font-family:'Gaegu'; font-size:20px; color:#555; margin-right:10px;">&#128274; 공개 범위 설정:</span>
@@ -31,7 +31,7 @@
                         </select>
                     </div>
 
-                    <textarea name="d_txt" placeholder="오늘의 일기를 남겨보세요..." style="width:100%; height:250px; border:none; padding:15px; font-family:'Gaegu'; font-size:20px; outline:none; resize:none; box-sizing: border-box;"></textarea>
+                    <textarea name="d_txt"  placeholder="오늘의 일기를 남겨보세요..." style="width:100%; height:250px; border:none; padding:15px; font-family:'Gaegu'; font-size:20px; outline:none; resize:none; box-sizing: border-box;"></textarea>
 
                     <div style="text-align:right;">
                         <button type="button" class="write-btn" onclick="submitDiaryForm()">등록하기</button>
@@ -119,10 +119,10 @@
 
                     <div class="reply-section">
                         <h4 style="font-family:'Gaegu'; color:#ff8e8b;">&#128172; 댓글 목록</h4>
-                        <form id="replyWriteForm" style="display:flex; gap:10px; margin-bottom:20px;">
+                        <form id="replyWriteForm" autocomplete="off" style="display:flex; gap:10px; margin-bottom:20px;" onsubmit="event.preventDefault();submitReply('${diary.no}', '${curYear}', '${curMonth}', '${selectedDay}')">
                             <input type="hidden" name="d_no" value="${diary.no}">
                             <input name="r_txt" placeholder="따뜻한 댓글을 남겨주세요" style="flex:1; padding:10px; border:1px solid #f7cfcd; border-radius:5px; outline:none;">
-                            <button type="button" class="write-btn" onclick="submitReply('${diary.no}', '${curYear}', '${curMonth}', '${selectedDay}')">등록</button>
+                            <button type="button" class="write-btn" >등록</button>
                         </form>
 
                         <div class="reply-list">

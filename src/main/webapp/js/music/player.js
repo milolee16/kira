@@ -331,13 +331,35 @@ if (window.YT && window.YT.Player) {
 
 // ── 페이지 이탈 직전 현재 곡/재생 위치 저장 ──────────────────────
 window.addEventListener("pageshow", function (event) {
-    if (event.persisted) {
+    // Safari/Chrome back-forward cache or any navigation that restores page
+    if (event.persisted || window.performance.navigation.type === 2) {
+        console.log("Page restored from cache - reinitializing YouTube player");
+        
+        // Reset player state
         playerReady = false;
-        ytPlayer = null;
-
-        if (fetchDone && apiReady) {
-            initPlayer();
+        
+        // Clear existing player instance
+        if (ytPlayer) {
+            try {
+                ytPlayer.destroy();
+            } catch (e) {
+                console.log("Player destroy failed:", e);
+            }
+            ytPlayer = null;
         }
+        
+        // Clear player container
+        const holder = document.getElementById("yt-player-hidden");
+        if (holder) {
+            holder.innerHTML = "";
+        }
+        
+        // Reinitialize after a short delay to ensure DOM is ready
+        setTimeout(() => {
+            if (fetchDone && apiReady) {
+                initPlayer();
+            }
+        }, 100);
     }
 });
 

@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
+
     // 1. 파도타기 세션 정보 확인
     const savedId = sessionStorage.getItem("currentHostId");
     const savedNick = sessionStorage.getItem("currentHostNick");

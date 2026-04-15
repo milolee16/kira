@@ -5,9 +5,7 @@
 <head>
   <meta charset="UTF-8">
   <title>비밀번호 재설정</title>
-
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/user/reset-pw.css">
-
 </head>
 <body>
 
@@ -24,6 +22,14 @@
       <div class="form-row">
         <label for="newPw">새 비밀번호</label>
         <input id="newPw" type="password" name="newPw" required placeholder="새 비밀번호 입력">
+
+        <div id="pwGuide" class="pw-guide">
+          8자 이상 / 숫자 / 특수문자 포함
+        </div>
+        <div id="pwStrengthText" class="pw-strength-text"></div>
+        <div class="pw-strength-wrap">
+          <div id="pwStrengthBar" class="pw-strength-bar"></div>
+        </div>
       </div>
 
       <div class="form-row">

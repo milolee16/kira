@@ -96,6 +96,7 @@
     const bar = document.querySelector(".pw-bar");
     const text = document.querySelector(".pw-text");
     const matchText = document.getElementById("pw-match-text");
+    const pwForm = document.querySelector("#pwBox form");
 
     // 강도 체크
     pwInput.addEventListener("input", function () {
@@ -110,8 +111,8 @@
         bar.className = "pw-bar";
 
         if (pw.length === 0) {
-
             text.innerText = "비밀번호를 입력하세요";
+            text.style.color = "";
             return;
         }
 
@@ -152,6 +153,28 @@
             matchText.style.color = "#ff6b6b";
         }
     }
+
+    // 제출 시 최종 검증
+    pwForm.addEventListener("submit", function (e) {
+        const pw = pwInput.value.trim();
+        const pwChk = pwChkInput.value.trim();
+
+        // 8자 이상 / 영문 / 숫자 / 특수문자 포함
+        const pwRule = /^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{8,}$/;
+
+        if (!pwRule.test(pw)) {
+            alert("새 비밀번호는 8자 이상이며, 영문, 숫자, 특수문자를 모두 포함해야 합니다.");
+            pwInput.focus();
+            e.preventDefault();
+            return;
+        }
+
+        if (pw !== pwChk) {
+            alert("새 비밀번호와 비밀번호 확인이 일치하지 않습니다.");
+            pwChkInput.focus();
+            e.preventDefault();
+        }
+    });
 
     function togglePw() {
         const pwBox = document.getElementById("pwBox");

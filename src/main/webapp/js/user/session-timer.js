@@ -19,7 +19,7 @@ function startSessionTimer() {
         if (sessionTimeLeft < 0) {
             clearInterval(sessionTimerInterval);
             alert("세션이 만료되어 자동 로그아웃됩니다.");
-            location.href = window.appCtx + "/logout";
+            location.href = "/logout";
         }
     }
 

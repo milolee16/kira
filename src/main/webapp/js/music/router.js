@@ -7,7 +7,9 @@
 function updateMarquee() {
     const titleEl = document.getElementById('bgm-title-mp3');
     if (!titleEl || !window.playlist || window.playlist.length === 0) return;
-    const track = window.playlist[window.currentIndex];
+
+    // ✅ 핵심: currentIndex 대신 currentTrackId로 트랙 찾기
+    const track = window.playlist.find(t => t.youtubeId === window.currentTrackId);
     if (!track) return;
 
     // 기존: titleEl.innerHTML = `<span class="marquee">...<span>${track.title}</span>...</span>`;
@@ -27,7 +29,9 @@ function updateMarquee() {
 // ── 스마트폰 썸네일 + 링크 + 제목 갱신 ──────────────────────────
 function updatePhoneScreen() {
     if (!window.playlist || window.playlist.length === 0) return;
-    const track = window.playlist[window.currentIndex];
+
+    // ✅ 핵심: currentIndex 대신 currentTrackId로 트랙 찾기
+    const track = window.playlist.find(t => t.youtubeId === window.currentTrackId);
     if (!track) return;
 
     const phoneThumb  = document.getElementById('phone-thumb');

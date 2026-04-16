@@ -116,8 +116,8 @@ function loadRecentVisitors() {
     // 디버깅용 로그 출력, 식별자가 유요하지 않으면 함수 실행 즉시 중단
     console.log("현재 홈피의 id는 " + currentOwnerPk);
     if (!currentOwnerPk) return;
-    // 현재 시간의 타임스탬프 생성 get 요청 시 브라우저가 과거 캐시 데이터를 반환하는 것을 방지
     const noCache = new Date().getTime();
+    // 현재 시간의 타임스탬프 생성 get 요청 시 브라우저가 과거 캐시 데이터를 반환하는 것을 방지
     // 방문자 목록 조회와 같은 visitor 앤드포인트를 사용하지만 쿼리 스트링의 reqType 값을
     // json이 아닌 recent 로 다르게 지정했다 서버측에서는 이 파라미터 값을 방명록 전체 목록을 줄 것인지
     // 최근 며칠 혹은 몇 명의 요약된 목록만 줄 것인지 분기 처리하게 된다.
@@ -129,9 +129,9 @@ function loadRecentVisitors() {
             'Expires': '0'} })
         // 앞선 fetcgVisitors 와 다르게 response.ok를 확인하는 예외 처리 로직이 생략되고 바로 .json으로 파싱을 시도
         .then(response => response.json())
+        .then(data => {
         // 서버가 응답한 데이터를 받으면, DOM에서 최근 방문자를 나열할 대상 v-recent-list 요소를 찾아 그 내부의 기존
         // HTML을 완전히 비워낸다("") 이전 데이터를 초기화하고 새 데이터를 그리기 위해 준비
-        .then(data => {
             const listContainer = document.getElementById('v-recent-list');
             listContainer.innerHTML = "";
             // 서버에서 받아온 배열 데이터가 null/undefined 이거나 길이가 0일 경우
@@ -166,7 +166,7 @@ function loadRecentVisitors() {
 // =========================================================================
 // 4. 방명록 삭제 로직
 // 함수가 호출될 때 삭제하고자 하는 특정 방명록 게시글의 고유 식별자(id)를 인자로 전달받는다
-// 이 값은 HTML 렌더링 단계에서 삭제 버튼의 onclick 이벤트 등에 바인딩 되어 있었을 것
+// 이 값은 HTML 렌더링 단계에서 삭제 버튼의 onclick 이벤트 등에 바인딩 되어 있었을 =
 function deleteVisitor(vId) {
     // 브라우저 내장 다이얼로그인 confirm창을 띄워 사용자에게 삭제를 최종확인한다
     // 사용자가 '취소'를 누르면 confirm 함수는 false를 반환하고, 앞에 붙은 논리 부정 연산자(!)에 의해 조건식이 true가 됨

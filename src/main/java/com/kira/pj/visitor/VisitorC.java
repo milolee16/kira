@@ -28,7 +28,7 @@ public class VisitorC extends HttpServlet {
         // 프론트엔드(JS)에서 &ownerPk=XXX 형태로 홈피 주인의 PK를 반드시 보내야 한다.
         String ownerPk = request.getParameter("ownerPk");
         if (ownerPk == null || ownerPk.trim().isEmpty()) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // <-- 여기가 정확히 400 에러를 뱉는 곳이다.
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
 
@@ -53,6 +53,7 @@ public class VisitorC extends HttpServlet {
             HttpSession session = request.getSession();
             String visitorPk = (String) session.getAttribute("loginUserId");
             System.out.println(visitorPk);
+
             // 방문자가 로그인한 상태이고, 내 홈피를 들어온 것이 아닐 때만 발도장을 찍는다.
             if (visitorPk != null && !visitorPk.equals(ownerPk)) {
                 try {
@@ -60,7 +61,9 @@ public class VisitorC extends HttpServlet {
                     vDto.setV_writer_pk(visitorPk);
                     vDto.setV_owner_pk(ownerPk);
 
-                    vDto.setV_emoji(1); // 자동 방문은 기본 이모지(1)로 고정
+                    // [수정된 로직] 기존에 1로 고정되어 있던 이모지를 1~4 랜덤으로 변경
+                    int randomEmoji = (int) (Math.random() * 4) + 1;
+                    vDto.setV_emoji(randomEmoji);
 
                     VisitorDAO vDao = new VisitorDAO();
                     vDao.upsertVisitor(vDto);

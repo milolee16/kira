@@ -384,7 +384,7 @@
         const clientKey = "test_ck_6BYq7GWPVv20ejRA9LnlVNE5vbo1"; // 예: test_ck_...
         const tossPayments = TossPayments(clientKey);
         const payment = tossPayments.payment({
-            customerKey: "user_${sessionScope.loginUserPk}"
+            customerKey: "${sessionScope.loginUserId}"
         });
 
         await payment.requestPayment({
